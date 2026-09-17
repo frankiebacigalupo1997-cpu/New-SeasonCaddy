@@ -189,11 +189,11 @@ export const Route =
           content:
             "#07111f",
         },
-        
+
         {
-  name: "impact-site-verification",
-  value: "fb8e9c3f-e0a9-44de-bed3-1dd34ba3c735",
-},
+          name: "impact-site-verification",
+          value: "fb8e9c3f-e0a9-44de-bed3-1dd34ba3c735",
+        },
       ],
 
       links: [
@@ -205,15 +205,33 @@ export const Route =
             appCss,
         },
 
+        /* ================================================== */
+        /* SEASONCADDY FAVICONS                               */
+        /* ================================================== */
+
         {
           rel: "icon",
-          href: "https://ekxmoxjvnohdbbrpbqdq.supabase.co/storage/v1/object/public/branding/SeasonCaddy%20Logo%20Blue.png",
+          href: "/favicon-48x48.png",
           type: "image/png",
+          sizes: "48x48",
         },
-        
+
+        {
+          rel: "icon",
+          href: "/favicon-96x96.png",
+          type: "image/png",
+          sizes: "96x96",
+        },
+
+        {
+          rel: "shortcut icon",
+          href: "/favicon.ico",
+        },
+
         {
           rel: "apple-touch-icon",
-          href: "https://ekxmoxjvnohdbbrpbqdq.supabase.co/storage/v1/object/public/branding/SeasonCaddy%20Logo%20Blue.png",
+          href: "/favicon-192x192.png",
+          sizes: "192x192",
         },
 
         {
