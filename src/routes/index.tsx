@@ -42,10 +42,6 @@ import {
 } from "@/components/gamehub/Shell";
 
 import {
-  SEASONCADDY_API_URL,
-} from "@/lib/config";
-
-import {
   formatRegionalTime,
   gameDisplayTitle,
   getProviderIdsForGame,
@@ -56,6 +52,15 @@ import {
   timeZoneForRegion,
   type Game,
 } from "@/lib/gamehub-data";
+
+import {
+  fetchDatasetForSavedTeams,
+} from "@/lib/frontend-data";
+
+import {
+  googleCalendarApiFetch,
+  startGoogleCalendarOAuth,
+} from "@/lib/google-calendar-api";
 
 import {
   deleteService,
@@ -1297,8 +1302,8 @@ function savedItemDisplayName(
 
     try {
       const statusResponse =
-        await fetch(
-          `${SEASONCADDY_API_URL}/google/status`,
+        await googleCalendarApiFetch(
+          "/google/status",
         );
 
       const status =
@@ -1327,34 +1332,43 @@ function savedItemDisplayName(
           return;
         }
 
-        const params =
-          new URLSearchParams({
-            region:
-              normalizeRegion(
-                region,
-              ),
-          });
-
-        window.open(
-          `${SEASONCADDY_API_URL}/google/oauth/start?${params.toString()}`,
-          "_blank",
-          "noopener,noreferrer",
-        );
-
-        toast.info(
-          "Connect Google Calendar in the new tab, then return here and click Sync again.",
-          {
-            duration:
-              10000,
-          },
+        await startGoogleCalendarOAuth(
+          normalizeRegion(
+            region,
+          ),
+          "/",
         );
 
         return;
       }
 
+      const syncDataset =
+        await fetchDatasetForSavedTeams(
+          competitions,
+        );
+
+      const syncEvents =
+        syncDataset.games
+          .filter((game) => {
+            if (!game.kickoff) return false;
+            const kickoffMs = new Date(game.kickoff).getTime();
+            return Number.isFinite(kickoffMs) && kickoffMs >= Date.now() - 6 * 60 * 60 * 1000;
+          })
+          .map((game) => ({
+            id: game.id,
+            sport: game.sport,
+            competition: game.league,
+            league: game.league,
+            home: game.home,
+            away: game.away,
+            kickoff: game.kickoff,
+            scheduledDate: game.scheduledDate,
+            scheduleLabel: game.scheduleLabel,
+          }));
+
       const syncResponse =
-        await fetch(
-          `${SEASONCADDY_API_URL}/google/sync`,
+        await googleCalendarApiFetch(
+          "/google/sync",
           {
             method:
               "POST",
@@ -1366,7 +1380,8 @@ function savedItemDisplayName(
 
             body:
               JSON.stringify({
-                competitions,
+                events:
+                  syncEvents,
 
                 region:
                   normalizeRegion(
@@ -1498,8 +1513,8 @@ function savedItemDisplayName(
 
     try {
       const statusResponse =
-        await fetch(
-          `${SEASONCADDY_API_URL}/google/status`,
+        await googleCalendarApiFetch(
+          "/google/status",
         );
 
       const status =
@@ -1518,26 +1533,11 @@ function savedItemDisplayName(
       if (
         !status.connected
       ) {
-        const params =
-          new URLSearchParams({
-            region:
-              normalizeRegion(
-                region,
-              ),
-          });
-
-        window.open(
-          `${SEASONCADDY_API_URL}/google/oauth/start?${params.toString()}`,
-          "_blank",
-          "noopener,noreferrer",
-        );
-
-        toast.info(
-          "Connect Google Calendar in the new tab, then return here and click Add to Google Calendar again.",
-          {
-            duration:
-              10000,
-          },
+        await startGoogleCalendarOAuth(
+          normalizeRegion(
+            region,
+          ),
+          "/",
         );
 
         return;
@@ -1572,8 +1572,8 @@ function savedItemDisplayName(
           );
 
       const response =
-        await fetch(
-          `${SEASONCADDY_API_URL}/google/add-event`,
+        await googleCalendarApiFetch(
+          "/google/add-event",
           {
             method:
               "POST",
