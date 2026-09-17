@@ -34,12 +34,13 @@ import {
 } from "@/lib/gamehub-data";
 
 import {
-  SEASONCADDY_API_URL,
-} from "@/lib/config";
-
-import {
   useSavedTeamsDataset,
 } from "@/hooks/useSeasonCaddyData";
+
+import {
+  googleCalendarApiFetch,
+  startGoogleCalendarOAuth,
+} from "@/lib/google-calendar-api";
 
 import {
   useAuth,
@@ -139,8 +140,8 @@ function CalendarPage() {
     async function loadGoogleCalendarStatus() {
       try {
         const response =
-          await fetch(
-            `${SEASONCADDY_API_URL}/google/status`,
+          await googleCalendarApiFetch(
+            "/google/status",
           );
 
         const status =
@@ -429,8 +430,8 @@ function CalendarPage() {
 
     try {
       const statusResponse =
-        await fetch(
-          `${SEASONCADDY_API_URL}/google/status`,
+        await googleCalendarApiFetch(
+          "/google/status",
         );
 
       const status =
@@ -453,34 +454,38 @@ function CalendarPage() {
           "idle",
         );
 
-        const params =
-          new URLSearchParams({
-            region:
-              normalizeRegion(
-                region,
-              ),
-          });
-
-        window.open(
-          `${SEASONCADDY_API_URL}/google/oauth/start?${params.toString()}`,
-          "_blank",
-          "noopener,noreferrer",
-        );
-
-        toast.info(
-          "Connect Google Calendar in the new tab, then return here and click Sync again.",
-          {
-            duration:
-              10000,
-          },
+        await startGoogleCalendarOAuth(
+          normalizeRegion(
+            region,
+          ),
+          "/my-caddy/calendar",
         );
 
         return;
       }
 
+      const syncEvents =
+        savedGames
+          .filter((game) => {
+            if (!game.kickoff) return false;
+            const kickoffMs = new Date(game.kickoff).getTime();
+            return Number.isFinite(kickoffMs) && kickoffMs >= Date.now() - 6 * 60 * 60 * 1000;
+          })
+          .map((game) => ({
+            id: game.id,
+            sport: game.sport,
+            competition: game.league,
+            league: game.league,
+            home: game.home,
+            away: game.away,
+            kickoff: game.kickoff,
+            scheduledDate: game.scheduledDate,
+            scheduleLabel: game.scheduleLabel,
+          }));
+
       const syncResponse =
-        await fetch(
-          `${SEASONCADDY_API_URL}/google/sync`,
+        await googleCalendarApiFetch(
+          "/google/sync",
           {
             method:
               "POST",
@@ -492,8 +497,8 @@ function CalendarPage() {
 
             body:
               JSON.stringify({
-                competitions:
-                  savedLeagues,
+                events:
+                  syncEvents,
 
                 region:
                   normalizeRegion(
