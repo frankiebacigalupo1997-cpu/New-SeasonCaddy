@@ -310,30 +310,13 @@ function MyCaddyOverview() {
 
   const savedGames =
     useMemo(() => {
+      /*
+       * useSavedTeamsDataset is already scoped to the user's saved teams (or
+       * an explicitly saved whole competition). Do not exact-match the saved
+       * labels a second time here: that used to discard canonical/alias matches
+       * that the shared frontend-data layer had already resolved correctly.
+       */
       return appGames
-        .filter(
-          (
-            game,
-          ) => {
-            const competitionId = game.competitionId;
-
-            if (!competitionId) {
-              return false;
-            }
-
-            const savedTeams =
-              savedLeagues[competitionId] ?? [];
-
-            return [
-              game.home,
-              game.away,
-              game.canonicalHome,
-              game.canonicalAway,
-            ].some((teamName) =>
-              Boolean(teamName && savedTeams.includes(teamName)),
-            );
-          },
-        )
         .filter(
           (game) =>
             isUpcomingOrLiveGame(
@@ -346,7 +329,6 @@ function MyCaddyOverview() {
         );
     }, [
       appGames,
-      savedLeagues,
       fixtureNow,
     ]);
 
