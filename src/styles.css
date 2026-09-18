@@ -444,52 +444,120 @@
   }
 }
 
+/* ===================================================== */
+/* HOME FIXTURE ROW RESPONSIVE PRIORITY                   */
+/* ===================================================== */
+
+/*
+ * Compression order:
+ * 1. Action buttons stack vertically.
+ * 2. Provider column narrows.
+ * 3. Team / fixture information narrows last.
+ * 4. Entire row stacks only on genuine mobile widths.
+ */
 .home-fixture-row {
   display: grid;
   grid-template-columns:
     155px
-    minmax(0, 1fr)
-    120px
-    auto;
+    minmax(220px, 1fr)
+    minmax(170px, 210px)
+    290px;
   gap: 16px;
   align-items: center;
   padding: 20px 0;
 }
 
+.home-fixture-date,
+.home-fixture-match,
+.home-fixture-providers,
+.home-fixture-actions {
+  min-width: 0;
+}
+
+.home-fixture-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 /*
- * Intermediate Home content width.
- *
- * Keep the date and fixture on the first row,
- * then place providers and actions underneath.
+ * Stage 1:
+ * Stack Calendar above Watch Options before any other
+ * fixture content is allowed to become cramped.
  */
-@container (max-width: 900px) and (min-width: 620px) {
+@container (max-width: 1100px) and (min-width: 620px) {
   .home-fixture-row {
     grid-template-columns:
       155px
-      minmax(0, 1fr);
-    gap: 14px 18px;
-  }
-
-  .home-fixture-date {
-    grid-column: 1;
-  }
-
-  .home-fixture-match {
-    grid-column: 2;
-  }
-
-  .home-fixture-providers {
-    grid-column: 1;
+      minmax(220px, 1fr)
+      minmax(170px, 210px)
+      150px;
   }
 
   .home-fixture-actions {
-    grid-column: 2;
-    justify-content: flex-start;
+    min-width: 150px;
+    max-width: 150px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .home-fixture-actions > * {
+    width: 100%;
+    text-align: center;
   }
 }
 
 /*
- * Mobile Home fixture rows.
+ * Stage 2:
+ * Once the actions are stacked, allow the provider column
+ * to contract while keeping the fixture information protected.
+ */
+@container (max-width: 980px) and (min-width: 620px) {
+  .home-fixture-row {
+    grid-template-columns:
+      155px
+      minmax(220px, 1fr)
+      minmax(95px, 150px)
+      150px;
+    gap: 14px;
+  }
+
+  .home-fixture-providers {
+    min-width: 95px;
+    max-width: 150px;
+  }
+}
+
+/*
+ * Stage 3:
+ * Team / fixture information is the final part of the row
+ * allowed to narrow before the mobile layout takes over.
+ */
+@container (max-width: 760px) and (min-width: 620px) {
+  .home-fixture-row {
+    grid-template-columns:
+      155px
+      minmax(150px, 1fr)
+      minmax(95px, 120px)
+      138px;
+    gap: 12px;
+  }
+
+  .home-fixture-match {
+    min-width: 150px;
+  }
+
+  .home-fixture-actions {
+    min-width: 138px;
+    max-width: 138px;
+  }
+}
+
+/*
+ * Mobile:
+ * Only now does the complete fixture row become a single column.
  */
 @container (max-width: 619px) {
   .home-fixture-row {
@@ -504,11 +572,19 @@
   .home-fixture-providers,
   .home-fixture-actions {
     grid-column: 1;
+    min-width: 0;
+    max-width: none;
   }
 
   .home-fixture-actions {
+    flex-direction: row;
+    align-items: center;
     justify-content: flex-start;
     flex-wrap: wrap;
+  }
+
+  .home-fixture-actions > * {
+    width: auto;
   }
 }
 
