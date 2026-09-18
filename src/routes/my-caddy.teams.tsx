@@ -30,8 +30,9 @@ import {
 
 import {
   frontendCatalogQueryOptions,
-  useCompetitionIdentityCatalog,
+  frontendIdentityCatalogQueryOptions,
   useFrontendCatalog,
+  useFrontendIdentityCatalog,
 } from "@/hooks/useSeasonCaddyData";
 
 import {
@@ -54,10 +55,12 @@ export const Route =
     "/my-caddy/teams",
   )({
     loader: ({ context }) => {
-      // My Teams only needs the lightweight catalog to render sports and
-      // competitions. Canonical team identity is fetched lazily for the
-      // competitions the user has saved or expands.
+      // Start the lightweight sport/competition catalog and the team identity
+      // catalog together. My Teams needs both immediately because every
+      // competition row displays a team count and the sport/competition save
+      // controls must work before an individual league is expanded.
       void context.queryClient.prefetchQuery(frontendCatalogQueryOptions);
+      void context.queryClient.prefetchQuery(frontendIdentityCatalogQueryOptions);
     },
 
     component:
@@ -177,24 +180,17 @@ function TeamsPage() {
     >
   >({});
 
-  const identityCompetitionIds = useMemo(
-    () =>
-      Array.from(
-        new Set([
-          ...Object.entries(savedLeagues)
-            .filter(([, teams]) => teams.length > 0)
-            .map(([competitionId]) => competitionId),
-          ...Object.entries(openLeagues)
-            .filter(([, isOpen]) => isOpen)
-            .map(([competitionId]) => competitionId),
-        ]),
-      ).sort(),
-    [savedLeagues, openLeagues],
-  );
-
+  /*
+   * My Teams is the one Caddy screen that needs team availability for every
+   * visible competition at once: the competition row shows a team count, and
+   * Save this Sport / Save competition must work before the user opens each
+   * individual competition. The lightweight frontend catalog intentionally
+   * omits team_names/canonical_teams, so hydrate the identity catalog on this
+   * route instead of waiting for each league accordion to open.
+   */
   const {
     data: focusedIdentityCatalog = [],
-  } = useCompetitionIdentityCatalog(identityCompetitionIds);
+  } = useFrontendIdentityCatalog();
 
   const focusedIdentityById = useMemo(
     () =>
