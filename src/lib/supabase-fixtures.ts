@@ -784,6 +784,56 @@ function resolveSavedTeamLabels(
   };
 }
 
+function fixtureMatchesSavedTeamLabels(
+  fixture: FrontendFixtureRow,
+  competitionId: string,
+  savedLabels: string[],
+  competition: FrontendCatalogRow | undefined,
+) {
+  if (savedLabels.includes(competitionId)) {
+    return true;
+  }
+
+  const acceptedKeys = new Set(
+    savedLabels.map(identityLookupKey).filter(Boolean),
+  );
+
+  /*
+   * Enrich saved labels with any canonical identity/aliases we can resolve.
+   * This keeps legacy saved names working while identity coverage is partial.
+   */
+  if (competition) {
+    for (const savedLabel of savedLabels) {
+      const savedKey = identityLookupKey(savedLabel);
+      const canonicalTeam = competition.canonicalTeams.find((team) =>
+        [team.displayName, team.preferredName, ...team.aliases].some(
+          (candidate) => candidate && identityLookupKey(candidate) === savedKey,
+        ),
+      );
+
+      if (!canonicalTeam) continue;
+
+      for (const candidate of [
+        canonicalTeam.displayName,
+        canonicalTeam.preferredName,
+        ...canonicalTeam.aliases,
+      ]) {
+        if (!candidate) continue;
+        acceptedKeys.add(identityLookupKey(candidate));
+      }
+    }
+  }
+
+  return [
+    fixture.home,
+    fixture.away,
+    fixture.canonicalHome,
+    fixture.canonicalAway,
+  ].some((candidate) =>
+    Boolean(candidate && acceptedKeys.has(identityLookupKey(candidate))),
+  );
+}
+
 const MAX_TEAM_NAMES_PER_FILTERED_QUERY = 24;
 
 export async function fetchFrontendFixturesForSavedTeams(
@@ -823,49 +873,65 @@ export async function fetchFrontendFixturesForSavedTeams(
 
   const resultSets = await Promise.all(
     entries.map(async ([competitionId, teamNames]) => {
+      const identityCompetition = identityByCompetition.get(competitionId);
+
       /*
-       * A very large saved-team set is usually equivalent to following most
-       * or all of a competition. Falling back to the established competition
-       * query avoids oversized PostgREST URLs while preserving exact output.
+       * A competition-id marker means the whole competition is followed.
+       * Keep the complete competition dataset in that case.
        */
-      if (
-        teamNames.includes(competitionId) ||
-        teamNames.length > MAX_TEAM_NAMES_PER_FILTERED_QUERY
-      ) {
+      if (teamNames.includes(competitionId)) {
         return fetchFrontendFixtures(competitionId);
       }
 
       const { canonicalNames, allResolved } = resolveSavedTeamLabels(
-        identityByCompetition.get(competitionId),
+        identityCompetition,
         teamNames,
       );
 
       /*
-       * Never let identity migration become a correctness requirement. If any
-       * saved legacy label/alias cannot be mapped confidently, use the original
-       * full competition query and let the existing client-side matching logic
-       * decide what belongs to the user's caddy.
+       * When every saved label resolves and the list is small enough, keep the
+       * efficient canonical home/away query.
        */
-      if (!allResolved || canonicalNames.length === 0) {
-        return fetchFrontendFixtures(competitionId);
+      if (
+        allResolved &&
+        canonicalNames.length > 0 &&
+        teamNames.length <= MAX_TEAM_NAMES_PER_FILTERED_QUERY
+      ) {
+        const [homeRows, awayRows] = await Promise.all([
+          fetchFrontendFixtures(competitionId, {
+            canonicalHomeIn: canonicalNames,
+          }),
+          fetchFrontendFixtures(competitionId, {
+            canonicalAwayIn: canonicalNames,
+          }),
+        ]);
+
+        const byId = new Map<string, FrontendFixtureRow>();
+
+        for (const fixture of [...homeRows, ...awayRows]) {
+          byId.set(fixture.id, fixture);
+        }
+
+        return Array.from(byId.values());
       }
 
-      const [homeRows, awayRows] = await Promise.all([
-        fetchFrontendFixtures(competitionId, {
-          canonicalHomeIn: canonicalNames,
-        }),
-        fetchFrontendFixtures(competitionId, {
-          canonicalAwayIn: canonicalNames,
-        }),
-      ]);
+      /*
+       * Partial identity coverage and large selections fall back to a full
+       * competition read, but keep the filtering here so every consumer of
+       * useSavedTeamsDataset receives an already-scoped dataset. This removes
+       * the old My Caddy disconnect where each page re-filtered by exact text
+       * and could drop aliases/canonical names.
+       */
+      const competitionFixtures = await fetchFrontendFixtures(competitionId);
 
-      const byId = new Map<string, FrontendFixtureRow>();
-
-      for (const fixture of [...homeRows, ...awayRows]) {
-        byId.set(fixture.id, fixture);
-      }
-
-      return Array.from(byId.values());
+      return competitionFixtures.filter((fixture) =>
+        fixtureMatchesSavedTeamLabels(
+          fixture,
+          competitionId,
+          teamNames,
+          identityCompetition,
+        ),
+      );
     }),
   );
 
