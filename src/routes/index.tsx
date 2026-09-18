@@ -3819,7 +3819,7 @@ function savedItemDisplayName(
 
                         {/* FIXTURE */}
 
-                        <div className="home-fixture-match min-w-0">
+                        <div className="home-fixture-match min-w-[150px] flex-1">
   <p className="font-semibold">
     {gameDisplayTitle(
       game,
@@ -3833,7 +3833,7 @@ function savedItemDisplayName(
 
                         {/* PROVIDERS */}
 
-                        <div className="home-fixture-providers flex min-w-[170px] max-w-[210px] flex-col gap-1 text-sm text-muted-foreground">
+                        <div className="home-fixture-providers flex min-w-[95px] max-w-[210px] flex-[0_1_170px] flex-col gap-1 text-sm text-muted-foreground">
   {regionalProviderIdsForGame.map(
     (
       providerId,
@@ -3856,7 +3856,7 @@ function savedItemDisplayName(
 
                         {/* ACTIONS */}
 
-                        <div className="home-fixture-actions flex min-w-[290px] flex-nowrap items-center justify-end gap-2">
+                        <div className="home-fixture-actions flex min-w-[138px] max-w-[290px] flex-[0_1_290px] flex-wrap items-center justify-end gap-2">
                           {game.kickoff && (
                             <button
                               type="button"
@@ -3869,7 +3869,7 @@ function savedItemDisplayName(
                                   game,
                                 )
                               }
-                              className="cursor-pointer whitespace-nowrap rounded-md border border-brand/40 bg-brand/5 px-3 py-1.5 text-xs font-bold text-brand transition-colors hover:bg-brand/10 disabled:cursor-wait disabled:opacity-60"
+                              className="min-w-[138px] flex-1 cursor-pointer whitespace-nowrap rounded-md border border-brand/40 bg-brand/5 px-3 py-1.5 text-center text-xs font-bold text-brand transition-colors hover:bg-brand/10 disabled:cursor-wait disabled:opacity-60"
                             >
                               {addingCalendarGameId ===
                               game.id
@@ -3887,7 +3887,7 @@ function savedItemDisplayName(
                             search={{
                               region,
                             }}
-                            className="cursor-pointer whitespace-nowrap rounded-md border border-border bg-surface-2 px-3 py-1.5 text-xs font-bold transition-colors hover:border-brand"
+                            className="min-w-[138px] flex-1 cursor-pointer whitespace-nowrap rounded-md border border-border bg-surface-2 px-3 py-1.5 text-center text-xs font-bold transition-colors hover:border-brand"
                           >
                             View watch options
                           </Link>
