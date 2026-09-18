@@ -298,29 +298,13 @@ function StreamingPage() {
 
   const savedGames =
     useMemo(() => {
+      /*
+       * useSavedTeamsDataset is already scoped to the user's saved selection.
+       * Avoid a second exact-string team filter here so aliases, canonical
+       * names and whole-competition follows stay aligned with the other Caddy
+       * screens.
+       */
       return appGames
-        .filter(
-          (
-            game,
-          ) => {
-            const competitionId = game.competitionId;
-
-            if (!competitionId) {
-              return false;
-            }
-
-            const savedTeams = savedLeagues[competitionId] ?? [];
-
-            return [
-              game.home,
-              game.away,
-              game.canonicalHome,
-              game.canonicalAway,
-            ].some((teamName) =>
-              Boolean(teamName && savedTeams.includes(teamName)),
-            );
-          },
-        )
         .filter(
           isUpcomingGame,
         )
@@ -329,7 +313,6 @@ function StreamingPage() {
         );
     }, [
       appGames,
-      savedLeagues,
     ]);
 
   /* ==================================================== */
