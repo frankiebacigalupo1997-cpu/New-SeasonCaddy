@@ -357,35 +357,16 @@ function CalendarPage() {
 
   const savedGames =
     useMemo(() => {
-      return appGames
-        .filter(
-          (
-            game,
-          ) => {
-            const competitionId = game.competitionId;
-
-            if (!competitionId) {
-              return false;
-            }
-
-            const savedTeams = savedLeagues[competitionId] ?? [];
-
-            return [
-              game.home,
-              game.away,
-              game.canonicalHome,
-              game.canonicalAway,
-            ].some((teamName) =>
-              Boolean(teamName && savedTeams.includes(teamName)),
-            );
-          },
-        )
-        .sort(
-          sortGamesByDate,
-        );
+      /*
+       * The shared saved-team dataset is already scoped. Keeping Calendar on
+       * that same source of truth prevents canonical/alias matches and whole-
+       * competition follows from being removed by a second exact-text filter.
+       */
+      return appGames.sort(
+        sortGamesByDate,
+      );
     }, [
       appGames,
-      savedLeagues,
     ]);
 
   /* ==================================================== */
