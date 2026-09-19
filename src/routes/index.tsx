@@ -47,7 +47,6 @@ import {
   getProviderIdsForGame,
   isGameLive,
   isUpcomingOrLiveGame,
-  leagues,
   providerById,
   timeZoneForRegion,
   type Game,
@@ -854,10 +853,6 @@ function competitionDisplayName(
     competitionDisplayNameById.get(
       competitionId,
     ) ??
-    leagues.find(
-      (item) =>
-        item.id === competitionId,
-    )?.name ??
     formatCloudflareOptionLabel(
       competitionId,
     )
@@ -1675,11 +1670,9 @@ function savedItemDisplayName(
 
     const competitionId =
       game.competitionId ??
-      leagues.find(
-        (league) =>
-          league.name ===
-          game.league,
-      )?.id;
+      competitionIdByName.get(
+        game.league,
+      );
 
     const liveBroadcast =
       liveBroadcasts.find(
@@ -1911,11 +1904,9 @@ function savedItemDisplayName(
           ?.league_id ??
         savedLeagueId;
 
-      const legacyLeague =
-        leagues.find(
-          (
-            item,
-          ) =>
+      const legacyCompetition =
+        liveCompetitionOptions.find(
+          (item) =>
             item.id ===
             legacyLeagueId,
         );
@@ -1926,7 +1917,7 @@ function savedItemDisplayName(
           sport:
             currentPrefs
               ?.sport ??
-            legacyLeague
+            legacyCompetition
               ?.sport ??
             "soccer",
 
@@ -2023,11 +2014,9 @@ function savedItemDisplayName(
           ?.league_id ??
         savedLeagueId;
 
-      const legacyLeague =
-        leagues.find(
-          (
-            item,
-          ) =>
+      const legacyCompetition =
+        liveCompetitionOptions.find(
+          (item) =>
             item.id ===
             legacyLeagueId,
         );
@@ -2038,7 +2027,7 @@ function savedItemDisplayName(
           sport:
             currentPrefs
               ?.sport ??
-            legacyLeague
+            legacyCompetition
               ?.sport ??
             "soccer",
 
@@ -2578,12 +2567,7 @@ function savedItemDisplayName(
               game.competitionId ??
               competitionIdByName.get(
                 game.league,
-              ) ??
-              leagues.find(
-                (item) =>
-                  item.name ===
-                  game.league,
-              )?.id;
+              );
 
             if (
               !gameCompetitionId
