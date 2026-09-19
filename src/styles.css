@@ -392,6 +392,16 @@
 
 .home-fixture-tracker {
   order: 1;
+
+  /*
+   * Fixture rows need to respond to the width of the tracker itself,
+   * not the wider main-content area that also contains the 300px
+   * coverage sidebar. Without this container, the row breakpoints can
+   * stay in their desktop state after the tracker has run out of room.
+   */
+  container-type: inline-size;
+  container-name: fixture-tracker;
+  min-width: 0;
 }
 
 .home-coverage-sidebar {
@@ -486,7 +496,7 @@
  * Stack Calendar above Watch Options before any other
  * fixture content is allowed to become cramped.
  */
-@container (max-width: 1100px) and (min-width: 620px) {
+@container fixture-tracker (max-width: 1100px) and (min-width: 620px) {
   .home-fixture-row {
     grid-template-columns:
       155px
@@ -514,7 +524,7 @@
  * Once the actions are stacked, allow the provider column
  * to contract while keeping the fixture information protected.
  */
-@container (max-width: 980px) and (min-width: 620px) {
+@container fixture-tracker (max-width: 980px) and (min-width: 620px) {
   .home-fixture-row {
     grid-template-columns:
       155px
@@ -535,7 +545,7 @@
  * Team / fixture information is the final part of the row
  * allowed to narrow before the mobile layout takes over.
  */
-@container (max-width: 760px) and (min-width: 620px) {
+@container fixture-tracker (max-width: 760px) and (min-width: 620px) {
   .home-fixture-row {
     grid-template-columns:
       155px
@@ -559,7 +569,7 @@
  * Mobile:
  * Only now does the complete fixture row become a single column.
  */
-@container (max-width: 619px) {
+@container fixture-tracker (max-width: 619px) {
   .home-fixture-row {
     grid-template-columns:
       minmax(0, 1fr);
