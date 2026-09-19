@@ -407,6 +407,9 @@ const EVENT_TITLE_ONLY_SPORTS = new Set([
   "wrestling",
   "fitness",
   "cheerleading",
+  "skiing",
+  "swimming-diving",
+  "ultimate-frisbee",
 ]);
 
 function normalizeSportDisplayId(value: string) {
