@@ -47,7 +47,7 @@ const HERO_IMAGES = {
   "swimming-diving": brandingHero("Swimming or Diving Hero.png"),
   "table-tennis": brandingHero("Table Tennis Hero.png"),
   tennis: brandingHero("Tennis Hero.png"),
-  "track-and-field": brandingHero("Track and Field Hero.jpg"),
+  "athletics": brandingHero("Track and Field Hero.jpg"),
   triathlon: brandingHero("Triathon Hero.png"),
   "ultimate-frisbee": brandingHero("Ultimate Frisbee Hero.png"),
   volleyball: brandingHero("Volleyball Hero.png"),
