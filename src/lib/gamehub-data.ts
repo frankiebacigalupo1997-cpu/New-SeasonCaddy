@@ -586,13 +586,6 @@ export function gameDisplayTitle(
   return `${home} vs. ${away}`;
 }
 
-export type League = {
-  id: string;
-  name: string;
-  sport: string;
-  teams: string[];
-};
-
 export const sports = [
   {
     id: "soccer",
