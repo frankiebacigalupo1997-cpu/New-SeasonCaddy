@@ -55,6 +55,9 @@ const HERO_IMAGES = {
   wrestling: brandingHero("Wrestling Hero.png"),
   cheerleading: brandingHero("Cheerleading Hero.png"),
 fitness: brandingHero("Fitness Hero.png"),
+  grappling: brandingHero("Grappling Hero.png"),
+  dance: brandingHero("Dance Hero.png"),
+  skiing: brandingHero("Skiing Hero.png"),
 
   // No soccer hero is currently stored in the branding bucket, so retain the
   // existing football/soccer fallback until a SeasonCaddy soccer asset exists.
