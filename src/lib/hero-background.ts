@@ -169,10 +169,11 @@ function resolveHeroImage(
   }
 
   if (
-    normalizedSport === "track-field" ||
-    normalizedSport === "athletics"
-  ) {
-    return HERO_IMAGES["track-and-field"];
+  normalizedSport === "track-field" ||
+  normalizedSport === "track-and-field" ||
+  normalizedSport === "athletics"
+) {
+  return HERO_IMAGES["athletics"];
   }
 
   if (normalizedSport === "rugby") {
