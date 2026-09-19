@@ -402,7 +402,7 @@ const EVENT_TITLE_ONLY_SPORTS = new Set([
   "surfing",
   "triathlon",
   "table-tennis",
-  "track-and-field",
+  "athletics",
   "tennis",
   "wrestling",
   "fitness",
