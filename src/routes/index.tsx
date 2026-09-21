@@ -1243,7 +1243,6 @@ function savedItemDisplayName(
     liveCompetitionOptions,
   ]);
 
- ```tsx
 /* ==================================================== */
 /* GOOGLE CALENDAR FULL SYNC                            */
 /* ==================================================== */
@@ -1346,7 +1345,9 @@ async function syncWithGoogleCalendar(
     const syncEvents =
       syncDataset.games
         .filter((game) => {
-          if (!game.kickoff) return false;
+          if (!game.kickoff) {
+            return false;
+          }
 
           const kickoffMs =
             new Date(
@@ -1382,14 +1383,6 @@ async function syncWithGoogleCalendar(
             game.scheduleLabel,
         }));
 
-    /*
-     * Google Calendar sync is split into separate Worker
-     * invocations so Cloudflare's per-invocation subrequest
-     * limit is not exceeded.
-     *
-     * Keep this at 10 because each event can require
-     * multiple Worker subrequests.
-     */
     const SYNC_BATCH_SIZE =
       10;
 
@@ -1403,10 +1396,13 @@ async function syncWithGoogleCalendar(
 
     let totalCreated =
       0;
+
     let totalUpdated =
       0;
+
     let totalDeleted =
       0;
+
     let totalFailed =
       0;
 
@@ -1415,14 +1411,13 @@ async function syncWithGoogleCalendar(
       | null = null;
 
     let cleanupComplete =
-      false;
+      syncEvents.length ===
+      0;
 
     /*
      * Process event batches sequentially.
      *
-     * Only the final event batch performs stale-event
-     * cleanup. Earlier batches must not delete events
-     * that have not been processed yet.
+     * Only the final event batch performs cleanup.
      */
     for (
       let offset = 0;
@@ -1438,7 +1433,7 @@ async function syncWithGoogleCalendar(
             SYNC_BATCH_SIZE,
         );
 
-      const isFinalEventBatch =
+      const isFinalBatch =
         offset +
           SYNC_BATCH_SIZE >=
         syncEvents.length;
@@ -1468,7 +1463,7 @@ async function syncWithGoogleCalendar(
                 desiredEventIds,
 
                 finalBatch:
-                  isFinalEventBatch,
+                  isFinalBatch,
               }),
           },
         );
@@ -1512,12 +1507,8 @@ async function syncWithGoogleCalendar(
     }
 
     /*
-     * If the final event batch completed but the cleanup
-     * pass has more pages, continue cleanup in separate
-     * Worker invocations.
-     *
-     * These requests contain no events, so they only
-     * continue stale-event cleanup.
+     * Continue cleanup in separate Worker invocations
+     * when the final batch returned another cleanup page.
      */
     while (
       syncEvents.length > 0 &&
