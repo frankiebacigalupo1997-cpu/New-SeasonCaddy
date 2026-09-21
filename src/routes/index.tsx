@@ -1026,7 +1026,7 @@ function savedItemDisplayName(
   /* ==================================================== */
 
   const [
-    googleCalendarSyncStatus,
+    googleCalendarStatus,
     setGoogleCalendarSyncStatus,
   ] =
     useState<
@@ -1243,123 +1243,205 @@ function savedItemDisplayName(
     liveCompetitionOptions,
   ]);
 
-  /* ==================================================== */
-  /* GOOGLE CALENDAR FULL SYNC                            */
-  /* ==================================================== */
+ ```tsx
+/* ==================================================== */
+/* GOOGLE CALENDAR FULL SYNC                            */
+/* ==================================================== */
 
-  async function syncWithGoogleCalendar(
-    competitionsToSync?: Record<
-      string,
-      string[]
-    >,
-    automatic = false,
-  ) {
-    const competitions =
-      competitionsToSync ??
-      savedLeagues;
+async function syncWithGoogleCalendar(
+  competitionsToSync?: Record<
+    string,
+    string[]
+  >,
+  automatic = false,
+) {
+  const competitions =
+    competitionsToSync ??
+    savedLeagues;
 
-    const savedTeamCount =
-      Object.values(
-        competitions,
-      ).reduce(
-        (
-          total,
-          competitionTeams,
-        ) =>
-          total +
-          competitionTeams.length,
-        0,
-      );
-
-    if (
-      savedTeamCount ===
-        0 &&
-      !automatic
-    ) {
-      toast.error(
-        "Save at least one team first",
-      );
-
-      return;
-    }
-
-    if (
-      googleCalendarSyncStatus ===
-        "syncing" &&
-      !automatic
-    ) {
-      return;
-    }
-
-    setGoogleCalendarSyncStatus(
-      "syncing",
+  const savedTeamCount =
+    Object.values(
+      competitions,
+    ).reduce(
+      (
+        total,
+        competitionTeams,
+      ) =>
+        total +
+        competitionTeams.length,
+      0,
     );
 
-    try {
-      const statusResponse =
-        await googleCalendarApiFetch(
-          "/google/status",
-        );
+  if (
+    savedTeamCount ===
+      0 &&
+    !automatic
+  ) {
+    toast.error(
+      "Save at least one team first",
+    );
 
-      const status =
-        await statusResponse.json();
+    return;
+  }
+
+  if (
+    googleCalendarSyncStatus ===
+      "syncing" &&
+    !automatic
+  ) {
+    return;
+  }
+
+  setGoogleCalendarSyncStatus(
+    "syncing",
+  );
+
+  try {
+    const statusResponse =
+      await googleCalendarApiFetch(
+        "/google/status",
+      );
+
+    const status =
+      await statusResponse.json();
+
+    if (
+      !statusResponse.ok ||
+      !status.success
+    ) {
+      throw new Error(
+        status.error ??
+          "Could not check Google Calendar connection",
+      );
+    }
+
+    if (
+      !status.connected
+    ) {
+      setGoogleCalendarSyncStatus(
+        "idle",
+      );
 
       if (
-        !statusResponse.ok ||
-        !status.success
+        automatic
       ) {
-        throw new Error(
-          status.error ??
-            "Could not check Google Calendar connection",
-        );
-      }
-
-      if (
-        !status.connected
-      ) {
-        setGoogleCalendarSyncStatus(
-          "idle",
-        );
-
-        if (
-          automatic
-        ) {
-          return;
-        }
-
-        await startGoogleCalendarOAuth(
-          normalizeRegion(
-            region,
-          ),
-          "/",
-        );
-
         return;
       }
 
-      const syncDataset =
-        await fetchDatasetForSavedTeams(
-          competitions,
+      await startGoogleCalendarOAuth(
+        normalizeRegion(
+          region,
+        ),
+        "/",
+      );
+
+      return;
+    }
+
+    const syncDataset =
+      await fetchDatasetForSavedTeams(
+        competitions,
+      );
+
+    const syncEvents =
+      syncDataset.games
+        .filter((game) => {
+          if (!game.kickoff) return false;
+
+          const kickoffMs =
+            new Date(
+              game.kickoff,
+            ).getTime();
+
+          return (
+            Number.isFinite(
+              kickoffMs,
+            ) &&
+            kickoffMs >=
+              Date.now() -
+                6 *
+                  60 *
+                  60 *
+                  1000
+          );
+        })
+        .map((game) => ({
+          id: game.id,
+          sport: game.sport,
+          competition:
+            game.league,
+          league:
+            game.league,
+          home: game.home,
+          away: game.away,
+          kickoff:
+            game.kickoff,
+          scheduledDate:
+            game.scheduledDate,
+          scheduleLabel:
+            game.scheduleLabel,
+        }));
+
+    /*
+     * Google Calendar sync is split into separate Worker
+     * invocations so Cloudflare's per-invocation subrequest
+     * limit is not exceeded.
+     *
+     * Keep this at 10 because each event can require
+     * multiple Worker subrequests.
+     */
+    const SYNC_BATCH_SIZE =
+      10;
+
+    const desiredEventIds =
+      syncEvents.map(
+        (event) =>
+          String(
+            event.id,
+          ),
+      );
+
+    let totalCreated =
+      0;
+    let totalUpdated =
+      0;
+    let totalDeleted =
+      0;
+    let totalFailed =
+      0;
+
+    let cleanupCursor:
+      | string
+      | null = null;
+
+    let cleanupComplete =
+      false;
+
+    /*
+     * Process event batches sequentially.
+     *
+     * Only the final event batch performs stale-event
+     * cleanup. Earlier batches must not delete events
+     * that have not been processed yet.
+     */
+    for (
+      let offset = 0;
+      offset <
+      syncEvents.length;
+      offset +=
+        SYNC_BATCH_SIZE
+    ) {
+      const batch =
+        syncEvents.slice(
+          offset,
+          offset +
+            SYNC_BATCH_SIZE,
         );
 
-      const syncEvents =
-        syncDataset.games
-          .filter((game) => {
-            if (!game.kickoff) return false;
-            const kickoffMs = new Date(game.kickoff).getTime();
-            return Number.isFinite(kickoffMs) && kickoffMs >= Date.now() - 6 * 60 * 60 * 1000;
-          })
-          .map((game) => ({
-            id: game.id,
-            sport: game.sport,
-            competition: game.league,
-            league: game.league,
-            home: game.home,
-            away: game.away,
-            kickoff: game.kickoff,
-            scheduledDate: game.scheduledDate,
-            scheduleLabel: game.scheduleLabel,
-          }));
+      const isFinalEventBatch =
+        offset +
+          SYNC_BATCH_SIZE >=
+        syncEvents.length;
 
       const syncResponse =
         await googleCalendarApiFetch(
@@ -1376,12 +1458,17 @@ function savedItemDisplayName(
             body:
               JSON.stringify({
                 events:
-                  syncEvents,
+                  batch,
 
                 region:
                   normalizeRegion(
                     region,
                   ),
+
+                desiredEventIds,
+
+                finalBatch:
+                  isFinalEventBatch,
               }),
           },
         );
@@ -1399,86 +1486,193 @@ function savedItemDisplayName(
         );
       }
 
-      setGoogleCalendarSyncStatus(
-        "synced",
-      );
+      totalCreated +=
+        result.created ??
+        0;
 
-      if (
-        automatic
-      ) {
-        console.log(
-          "SeasonCaddy automatic Calendar sync:",
+      totalUpdated +=
+        result.updated ??
+        0;
+
+      totalDeleted +=
+        result.deleted ??
+        0;
+
+      totalFailed +=
+        result.failed ??
+        0;
+
+      cleanupCursor =
+        result.cleanupCursor ??
+        null;
+
+      cleanupComplete =
+        result.cleanupComplete ===
+        true;
+    }
+
+    /*
+     * If the final event batch completed but the cleanup
+     * pass has more pages, continue cleanup in separate
+     * Worker invocations.
+     *
+     * These requests contain no events, so they only
+     * continue stale-event cleanup.
+     */
+    while (
+      syncEvents.length > 0 &&
+      !cleanupComplete
+    ) {
+      const cleanupResponse =
+        await googleCalendarApiFetch(
+          "/google/sync",
           {
-            competitions,
+            method:
+              "POST",
 
-            created:
-              result.created,
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
 
-            updated:
-              result.updated,
+            body:
+              JSON.stringify({
+                events: [],
 
-            deleted:
-              result.deleted,
+                region:
+                  normalizeRegion(
+                    region,
+                  ),
 
-            failed:
-              result.failed,
+                desiredEventIds,
 
-            total:
-              result.total,
+                finalBatch:
+                  true,
+
+                cleanupCursor,
+              }),
           },
         );
 
-        if (
-          savedTeamCount ===
-          0
-        ) {
-          toast.success(
-            `${result.deleted ?? 0} Google Calendar fixture(s) removed`,
-            {
-              duration:
-                6000,
-            },
-          );
-        } else {
-          toast.success(
-            "Saved teams synced with Google Calendar",
-            {
-              duration:
-                6000,
-            },
-          );
-        }
+      const cleanupResult =
+        await cleanupResponse.json();
 
-        return;
+      if (
+        !cleanupResponse.ok ||
+        !cleanupResult.success
+      ) {
+        throw new Error(
+          cleanupResult.error ??
+            "Could not finish Google Calendar cleanup",
+        );
       }
 
-      toast.success(
-        `${result.total} fixtures synced to Google Calendar`,
+      totalCreated +=
+        cleanupResult.created ??
+        0;
+
+      totalUpdated +=
+        cleanupResult.updated ??
+        0;
+
+      totalDeleted +=
+        cleanupResult.deleted ??
+        0;
+
+      totalFailed +=
+        cleanupResult.failed ??
+        0;
+
+      cleanupCursor =
+        cleanupResult.cleanupCursor ??
+        null;
+
+      cleanupComplete =
+        cleanupResult.cleanupComplete ===
+        true;
+    }
+
+    setGoogleCalendarSyncStatus(
+      "synced",
+    );
+
+    if (
+      automatic
+    ) {
+      console.log(
+        "SeasonCaddy automatic Calendar sync:",
         {
-          duration:
-            6000,
+          competitions,
+
+          created:
+            totalCreated,
+
+          updated:
+            totalUpdated,
+
+          deleted:
+            totalDeleted,
+
+          failed:
+            totalFailed,
+
+          total:
+            totalCreated +
+            totalUpdated,
         },
       );
-    } catch (
-      error
-    ) {
-      console.error(
-        "Google Calendar sync failed",
-        error,
-      );
 
-      setGoogleCalendarSyncStatus(
-        "idle",
-      );
+      if (
+        savedTeamCount ===
+        0
+      ) {
+        toast.success(
+          `${totalDeleted} Google Calendar fixture(s) removed`,
+          {
+            duration:
+              6000,
+          },
+        );
+      } else {
+        toast.success(
+          "Saved teams synced with Google Calendar",
+          {
+            duration:
+              6000,
+          },
+        );
+      }
 
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Could not sync Google Calendar",
-      );
+      return;
     }
-  }
 
+    toast.success(
+      `${totalCreated + totalUpdated} fixtures synced to Google Calendar`,
+      {
+        duration:
+          6000,
+      },
+    );
+  } catch (
+    error
+  ) {
+    console.error(
+      "Google Calendar sync failed",
+      error,
+    );
+
+    setGoogleCalendarSyncStatus(
+      "idle",
+    );
+
+    toast.error(
+      error instanceof Error
+        ? error.message
+        : "Could not sync Google Calendar",
+    );
+  }
+}
+```
   /* ==================================================== */
   /* GOOGLE CALENDAR — ADD ONE FIXTURE                    */
   /* ==================================================== */
