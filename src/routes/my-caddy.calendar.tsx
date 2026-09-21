@@ -373,119 +373,124 @@ function CalendarPage() {
   /* GOOGLE CALENDAR SYNC                                 */
   /* ==================================================== */
 
-  async function syncWithGoogleCalendar() {
-    const savedTeamCount =
-      Object.values(
-        savedLeagues,
-      ).reduce(
-        (
-          total,
-          competitionTeams,
-        ) =>
-          total +
-          competitionTeams.length,
-        0,
-      );
-
-    if (
-      savedTeamCount ===
-      0
-    ) {
-      toast.error(
-        "Save at least one team first",
-      );
-
-      return;
-    }
-
-    if (
-      googleCalendarSyncStatus ===
-      "syncing"
-    ) {
-      return;
-    }
-
-    setGoogleCalendarSyncStatus(
-      "syncing",
+ async function syncWithGoogleCalendar() {
+  const savedTeamCount =
+    Object.values(savedLeagues).reduce(
+      (total, competitionTeams) =>
+        total + competitionTeams.length,
+      0,
     );
 
-    try {
-      const statusResponse =
-        await googleCalendarApiFetch(
-          "/google/status",
+  if (savedTeamCount === 0) {
+    toast.error("Save at least one team first");
+    return;
+  }
+
+  if (googleCalendarSyncStatus === "syncing") {
+    return;
+  }
+
+  setGoogleCalendarSyncStatus("syncing");
+
+  try {
+    const statusResponse =
+      await googleCalendarApiFetch("/google/status");
+
+    const status = await statusResponse.json();
+
+    if (!statusResponse.ok || !status.success) {
+      throw new Error(
+        status.error ??
+          "Could not check Google Calendar connection",
+      );
+    }
+
+    if (!status.connected) {
+      setGoogleCalendarSyncStatus("idle");
+
+      await startGoogleCalendarOAuth(
+        normalizeRegion(region),
+        "/my-caddy/calendar",
+      );
+
+      return;
+    }
+
+    const syncEvents =
+      savedGames
+        .filter((game) => {
+          if (!game.kickoff) return false;
+
+          const kickoffMs =
+            new Date(game.kickoff).getTime();
+
+          return (
+            Number.isFinite(kickoffMs) &&
+            kickoffMs >=
+              Date.now() -
+                6 * 60 * 60 * 1000
+          );
+        })
+        .map((game) => ({
+          id: game.id,
+          sport: game.sport,
+          competition: game.league,
+          league: game.league,
+          home: game.home,
+          away: game.away,
+          kickoff: game.kickoff,
+          scheduledDate: game.scheduledDate,
+          scheduleLabel: game.scheduleLabel,
+        }));
+
+    const BATCH_SIZE = 10;
+
+    const desiredEventIds =
+      syncEvents.map((event) =>
+        String(event.id),
+      );
+
+    let totalCreated = 0;
+    let totalUpdated = 0;
+    let totalDeleted = 0;
+
+    /*
+     * Send the event batches sequentially.
+     * Each request is a separate Cloudflare Worker
+     * invocation, which resets the per-invocation
+     * subrequest limit.
+     */
+    for (
+      let index = 0;
+      index < syncEvents.length;
+      index += BATCH_SIZE
+    ) {
+      const batch =
+        syncEvents.slice(
+          index,
+          index + BATCH_SIZE,
         );
 
-      const status =
-        await statusResponse.json();
-
-      if (
-        !statusResponse.ok ||
-        !status.success
-      ) {
-        throw new Error(
-          status.error ??
-            "Could not check Google Calendar connection",
-        );
-      }
-
-      if (
-        !status.connected
-      ) {
-        setGoogleCalendarSyncStatus(
-          "idle",
-        );
-
-        await startGoogleCalendarOAuth(
-          normalizeRegion(
-            region,
-          ),
-          "/my-caddy/calendar",
-        );
-
-        return;
-      }
-
-      const syncEvents =
-        savedGames
-          .filter((game) => {
-            if (!game.kickoff) return false;
-            const kickoffMs = new Date(game.kickoff).getTime();
-            return Number.isFinite(kickoffMs) && kickoffMs >= Date.now() - 6 * 60 * 60 * 1000;
-          })
-          .map((game) => ({
-            id: game.id,
-            sport: game.sport,
-            competition: game.league,
-            league: game.league,
-            home: game.home,
-            away: game.away,
-            kickoff: game.kickoff,
-            scheduledDate: game.scheduledDate,
-            scheduleLabel: game.scheduleLabel,
-          }));
+      const isFinalBatch =
+        index + BATCH_SIZE >=
+        syncEvents.length;
 
       const syncResponse =
         await googleCalendarApiFetch(
           "/google/sync",
           {
-            method:
-              "POST",
-
+            method: "POST",
             headers: {
               "Content-Type":
                 "application/json",
             },
-
-            body:
-              JSON.stringify({
-                events:
-                  syncEvents,
-
-                region:
-                  normalizeRegion(
-                    region,
-                  ),
-              }),
+            body: JSON.stringify({
+              events: batch,
+              region:
+                normalizeRegion(region),
+              desiredEventIds,
+              finalBatch: isFinalBatch,
+            }),
           },
         );
 
@@ -502,36 +507,94 @@ function CalendarPage() {
         );
       }
 
-      setGoogleCalendarSyncStatus(
-        "synced",
-      );
+      totalCreated +=
+        Number(result.created ?? 0);
 
-      toast.success(
-        `${result.total} fixtures synced to Google Calendar`,
-        {
-          duration:
-            6000,
-        },
-      );
-    } catch (
-      error
-    ) {
-      console.error(
-        "Google Calendar sync failed",
-        error,
-      );
+      totalUpdated +=
+        Number(result.updated ?? 0);
 
-      setGoogleCalendarSyncStatus(
-        "idle",
-      );
+      totalDeleted +=
+        Number(result.deleted ?? 0);
 
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Could not sync Google Calendar",
-      );
+      /*
+       * Cleanup may require additional Worker
+       * invocations because the Worker processes
+       * stale mappings in groups of 20.
+       */
+      if (
+        isFinalBatch &&
+        result.cleanupComplete === false
+      ) {
+        let cleanupCursor =
+          result.cleanupCursor ?? null;
+
+        while (cleanupCursor) {
+          const cleanupResponse =
+            await googleCalendarApiFetch(
+              "/google/sync",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type":
+                    "application/json",
+                },
+                body: JSON.stringify({
+                  events: [],
+                  region:
+                    normalizeRegion(region),
+                  desiredEventIds,
+                  finalBatch: true,
+                  cleanupCursor,
+                }),
+              },
+            );
+
+          const cleanupResult =
+            await cleanupResponse.json();
+
+          if (
+            !cleanupResponse.ok ||
+            !cleanupResult.success
+          ) {
+            throw new Error(
+              cleanupResult.error ??
+                "Could not finish Google Calendar cleanup",
+            );
+          }
+
+          totalDeleted +=
+            Number(
+              cleanupResult.deleted ?? 0,
+            );
+
+          cleanupCursor =
+            cleanupResult.cleanupCursor ??
+            null;
+        }
+      }
     }
+
+    setGoogleCalendarSyncStatus("synced");
+
+    toast.success(
+      `${totalCreated + totalUpdated} fixtures synced to Google Calendar`,
+      { duration: 6000 },
+    );
+  } catch (error) {
+    console.error(
+      "Google Calendar sync failed",
+      error,
+    );
+
+    setGoogleCalendarSyncStatus("idle");
+
+    toast.error(
+      error instanceof Error
+        ? error.message
+        : "Could not sync Google Calendar",
+    );
   }
+}
 
   /* ==================================================== */
   /* PROVIDER LOOKUP                                      */
