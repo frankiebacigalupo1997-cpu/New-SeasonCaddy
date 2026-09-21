@@ -26,6 +26,8 @@ import {
   AuthProvider,
 } from "@/hooks/useAuth";
 
+import { Analytics } from "@vercel/analytics/react";
+
 /* ====================================================== */
 /* NOT FOUND                                              */
 /* ====================================================== */
@@ -324,6 +326,7 @@ function RootComponent() {
       </AuthProvider>
 
       <Toaster />
+      <Analytics />
     </QueryClientProvider>
   );
 }
