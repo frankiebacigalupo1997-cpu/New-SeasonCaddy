@@ -2918,11 +2918,9 @@ async function syncWithGoogleCalendar(
   
   const stableNext =
   stableHero?.signature ===
-  heroFilterSignature
-    ? visibleTrackerGames.find(
-        (game) =>
-          game.id === stableHero.id,
-      ) ?? null
+  heroFilterSignature &&
+  visibleTrackerGames[0]?.id === stableHero.id
+    ? visibleTrackerGames[0]
     : null;
 
   const next =
