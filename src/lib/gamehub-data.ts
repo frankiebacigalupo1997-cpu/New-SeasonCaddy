@@ -546,6 +546,13 @@ export function heroDisplayTitle(
     "sport" | "eventName" | "eventKind" | "home" | "away" | "canonicalHome" | "canonicalAway"
   >,
 ) {
+  if (
+    game.eventKind === "event" &&
+    game.eventName?.trim()
+  ) {
+    return game.eventName.trim();
+  }
+
   if (isEventTitleOnlyGame(game)) {
     return game.eventName?.trim() || game.home;
   }
@@ -577,12 +584,20 @@ export function gameDisplayTitle(
     "sport" | "eventName" | "eventKind" | "home" | "away" | "canonicalHome" | "canonicalAway"
   >,
 ) {
+  if (
+    game.eventKind === "event" &&
+    game.eventName?.trim()
+  ) {
+    return game.eventName.trim();
+  }
+
   if (isEventTitleOnlyGame(game)) {
     return game.eventName?.trim() || game.canonicalHome || game.home;
   }
 
   const home = game.canonicalHome ?? game.home;
   const away = game.canonicalAway ?? game.away;
+
   return `${home} vs. ${away}`;
 }
 
