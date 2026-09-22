@@ -191,9 +191,14 @@ export const Route =
         },
 
         {
-          name: "impact-site-verification",
-          value: "fb8e9c3f-e0a9-44de-bed3-1dd34ba3c735",
-        },
+  name: "impact-site-verification",
+  value: "fb8e9c3f-e0a9-44de-bed3-1dd34ba3c735",
+},
+
+{
+  name: "mitgo-verification",
+  content: "7dadce9d-4081-4981-a35b-c003c162fedc",
+},
       ],
 
       links: [
