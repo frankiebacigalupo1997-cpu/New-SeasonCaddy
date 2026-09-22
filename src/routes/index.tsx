@@ -2914,17 +2914,14 @@ async function syncWithGoogleCalendar(
     } | null>(null);
 
   const candidateNext =
-  visibleTrackerGames.find(
-    (game) => !isGameLive(game, fixtureNow),
-  ) ?? null;
+  visibleTrackerGames[0] ?? null;
   
   const stableNext =
   stableHero?.signature ===
   heroFilterSignature
     ? visibleTrackerGames.find(
         (game) =>
-          game.id === stableHero.id &&
-          !isGameLive(game, fixtureNow),
+          game.id === stableHero.id,
       ) ?? null
     : null;
 
