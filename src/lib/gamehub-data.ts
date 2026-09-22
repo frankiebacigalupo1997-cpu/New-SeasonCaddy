@@ -437,13 +437,22 @@ const UFC_EVENT_TITLE_ONLY_RE =
 export function isEventTitleOnlyGame(
   game: Pick<Game, "sport" | "eventName" | "eventKind">,
 ) {
+  if (
+    game.eventKind === "event" &&
+    game.eventName?.trim()
+  ) {
+    return true;
+  }
+
   if (isEventTitleOnlySport(game.sport)) {
     return true;
   }
 
   return (
     normalizeSportDisplayId(game.sport) === "mma" &&
-    UFC_EVENT_TITLE_ONLY_RE.test(game.eventName?.trim() ?? "")
+    UFC_EVENT_TITLE_ONLY_RE.test(
+      game.eventName?.trim() ?? "",
+    )
   );
 }
 
