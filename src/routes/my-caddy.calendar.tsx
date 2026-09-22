@@ -27,6 +27,7 @@ import {
 
 import {
   formatRegionalTime,
+  gameDisplayTitle,
   gameLiveEndTime,
   providerById,
   timeZoneForRegion,
@@ -1579,7 +1580,7 @@ function CalendarGameChip({
       search={{
         region,
       }}
-      title={`${game.home} vs ${game.away}`}
+      title={gameDisplayTitle(game)}
       className={[
         "my-calendar-game-chip",
         isFinished
@@ -1590,9 +1591,8 @@ function CalendarGameChip({
         .join(" ")}
     >
       <div className="my-calendar-game-title">
-        {game.home} vs{" "}
-        {game.away}
-      </div>
+  {gameDisplayTitle(game)}
+</div>
 
       <div className="my-calendar-game-time">
         {
@@ -1821,44 +1821,25 @@ function CalendarListRow({
         }}
       >
         <div
-          style={{
-            fontSize:
-              "14px",
+  style={{
+    fontSize:
+      "14px",
 
-            fontWeight:
-              750,
+    fontWeight:
+      750,
 
-            whiteSpace:
-              "nowrap",
+    whiteSpace:
+      "nowrap",
 
-            overflow:
-              "hidden",
+    overflow:
+      "hidden",
 
-            textOverflow:
-              "ellipsis",
-          }}
-        >
-          {
-            game.home
-          }
-
-          <span
-            className="text-muted-foreground"
-            style={{
-              margin:
-                "0 6px",
-
-              fontWeight:
-                500,
-            }}
-          >
-            vs
-          </span>
-
-          {
-            game.away
-          }
-        </div>
+    textOverflow:
+      "ellipsis",
+  }}
+>
+  {gameDisplayTitle(game)}
+</div>
 
         <div
           className="text-muted-foreground"
