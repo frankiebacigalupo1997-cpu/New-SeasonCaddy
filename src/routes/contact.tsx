@@ -32,29 +32,17 @@ function ContactPage() {
       </div>
 
       <section className="panel p-6 sm:p-8">
-        <h2 className="text-2xl font-bold">Contact form</h2>
-        <p className="mt-2 text-muted-foreground">Use the form below to prepare your message. Submission delivery will be connected to SeasonCaddy's support inbox.</p>
-        <form className="mt-6 grid gap-5">
-          <label className="grid gap-2 text-sm font-semibold">
-            Name
-            <input className="gh-select" name="name" autoComplete="name" />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Email
-            <input className="gh-select" name="email" type="email" autoComplete="email" />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Subject
-            <input className="gh-select" name="subject" />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Message
-            <textarea className="gh-select min-h-40 resize-y" name="message" />
-          </label>
-          <button type="button" disabled className="w-fit cursor-not-allowed rounded-lg bg-brand/50 px-5 py-3 text-sm font-bold text-brand-foreground">
-            Email us at frankie@seasoncaddy.com
-          </button>
-        </form>
+        <h2 className="text-2xl font-bold">Email SeasonCaddy</h2>
+        <p className="mt-2 max-w-2xl text-muted-foreground">
+          For support, corrections, feedback, or business inquiries, email us directly.
+        </p>
+        <a
+          href="mailto:frankie@seasoncaddy.com"
+          className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-bold text-brand-foreground transition-opacity hover:opacity-90"
+        >
+          <Mail className="h-4 w-4" />
+          frankie@seasoncaddy.com
+        </a>
       </section>
     </PublicPage>
   );
