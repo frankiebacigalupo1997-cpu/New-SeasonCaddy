@@ -139,7 +139,7 @@ export const Route =
 
         {
           title:
-            "SeasonCaddy — Your Sports Schedule & Streaming Guide",
+            "SeasonCaddy — Find Where to Watch Sports",
         },
 
         {
@@ -147,7 +147,7 @@ export const Route =
             "description",
 
           content:
-            "Follow your teams, track upcoming fixtures, see regional broadcast coverage and find the streaming services you need with SeasonCaddy.",
+            "Find upcoming sports events and see where they're available to watch in the United States.",
         },
 
         {
@@ -155,7 +155,7 @@ export const Route =
             "og:title",
 
           content:
-            "SeasonCaddy — Your Sports Schedule & Streaming Guide",
+            "SeasonCaddy — Find Where to Watch Sports",
         },
 
         {
@@ -163,7 +163,7 @@ export const Route =
             "og:description",
 
           content:
-            "Follow your teams, track upcoming fixtures and see where every game is available to watch.",
+            "Find upcoming sports events and see where they're available to watch in the United States.",
         },
 
         {
