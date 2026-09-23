@@ -18,51 +18,101 @@ import { Route as MyCaddyCalendarRouteImport } from './routes/my-caddy.calendar'
 import { Route as MyCaddySettingsRouteImport } from './routes/my-caddy.settings'
 import { Route as MyCaddyStreamingRouteImport } from './routes/my-caddy.streaming'
 import { Route as MyCaddyTeamsRouteImport } from './routes/my-caddy.teams'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AffiliateDisclosureRouteImport } from './routes/affiliate-disclosure'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+
 const MyCaddyRoute = MyCaddyRouteImport.update({
   id: '/my-caddy',
   path: '/my-caddy',
   getParentRoute: () => rootRouteImport,
 } as any)
+
 const GameGameIdRoute = GameGameIdRouteImport.update({
   id: '/game/$gameId',
   path: '/game/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
+
 const MyCaddyIndexRoute = MyCaddyIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MyCaddyRoute,
 } as any)
+
 const MyCaddyCalendarRoute = MyCaddyCalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
   getParentRoute: () => MyCaddyRoute,
 } as any)
+
 const MyCaddySettingsRoute = MyCaddySettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => MyCaddyRoute,
 } as any)
+
 const MyCaddyStreamingRoute = MyCaddyStreamingRouteImport.update({
   id: '/streaming',
   path: '/streaming',
   getParentRoute: () => MyCaddyRoute,
 } as any)
+
 const MyCaddyTeamsRoute = MyCaddyTeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
   getParentRoute: () => MyCaddyRoute,
+} as any)
+
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const AffiliateDisclosureRoute = AffiliateDisclosureRouteImport.update({
+  id: '/affiliate-disclosure',
+  path: '/affiliate-disclosure',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -70,34 +120,55 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/my-caddy': typeof MyCaddyRouteWithChildren
   '/game/$gameId': typeof GameGameIdRoute
+  '/about': typeof AboutRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
+  '/affiliate-disclosure': typeof AffiliateDisclosureRoute
   '/my-caddy/calendar': typeof MyCaddyCalendarRoute
   '/my-caddy/settings': typeof MyCaddySettingsRoute
   '/my-caddy/streaming': typeof MyCaddyStreamingRoute
   '/my-caddy/teams': typeof MyCaddyTeamsRoute
   '/my-caddy/': typeof MyCaddyIndexRoute
 }
+
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/about': typeof AboutRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
+  '/affiliate-disclosure': typeof AffiliateDisclosureRoute
   '/my-caddy/calendar': typeof MyCaddyCalendarRoute
   '/my-caddy/settings': typeof MyCaddySettingsRoute
   '/my-caddy/streaming': typeof MyCaddyStreamingRoute
   '/my-caddy/teams': typeof MyCaddyTeamsRoute
   '/my-caddy': typeof MyCaddyIndexRoute
 }
+
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/my-caddy': typeof MyCaddyRouteWithChildren
   '/game/$gameId': typeof GameGameIdRoute
+  '/about': typeof AboutRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
+  '/affiliate-disclosure': typeof AffiliateDisclosureRoute
   '/my-caddy/calendar': typeof MyCaddyCalendarRoute
   '/my-caddy/settings': typeof MyCaddySettingsRoute
   '/my-caddy/streaming': typeof MyCaddyStreamingRoute
   '/my-caddy/teams': typeof MyCaddyTeamsRoute
   '/my-caddy/': typeof MyCaddyIndexRoute
 }
+
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -105,39 +176,67 @@ export interface FileRouteTypes {
     | '/auth'
     | '/my-caddy'
     | '/game/$gameId'
+    | '/about'
+    | '/how-it-works'
+    | '/contact'
+    | '/privacy'
+    | '/terms'
+    | '/affiliate-disclosure'
     | '/my-caddy/calendar'
     | '/my-caddy/settings'
     | '/my-caddy/streaming'
     | '/my-caddy/teams'
     | '/my-caddy/'
+
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/game/$gameId'
+    | '/about'
+    | '/how-it-works'
+    | '/contact'
+    | '/privacy'
+    | '/terms'
+    | '/affiliate-disclosure'
     | '/my-caddy/calendar'
     | '/my-caddy/settings'
     | '/my-caddy/streaming'
     | '/my-caddy/teams'
     | '/my-caddy'
+
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/my-caddy'
     | '/game/$gameId'
+    | '/about'
+    | '/how-it-works'
+    | '/contact'
+    | '/privacy'
+    | '/terms'
+    | '/affiliate-disclosure'
     | '/my-caddy/calendar'
     | '/my-caddy/settings'
     | '/my-caddy/streaming'
     | '/my-caddy/teams'
     | '/my-caddy/'
+
   fileRoutesById: FileRoutesById
 }
+
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   MyCaddyRoute: typeof MyCaddyRouteWithChildren
   GameGameIdRoute: typeof GameGameIdRoute
+  AboutRoute: typeof AboutRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  ContactRoute: typeof ContactRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
+  AffiliateDisclosureRoute: typeof AffiliateDisclosureRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -149,6 +248,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -156,6 +256,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+
     '/my-caddy': {
       id: '/my-caddy'
       path: '/my-caddy'
@@ -163,6 +264,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyCaddyRouteImport
       parentRoute: typeof rootRouteImport
     }
+
     '/game/$gameId': {
       id: '/game/$gameId'
       path: '/game/$gameId'
@@ -170,6 +272,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameGameIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+
+    '/affiliate-disclosure': {
+      id: '/affiliate-disclosure'
+      path: '/affiliate-disclosure'
+      fullPath: '/affiliate-disclosure'
+      preLoaderRoute: typeof AffiliateDisclosureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+
     '/my-caddy/': {
       id: '/my-caddy/'
       path: '/'
@@ -177,6 +328,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyCaddyIndexRouteImport
       parentRoute: typeof MyCaddyRoute
     }
+
     '/my-caddy/calendar': {
       id: '/my-caddy/calendar'
       path: '/calendar'
@@ -184,6 +336,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyCaddyCalendarRouteImport
       parentRoute: typeof MyCaddyRoute
     }
+
     '/my-caddy/settings': {
       id: '/my-caddy/settings'
       path: '/settings'
@@ -191,6 +344,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyCaddySettingsRouteImport
       parentRoute: typeof MyCaddyRoute
     }
+
     '/my-caddy/streaming': {
       id: '/my-caddy/streaming'
       path: '/streaming'
@@ -198,6 +352,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyCaddyStreamingRouteImport
       parentRoute: typeof MyCaddyRoute
     }
+
     '/my-caddy/teams': {
       id: '/my-caddy/teams'
       path: '/teams'
@@ -232,13 +387,21 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   MyCaddyRoute: MyCaddyRouteWithChildren,
   GameGameIdRoute: GameGameIdRoute,
+  AboutRoute: AboutRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  ContactRoute: ContactRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
+  AffiliateDisclosureRoute: AffiliateDisclosureRoute,
 }
+
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
 import type { startInstance } from './start.ts'
+
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
