@@ -110,27 +110,11 @@ export function Shell({
           {/* ============================================= */}
 
           <nav className="seasoncaddy-header-nav">
-            <Link
-              to="/"
-              className={`seasoncaddy-header-nav-link rounded-full font-semibold transition-all ${
-                isHome
-                  ? "bg-brand text-brand-foreground shadow-sm"
-                  : "text-foreground/75 hover:bg-surface-2/60 hover:text-foreground"
-              }`}
-            >
-              Home
-            </Link>
-
-            <Link
-              to="/my-caddy"
-              className={`seasoncaddy-header-nav-link rounded-full font-semibold whitespace-nowrap transition-all ${
-                isMyCaddy
-                  ? "bg-brand text-brand-foreground shadow-sm"
-                  : "text-foreground/75 hover:bg-surface-2/60 hover:text-foreground"
-              }`}
-            >
-              My Caddy
-            </Link>
+            <Link to="/" className={`seasoncaddy-header-nav-link rounded-full font-semibold transition-all ${isHome ? "bg-brand text-brand-foreground shadow-sm" : "text-foreground/75 hover:bg-surface-2/60 hover:text-foreground"}`}>Home</Link>
+            <Link to="/my-caddy" className={`seasoncaddy-header-nav-link rounded-full font-semibold whitespace-nowrap transition-all ${isMyCaddy ? "bg-brand text-brand-foreground shadow-sm" : "text-foreground/75 hover:bg-surface-2/60 hover:text-foreground"}`}>My Caddy</Link>
+            <Link to="/about" className="seasoncaddy-header-nav-link rounded-full font-semibold text-foreground/75 hover:bg-surface-2/60 hover:text-foreground">About</Link>
+            <Link to="/how-it-works" className="seasoncaddy-header-nav-link rounded-full font-semibold text-foreground/75 hover:bg-surface-2/60 hover:text-foreground">How It Works</Link>
+            <Link to="/contact" className="seasoncaddy-header-nav-link rounded-full font-semibold text-foreground/75 hover:bg-surface-2/60 hover:text-foreground">Contact</Link>
           </nav>
 
           {/* ============================================= */}
@@ -192,13 +176,16 @@ export function Shell({
       {/* ================================================= */}
 
       <footer className="seasoncaddy-footer mx-auto max-w-[1600px] text-xs text-muted-foreground">
-        <span className="font-semibold">
-          SeasonCaddy
-        </span>
-
-        <span>
-          Every game. All season.
-        </span>
+        <span className="font-semibold">SeasonCaddy</span>
+        <span>Every game. All season.</span>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Link to="/about" className="hover:text-foreground">About</Link>
+          <Link to="/how-it-works" className="hover:text-foreground">How It Works</Link>
+          <Link to="/contact" className="hover:text-foreground">Contact</Link>
+          <Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-foreground">Terms</Link>
+          <Link to="/affiliate-disclosure" className="hover:text-foreground">Affiliate Disclosure</Link>
+        </div>
       </footer>
     </div>
   );
