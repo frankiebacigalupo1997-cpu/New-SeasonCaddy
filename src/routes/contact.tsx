@@ -27,7 +27,7 @@ function ContactPage() {
           <p>If you find an incorrect fixture, competition, provider, or viewing listing, please tell us what is wrong and include the event details.</p>
         </InfoCard>
         <InfoCard icon={<Mail className="h-5 w-5" />} title="Business inquiries">
-          <p>We welcome inquiries about provider relationships, media opportunities, partnerships, and other business matters.</p>
+          <p>We welcome inquiries about provider relationships, media opportunities, partnerships, and other business matters.</p><p><a href="mailto:frankie@seasoncaddy.com" className="font-semibold text-brand hover:underline">frankie@seasoncaddy.com</a></p>
         </InfoCard>
       </div>
 
@@ -52,7 +52,7 @@ function ContactPage() {
             <textarea className="gh-select min-h-40 resize-y" name="message" />
           </label>
           <button type="button" disabled className="w-fit cursor-not-allowed rounded-lg bg-brand/50 px-5 py-3 text-sm font-bold text-brand-foreground">
-            Contact delivery coming next
+            Email us at frankie@seasoncaddy.com
           </button>
         </form>
       </section>
