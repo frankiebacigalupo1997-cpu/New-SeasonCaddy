@@ -20,18 +20,6 @@ import { Shell } from "@/components/gamehub/Shell";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/my-caddy")({
-  beforeLoad: async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      throw redirect({
-        to: "/auth",
-        replace: true,
-      });
-    }
-  },
 
   component: MyCaddyLayout,
 });
