@@ -395,6 +395,7 @@ const EVENT_TITLE_ONLY_SPORTS = new Set([
   "darts",
   "extreme-sports",
   "golf",
+  "boxing",
   "motorsport",
   "horse-racing",
   "pickleball",
