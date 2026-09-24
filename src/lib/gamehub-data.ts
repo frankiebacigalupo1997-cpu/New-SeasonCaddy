@@ -587,6 +587,31 @@ export function hideHeroCompetitorArtwork(sport: string) {
   );
 }
 
+function boxingDisplayTitle(game: Pick<Game, "eventName" | "home" | "away" | "canonicalHome" | "canonicalAway">) {
+  const eventName = game.eventName?.trim() ?? "";
+
+  // Boxing feeds sometimes append the sport to a fighter matchup, e.g.
+  // "Davies vs. Collins vs. Boxing". That is not part of the matchup.
+  const cleanedEventName = eventName
+    .replace(/\s+vs\.?\s+boxing\s*$/i, "")
+    .trim();
+
+  // If the provider gives a named fight, always present the two fighters.
+  const matchup = cleanedEventName.match(/^(.+?)\s+vs\.?\s+(.+)$/i);
+  if (matchup) {
+    const home = matchup[1].trim();
+    const away = matchup[2].trim();
+    if (home && away) return `${home} vs. ${away}`;
+  }
+
+  // If there is no fighter matchup, keep the provider event/card name.
+  if (eventName) return eventName;
+
+  const home = game.canonicalHome ?? game.home;
+  const away = game.canonicalAway ?? game.away;
+  return home && away ? `${home} vs. ${away}` : home || away || "Boxing";
+}
+
 export function gameDisplayTitle(
   game: Pick<
     Game,
@@ -600,6 +625,10 @@ export function gameDisplayTitle(
     return game.eventName.trim();
   }
 
+  if (normalizeSportDisplayId(game.sport) === "boxing") {
+    return boxingDisplayTitle(game);
+  }
+
   if (isEventTitleOnlyGame(game)) {
     return game.eventName?.trim() || game.canonicalHome || game.home;
   }
@@ -609,7 +638,6 @@ export function gameDisplayTitle(
 
   return `${home} vs. ${away}`;
 }
-
 export const sports = [
   {
     id: "soccer",
