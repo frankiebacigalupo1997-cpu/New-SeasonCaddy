@@ -1,4 +1,7 @@
-import type { Game } from "@/lib/gamehub-data";
+import {
+  gameDisplayTitle,
+  type Game,
+} from "@/lib/gamehub-data";
 
 type GoogleCalendarOptions = {
   game: Game;
