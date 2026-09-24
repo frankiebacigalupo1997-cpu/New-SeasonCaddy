@@ -461,7 +461,7 @@ export function CompactCalendar({
                             search={{
                               region,
                             }}
-                            title={`${game.home} vs ${game.away}`}
+                            title={gameDisplayTitle(game)}
                             className={[
                               "compact-calendar-game",
                               isFinished
@@ -472,13 +472,7 @@ export function CompactCalendar({
                               .join(" ")}
                           >
                             <div className="compact-calendar-game-title">
-                              {
-                                game.home
-                              }{" "}
-                              vs{" "}
-                              {
-                                game.away
-                              }
+                              {gameDisplayTitle(game)}
                             </div>
 
                             <div className="compact-calendar-game-time">
