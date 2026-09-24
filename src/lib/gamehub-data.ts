@@ -618,15 +618,15 @@ export function gameDisplayTitle(
     "sport" | "eventName" | "eventKind" | "home" | "away" | "canonicalHome" | "canonicalAway"
   >,
 ) {
+  if (normalizeSportDisplayId(game.sport) === "boxing") {
+    return boxingDisplayTitle(game);
+  }
+
   if (
     game.eventKind === "event" &&
     game.eventName?.trim()
   ) {
     return game.eventName.trim();
-  }
-
-  if (normalizeSportDisplayId(game.sport) === "boxing") {
-    return boxingDisplayTitle(game);
   }
 
   if (isEventTitleOnlyGame(game)) {
