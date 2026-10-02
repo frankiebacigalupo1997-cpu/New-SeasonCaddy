@@ -14,6 +14,7 @@ import {
 
 import {
   formatRegionalTime,
+  gameDisplayTitle,
   gameLiveEndTime,
   timeZoneForRegion,
   type Game,
