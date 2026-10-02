@@ -76,6 +76,11 @@ export const providers: Provider[] = [
     name: "NBC Sports Network",
     url: "https://www.nbc.com/sports",
   },
+  {
+    id: "tbs",
+    name: "TBS",
+    url: "https://www.tbs.com",
+  },
 
   // United Kingdom
   {
@@ -289,6 +294,11 @@ export const providers: Provider[] = [
   },
   {
     id: "hbo-max",
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
+  },
+  {
+    id: "max",
     name: "HBO Max",
     url: "https://www.hbomax.com",
   },
