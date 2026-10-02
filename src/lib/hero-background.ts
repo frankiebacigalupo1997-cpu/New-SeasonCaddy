@@ -39,7 +39,6 @@ const HERO_IMAGES = {
   mma: brandingHero("MMA Hero.png"),
   motorsport: brandingHero("Motorsport Hero.png"),
   pickleball: brandingHero("Pickleball Hero.png"),
-  padel: brandingHero("Padel Hero.png"),
   "rugby-league": brandingHero("Rugby League Hero.png"),
   "rugby-union": brandingHero("Rugby Union Hero.png"),
   snooker: brandingHero("Snooker Hero.png"),
