@@ -27,6 +27,16 @@ export const providers: Provider[] = [
     url: "https://www.nbc.com",
   },
   {
+  id: "tbs",
+  name: "TBS",
+  url: "https://www.tbs.com",
+},
+{
+  id: "max",
+  name: "HBO Max",
+  url: "https://www.hbomax.com",
+},
+  {
     id: "paramount",
     name: "Paramount+",
     url: "https://www.paramountplus.com",
