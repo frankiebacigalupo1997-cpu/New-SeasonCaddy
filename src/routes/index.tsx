@@ -712,18 +712,51 @@ function Index() {
       [competitionIdentityCatalog],
     );
 
-  const requestedCompetitionIds =
-    useMemo(
-      () =>
-        Array.from(
-          new Set([
-            ...trackerCompetitionIds,
-          ]),
-        ).sort(),
-      [
-        trackerCompetitionIds,
-      ],
-    );
+  const requestedCompetitionIds = useMemo(
+  () => {
+    /*
+     * A provider filter must search the full upcoming competition slate
+     * rather than the bounded 100-fixture global preview. Sport/league
+     * filters already provide the relevant competition IDs; provider-only
+     * filtering needs all competitions represented in the frontend catalog.
+     */
+    if (
+      trackerSport ||
+      trackerLeague
+    ) {
+      return Array.from(
+        new Set([
+          ...trackerCompetitionIds,
+        ]),
+      ).sort();
+    }
+
+    if (
+      selectedProviderIds.length > 0
+    ) {
+      return frontendCatalog
+        .filter(
+          (item) =>
+            item.upcomingCount > 0,
+        )
+        .map(
+          (item) =>
+            item.competitionId,
+        )
+        .filter(Boolean)
+        .sort();
+    }
+
+    return [];
+  },
+  [
+    frontendCatalog,
+    trackerCompetitionIds,
+    trackerSport,
+    trackerLeague,
+    selectedProviderIds,
+  ],
+);
 
   const {
     data: selectedLeagueDataset,
