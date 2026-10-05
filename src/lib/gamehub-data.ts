@@ -27,15 +27,15 @@ export const providers: Provider[] = [
     url: "https://www.nbc.com",
   },
   {
-  id: "tbs",
-  name: "TBS",
-  url: "https://www.tbs.com",
-},
-{
-  id: "max",
-  name: "HBO Max",
-  url: "https://www.hbomax.com",
-},
+    id: "tbs",
+    name: "TBS",
+    url: "https://www.tbs.com",
+  },
+  {
+    id: "max",
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
+  },
   {
     id: "paramount",
     name: "Paramount+",
@@ -47,10 +47,10 @@ export const providers: Provider[] = [
     url: "https://www.paramountplus.com",
   },
   {
-    id: "prime-video",
-    name: "Prime Video",
-    url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
-  },
+  id: "prime-video",
+  name: "Prime Video",
+  url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
+},
   {
     id: "espn-plus",
     name: "ESPN+",
@@ -85,6 +85,343 @@ export const providers: Provider[] = [
     id: "nbcsn",
     name: "NBC Sports Network",
     url: "https://www.nbc.com/sports",
+  },
+  {
+    id: "cbs",
+    name: "CBS",
+    url: "https://www.cbs.com",
+  },
+  {
+    id: "cbs-sports-golazo",
+    name: "CBS Sports Golazo Network",
+    url: "https://www.cbssports.com/watch/cbs-sports-golazo-network/",
+  },
+  {
+    id: "cbs-sports-network",
+    name: "CBS Sports Network",
+    url: "https://www.cbssportsnetwork.com",
+  },
+  {
+    id: "dazn-us",
+    name: "DAZN",
+    url: "https://www.dazn.com/en-US",
+  },
+  {
+    id: "dazn",
+    name: "DAZN",
+    url: "https://www.dazn.com/en-US",
+  },
+  {
+    id: "telemundo",
+    name: "Telemundo",
+    url: "https://www.telemundo.com/deportes",
+  },
+  {
+    id: "universo",
+    name: "Universo",
+    url: "https://www.nbc.com/networks/universo",
+  },
+  {
+    id: "telemundo-app",
+    name: "Telemundo App",
+    url: "https://www.telemundo.com/deportes",
+  },
+  {
+    id: "telemundo-deportes-ahora",
+    name: "Telemundo Deportes Ahora",
+    url: "https://www.telemundo.com/deportes",
+  },
+  {
+    id: "tln",
+    name: "TLN",
+    url: "https://www.tln.ca",
+  },
+  {
+    id: "tnt-sports",
+    name: "TNT Sports",
+    url: "https://www.tntsports.co.uk",
+  },
+  {
+    id: "fubo",
+    name: "Fubo",
+    url: "https://www.fubo.tv",
+  },
+  {
+    id: "big-ten-plus",
+    name: "Big Ten Plus",
+    url: "https://www.bigtenplus.com",
+  },
+  {
+    id: "apple-tv",
+    name: "Apple TV",
+    url: "https://tv.apple.com",
+  },
+  {
+    id: "sportsnet",
+    name: "Sportsnet",
+    url: "https://www.sportsnet.ca",
+  },
+  {
+    id: "sportsnet-ca",
+    name: "Sportsnet",
+    url: "https://watch.sportsnet.ca",
+  },
+  {
+    id: "vix",
+    name: "ViX",
+    url: "https://vix.com",
+  },
+  {
+    id: "flosports",
+    name: "FloSports",
+    url: "https://www.flosports.tv",
+  },
+  {
+    id: "mlb-tv",
+    name: "MLB.TV",
+    url: "https://www.mlb.com/live-stream-games/subscribe",
+  },
+  {
+    id: "wnba-league-pass",
+    name: "WNBA League Pass",
+    url: "https://www.wnba.com/leaguepass",
+  },
+  {
+    id: "sling",
+    name: "Sling TV",
+    url: "https://www.sling.com",
+  },
+  {
+    id: "tubi",
+    name: "Tubi",
+    url: "https://tubitv.com/live",
+  },
+  {
+    id: "roku",
+    name: "The Roku Channel",
+    url: "https://therokuchannel.roku.com",
+  },
+  {
+    id: "tsn",
+    name: "TSN",
+    url: "https://www.tsn.ca",
+  },
+  {
+    id: "abc",
+    name: "ABC",
+    url: "https://abc.com",
+  },
+  {
+    id: "hulu",
+    name: "Hulu",
+    url: "https://www.hulu.com",
+  },
+  {
+    id: "trutv",
+    name: "truTV",
+    url: "https://www.trutv.com",
+  },
+  {
+    id: "hbo-max",
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
+  },
+  {
+    id: "tva-sports",
+    name: "TVA Sports",
+    url: "https://www.tvasports.ca",
+  },
+  {
+    id: "nhl-tv-dazn-uk",
+    name: "NHL.TV on DAZN",
+    url: "https://www.dazn.com/en-GB",
+  },
+  {
+    id: "appletv",
+    name: "Apple TV",
+    url: "https://tv.apple.com",
+  },
+  {
+    id: "tnt",
+    name: "TNT",
+    url: "https://www.tntdrama.com",
+  },
+
+  // Exact backend provider IDs
+  {
+    id: "DAZN",
+    name: "DAZN",
+    url: "https://www.dazn.com/en-US",
+  },
+  {
+    id: "FS1",
+    name: "FS1",
+    url: "https://www.foxsports.com",
+  },
+  {
+    id: "FS2",
+    name: "FS2",
+    url: "https://www.foxsports.com",
+  },
+  {
+    id: "ESPN2",
+    name: "ESPN2",
+    url: "https://www.espn.com/watch",
+  },
+  {
+    id: "CBSSN",
+    name: "CBS Sports Network",
+    url: "https://www.cbssports.com/watch",
+  },
+  {
+    id: "NHL Net",
+    name: "NHL Network",
+    url: "https://www.nhl.com/network",
+  },
+  {
+    id: "SEC Network",
+    name: "SEC Network",
+    url: "https://www.espn.com/watch/espnplus/",
+  },
+  {
+    id: "USA Net",
+    name: "USA Network",
+    url: "https://www.usanetwork.com",
+  },
+  {
+    id: "Ticket",
+    name: "NFL Sunday Ticket",
+    url: "https://tv.youtube.com/",
+  },
+  {
+    id: "MW+",
+    name: "Mountain West+",
+    url: "https://www.mountainwestplus.com",
+  },
+  {
+    id: "ACC Network",
+    name: "ACC Network",
+    url: "https://www.espn.com/watch/espnplus/",
+  },
+  {
+    id: "FloCollege",
+    name: "FloCollege",
+    url: "https://www.flocollege.com",
+  },
+  {
+    id: "FloHockey",
+    name: "FloHockey",
+    url: "https://www.flohockey.tv",
+  },
+  {
+    id: "FloLive",
+    name: "FloLive",
+    url: "https://www.flolive.tv",
+  },
+  {
+    id: "FloRacing",
+    name: "FloRacing",
+    url: "https://www.floracing.com",
+  },
+  {
+    id: "FloRugby",
+    name: "FloRugby",
+    url: "https://www.florugby.com",
+  },
+  {
+    id: "FloWrestling",
+    name: "FloWrestling",
+    url: "https://www.flowrestling.org",
+  },
+  {
+    id: "FloBikes",
+    name: "FloBikes",
+    url: "https://www.flobikes.com",
+  },
+  {
+    id: "FloGrappling",
+    name: "FloGrappling",
+    url: "https://www.flograppling.com",
+  },
+  {
+    id: "FloTrack",
+    name: "FloTrack",
+    url: "https://www.flotrack.org",
+  },
+  {
+    id: "FloElite",
+    name: "FloElite",
+    url: "https://www.floelite.com",
+  },
+  {
+    id: "B1G+",
+    name: "Big Ten+",
+    url: "https://www.bigtenplus.com",
+  },
+  {
+    id: "SECN+",
+    name: "SEC Network+",
+    url: "https://www.espn.com/watch/espnplus/",
+  },
+  {
+    id: "ESPNU",
+    name: "ESPNU",
+    url: "https://www.espn.com/watch/espnplus/",
+  },
+  {
+    id: "FOX",
+    name: "FOX",
+    url: "https://www.fox.com",
+  },
+  {
+    id: "CW",
+    name: "The CW",
+    url: "https://www.cwtv.com",
+  },
+  {
+    id: "HBO Max",
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
+  },
+  {
+    id: "Sportsnet",
+    name: "Sportsnet",
+    url: "https://www.sportsnet.ca",
+  },
+  {
+    id: "TSN",
+    name: "TSN",
+    url: "https://www.tsn.ca",
+  },
+  {
+    id: "fubo",
+    name: "Fubo",
+    url: "https://www.fubo.tv",
+  },
+  {
+    id: "YouTube",
+    name: "YouTube",
+    url: "https://www.youtube.com",
+  },
+  {
+    id: "Tele",
+    name: "Tele",
+    url: "https://www.televisaunivision.com",
+  },
+  {
+    id: "DAZN PPV",
+    name: "DAZN PPV",
+    url: "https://www.dazn.com/en-US",
+  },
+  {
+    id: "NFL Net",
+    name: "NFL Network",
+    url: "https://www.nfl.com/network",
+  },
+  {
+    id: "BTN",
+    name: "Big Ten Network",
+    url: "https://www.foxsports.com",
   },
 
   // United Kingdom
@@ -140,63 +477,6 @@ export const providers: Provider[] = [
     name: "DAZN",
     url: "https://www.dazn.com/en-CA",
   },
-
-  // Additional provider IDs emitted by the SeasonCaddy Worker
-  {
-    id: "cbs",
-    name: "CBS",
-    url: "https://www.cbs.com",
-  },
-  {
-    id: "cbs-sports-golazo",
-    name: "CBS Sports Golazo Network",
-    url: "https://www.cbssports.com/watch/cbs-sports-golazo-network/",
-  },
-  {
-    id: "cbs-sports-network",
-    name: "CBS Sports Network",
-    url: "https://www.cbssportsnetwork.com",
-  },
-  {
-    id: "dazn-us",
-    name: "DAZN",
-    url: "https://www.dazn.com/en-US",
-  },
-  {
-    id: "telemundo",
-    name: "Telemundo",
-    url: "https://www.telemundo.com/deportes",
-  },
-  {
-    id: "universo",
-    name: "Universo",
-    url: "https://www.nbc.com/networks/universo",
-  },
-  {
-    id: "telemundo-app",
-    name: "Telemundo App",
-    url: "https://www.telemundo.com/deportes",
-  },
-  {
-    id: "telemundo-deportes-ahora",
-    name: "Telemundo Deportes Ahora",
-    url: "https://www.telemundo.com/deportes",
-  },
-  {
-    id: "tln",
-    name: "TLN",
-    url: "https://www.tln.ca",
-  },
-  {
-    id: "tnt-sports",
-    name: "TNT Sports",
-    url: "https://www.tntsports.co.uk",
-  },
-  {
-    id: "fubo",
-    name: "Fubo",
-    url: "https://www.fubo.tv",
-  },
   {
     id: "dazn-game-pass-ca",
     name: "DAZN NFL Game Pass",
@@ -208,122 +488,12 @@ export const providers: Provider[] = [
     url: "https://www.dazn.com/en-GB",
   },
   {
-    id: "big-ten-plus",
-    name: "Big Ten Plus",
-    url: "https://www.bigtenplus.com",
-  },
-  {
-    id: "apple-tv",
-    name: "Apple TV",
-    url: "https://tv.apple.com",
-  },
-  {
-    id: "sportsnet",
-    name: "Sportsnet",
-    url: "https://www.sportsnet.ca",
-  },
-  {
-    id: "sportsnet-ca",
-    name: "Sportsnet",
-    url: "https://watch.sportsnet.ca",
-  },
-  {
-    id: "vix",
-    name: "ViX",
-    url: "https://vix.com",
-  },
-  {
-    id: "flosports",
-    name: "FloSports",
-    url: "https://www.flosports.tv",
-  },
-  {
-    id: "dazn",
-    name: "DAZN",
-    url: "https://www.dazn.com/en-US",
-  },
-  {
-    id: "mlb-tv",
-    name: "MLB.TV",
-    url: "https://www.mlb.com/live-stream-games/subscribe",
-  },
-  {
-    id: "wnba-league-pass",
-    name: "WNBA League Pass",
-    url: "https://www.wnba.com/leaguepass",
-  },
-  {
-    id: "sling",
-    name: "Sling TV",
-    url: "https://www.sling.com",
-  },
-  {
-    id: "tubi",
-    name: "Tubi",
-    url: "https://tubitv.com/live",
-  },
-  {
-    id: "roku",
-    name: "The Roku Channel",
-    url: "https://therokuchannel.roku.com",
-  },
-  {
-    id: "bbc-iplayer",
-    name: "BBC iPlayer / BBC Sport",
-    url: "https://www.bbc.co.uk/iplayer",
-  },
-  {
     id: "nba-league-pass-uk",
     name: "NBA League Pass",
     url: "https://www.nba.com/watch/league-pass-stream",
   },
-  {
-    id: "tsn",
-    name: "TSN",
-    url: "https://www.tsn.ca",
-  },
-  {
-    id: "abc",
-    name: "ABC",
-    url: "https://abc.com",
-  },
-  {
-    id: "hulu",
-    name: "Hulu",
-    url: "https://www.hulu.com",
-  },
-  {
-    id: "trutv",
-    name: "truTV",
-    url: "https://www.trutv.com",
-  },
-  {
-    id: "hbo-max",
-    name: "HBO Max",
-    url: "https://www.hbomax.com",
-  },
-  {
-    id: "tva-sports",
-    name: "TVA Sports",
-    url: "https://www.tvasports.ca",
-  },
-  {
-    id: "nhl-tv-dazn-uk",
-    name: "NHL.TV on DAZN",
-    url: "https://www.dazn.com/en-GB",
-  },
 
   // Other
-  {
-    id: "appletv",
-    name: "Apple TV",
-    url: "https://tv.apple.com",
-  },
-  {
-    id: "tnt",
-    name: "TNT",
-    url: "https://www.tntdrama.com",
-  },
   {
     id: "tbd",
     name: "Provider pending",
