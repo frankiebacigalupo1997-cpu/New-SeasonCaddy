@@ -2733,12 +2733,11 @@ async function syncWithGoogleCalendar(
           game,
         ) => {
           if (
-            trackerSport &&
-            game.sport !==
-              trackerSport
-          ) {
-            return false;
-          }
+  trackerSport &&
+  normalizeCloudflareOptionValue(game.sport) !== trackerSport
+) {
+  return false;
+}
 
           if (
             isSoccerTracker &&
