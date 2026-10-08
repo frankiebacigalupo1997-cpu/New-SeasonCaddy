@@ -616,9 +616,6 @@ function Index() {
   const trackerCompetitionIds =
     useMemo(() => {
       const matchingCatalog = frontendCatalog.filter((item) => {
-        if (item.upcomingCount <= 0) {
-          return false;
-        }
 
         if (
           trackerSport &&
