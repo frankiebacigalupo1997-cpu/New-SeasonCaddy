@@ -823,12 +823,10 @@ function Index() {
    * taxonomy never creates Sport or Competition options.
    */
   const liveSportOptions =
-    useMemo(() => {
-      const bySport = new Map<string, string>();
+  useMemo(() => {
+    const bySport = new Map<string, string>();
 
-      frontendCatalog
-  .filter((item) => item.upcomingCount > 0)
-  .forEach((item) => {
+    frontendCatalog.forEach((item) => {
         const sportId = normalizeCloudflareOptionValue(item.sport);
 
         if (!sportId || sportId === "unknown" || sportId === "unclassified" || sportId === "other") {
@@ -846,10 +844,8 @@ function Index() {
     }, [frontendCatalog]);
 
   const liveCompetitionOptions =
-    useMemo(() =>
-      frontendCatalog
-        .filter((item) => item.upcomingCount > 0)
-        .map((item) => ({
+  useMemo(() =>
+    frontendCatalog.map((item) => ({
           id: item.competitionId,
           name: item.competitionName || formatCloudflareOptionLabel(item.competitionId),
           sport: normalizeCloudflareOptionValue(item.sport),
