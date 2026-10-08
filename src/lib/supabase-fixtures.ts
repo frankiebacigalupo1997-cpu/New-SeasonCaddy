@@ -544,27 +544,40 @@ export async function fetchFrontendCompetitionIdentity(
 }
 
 export async function fetchFrontendCatalog(): Promise<FrontendCatalogRow[]> {
+  /*
+   * Sport and competition navigation is defined by the canonical competition
+   * registry, not by the fixture serving cache. This means adding/removing an
+   * active canonical competition immediately changes the tracker taxonomy,
+   * even when that competition has no current fixture rows.
+   */
   const { data, error } = await sportsDataSupabase
-    // Sports/competition navigation must not depend on the heavier identity
-    // aggregation view. The serving cache already owns every summary field
-    // needed by these dropdowns. Canonical teams are requested separately and
-    // only for competitions that actually need them.
-    .from("frontend_catalog_cache")
-    .select(FRONTEND_CATALOG_SUMMARY_SELECT)
-    .gt("upcoming_count", 0)
+    .from("competitions")
+    .select("id,name,sport,active")
+    .eq("active", true)
+    .not("sport", "is", null)
+    .not("sport", "eq", "")
     .order("sport", { ascending: true })
-    .order("competition_name", { ascending: true })
-    .order("competition_id", { ascending: true });
+    .order("name", { ascending: true })
+    .order("id", { ascending: true });
 
   if (error) {
-    throw new Error(`Supabase frontend_catalog_identity query failed: ${error.message}`);
+    throw new Error(`Supabase canonical competition query failed: ${error.message}`);
   }
 
   return (Array.isArray(data) ? data : [])
+    .map((row) => ({
+      competitionId: String(row.id),
+      competitionName: String(row.name ?? row.id),
+      sport: String(row.sport),
+      teamNames: [],
+      canonicalTeams: [],
+      providerIds: [],
+      fixtureCount: 0,
+      upcomingCount: 0,
+    }))
     .map(normalizeCatalogRow)
     .filter((row): row is FrontendCatalogRow => row !== null);
 }
-
 export async function fetchFrontendHomeInitial(
   limit = 100,
 ): Promise<FrontendFixtureRow[]> {
