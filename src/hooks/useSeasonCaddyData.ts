@@ -42,8 +42,8 @@ export function competitionIdentityCatalogQueryOptions(competitionIds: string[])
   const normalizedIds = Array.from(new Set(competitionIds.filter(Boolean))).sort();
 
   return queryOptions({
-    queryKey: ["frontend-catalog-identity", "competitions", ...normalizedIds],
-    queryFn: () => fetchFrontendCompetitionIdentity(normalizedIds),
+    queryKey: ["frontend-identity-catalog", normalizedIds],
+    queryFn: () => fetchFrontendCatalog(),
     enabled: normalizedIds.length > 0,
     staleTime: SPORTS_DATA_STALE_TIME,
     gcTime: SPORTS_DATA_GC_TIME,
