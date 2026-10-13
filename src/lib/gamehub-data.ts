@@ -12,6 +12,11 @@ export const providers: Provider[] = [
     url: "https://www.peacocktv.com",
   },
   {
+  id: "Paramount+",
+  name: "Paramount+",
+  url: "https://www.paramountplus.com",
+},
+  {
     id: "espn",
     name: "ESPN",
     url: "https://www.espn.com/watch",
