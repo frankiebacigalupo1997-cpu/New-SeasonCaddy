@@ -66,7 +66,7 @@ export async function fetchGlobalInitialUpcomingDataset(limit = 100) {
   };
 }
 
-export async function fetchGlobalUpcomingDataset(limit = 750, offset = 0) {
+export async function fetchGlobalUpcomingDataset(limit = 500, offset = 0) {
   const recentLiveLookback = new Date(
     Date.now() - 24 * 60 * 60 * 1000,
   ).toISOString();
