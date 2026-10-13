@@ -67,6 +67,16 @@ export const providers: Provider[] = [
     url: "https://plus.espn.com",
   },
   {
+  id: "NBA TV",
+  name: "NBA TV",
+  url: "https://www.nba.com/watch/nba-tv",
+},
+{
+  id: "ESPN",
+  name: "ESPN",
+  url: "https://www.espn.com/watch",
+},
+  {
     id: "fox-one",
     name: "FOX One",
     url: "https://www.fox.com",
