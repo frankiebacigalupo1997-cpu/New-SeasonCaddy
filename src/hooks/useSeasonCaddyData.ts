@@ -143,7 +143,7 @@ export function useGlobalUpcomingDataset() {
 
     const publish = () => {
       const fixtures = Array.from(fixturesById.values()).sort((a, b) => {
-  const aLive = a.status?.toLowerCase() === "live";
+  const aLive = a.status?.toLowerCase() === "Live Now";
   const bLive = b.status?.toLowerCase() === "live";
 
   if (aLive !== bLive) return aLive ? -1 : 1;
