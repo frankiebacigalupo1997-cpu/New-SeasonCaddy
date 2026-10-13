@@ -92,8 +92,11 @@ export function savedTeamsDatasetQueryOptions(
   });
 }
 
+
 const GLOBAL_UPCOMING_INITIAL_LIMIT = 100;
-const GLOBAL_UPCOMING_FULL_LIMIT = 750;
+const GLOBAL_UPCOMING_BATCH_SIZE = 500;
+const GLOBAL_UPCOMING_BATCH_DELAY_MS = 3000;
+
 
 /*
  * Stage 12 progressive home loading:
