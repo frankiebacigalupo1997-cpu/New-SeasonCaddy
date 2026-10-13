@@ -251,6 +251,121 @@ export const providers: Provider[] = [
     name: "TNT",
     url: "https://www.tntdrama.com",
   },
+  {
+  id: "Apple TV",
+  name: "Apple TV",
+  url: "https://tv.apple.com",
+},
+{
+  id: "ESPN+",
+  name: "ESPN+",
+  url: "https://plus.espn.com",
+},
+{
+  id: "CBS",
+  name: "CBS",
+  url: "https://www.cbs.com",
+},
+{
+  id: "NBC",
+  name: "NBC",
+  url: "https://www.nbc.com",
+},
+{
+  id: "RugbyPass",
+  name: "RugbyPass",
+  url: "https://www.rugbypass.com",
+},
+{
+  id: "Varsity TV",
+  name: "Varsity TV",
+  url: "https://www.varsity.tv",
+},
+{
+  id: "FloHoops",
+  name: "FloHoops",
+  url: "https://www.flohoops.com",
+},
+{
+  id: "FloMarching",
+  name: "FloMarching",
+  url: "https://www.flomarching.com",
+},
+{
+  id: "FloFootball",
+  name: "FloFootball",
+  url: "https://www.flofootball.com",
+},
+{
+  id: "ION",
+  name: "ION",
+  url: "https://iontelevision.com",
+},
+{
+  id: "NWSL+",
+  name: "NWSL+",
+  url: "https://plus.nwslsoccer.com",
+},
+{
+  id: "NBCSN",
+  name: "NBC Sports Network",
+  url: "https://www.nbc.com/sports",
+},
+{
+  id: "Sling",
+  name: "Sling TV",
+  url: "https://www.sling.com",
+},
+{
+  id: "TBS",
+  name: "TBS",
+  url: "https://www.tbs.com",
+},
+{
+  id: "ABC",
+  name: "ABC",
+  url: "https://abc.com",
+},
+{
+  id: "Roku",
+  name: "The Roku Channel",
+  url: "https://therokuchannel.roku.com",
+},
+{
+  id: "FloSports",
+  name: "FloSports",
+  url: "https://www.flosports.tv",
+},
+{
+  id: "Fox",
+  name: "FOX",
+  url: "https://www.fox.com",
+},
+{
+  id: "directv",
+  name: "DIRECTV Streaming",
+  url: "https://www.directv.com/sports",
+},
+{
+  id: "fanduel-sports-network",
+  name: "FanDuel Sports Network",
+  url: "https://fanduelsportsnetwork.com",
+},
+{
+  id: "hulu-live",
+  name: "Hulu + Live TV",
+  url: "https://www.hulu.com",
+},
+{
+  id: "victory-plus",
+  name: "Victory+",
+  url: "https://victoryplus.com",
+},
+{
+  id: "youtube-tv",
+  name: "YouTube TV",
+  url: "https://tv.youtube.com",
+},
 
   // Exact backend provider IDs
   {
