@@ -57,6 +57,11 @@ export const providers: Provider[] = [
   url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
 },
   {
+  id: "Prime Video",
+  name: "Prime Video",
+  url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
+},
+  {
     id: "espn-plus",
     name: "ESPN+",
     url: "https://plus.espn.com",
