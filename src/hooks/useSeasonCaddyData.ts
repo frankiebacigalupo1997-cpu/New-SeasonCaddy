@@ -2,7 +2,7 @@ import {
   queryOptions,
   useQuery,
 } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   fetchCatalog,
@@ -97,31 +97,150 @@ const GLOBAL_UPCOMING_INITIAL_LIMIT = 100;
 const GLOBAL_UPCOMING_BATCH_SIZE = 500;
 const GLOBAL_UPCOMING_BATCH_DELAY_MS = 3000;
 
+type GlobalUpcomingDataset = Awaited<
+  ReturnType<typeof fetchGlobalUpcomingDataset>
+>;
 
-/*
- * Stage 12 progressive home loading:
- * - the route prefetch asks for live fixtures plus the next 100 from "now",
- *   rather than the oldest rows from a 24-hour lookback window;
- * - once that succeeds, the established 750-fixture preview is fetched in the
- *   background and replaces the initial slice. No artificial delay is added.
- */
-export const globalUpcomingDatasetQueryOptions = queryOptions({
-  queryKey: ["frontend-dataset", "global-upcoming", "initial"],
-  queryFn: () => fetchGlobalInitialUpcomingDataset(GLOBAL_UPCOMING_INITIAL_LIMIT),
-  staleTime: SPORTS_DATA_STALE_TIME,
-  gcTime: SPORTS_DATA_GC_TIME,
-  retry: 1,
-  refetchOnWindowFocus: false,
+export function useGlobalUpcomingDataset() {
+  const initialQuery = useQuery(globalUpcomingDatasetQueryOptions);
+  const [secondaryDataReady, setSecondaryDataReady] = useState(false);
+  const [progressiveData, setProgressiveData] =
+    useState<GlobalUpcomingDataset>();
+  const [isProgressiveFetching, setIsProgressiveFetching] = useState(false);
+
+  useEffect(() => {
+    if (initialQuery.isPending) {
+      setSecondaryDataReady(false);
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      setSecondaryDataReady(true);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [initialQuery.isPending]);
+
+  useEffect(() => {
+    if (!secondaryDataReady) return;
+
+    let cancelled = false;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+
+    const initialData = initialQuery.data;
+    const fixturesById = new Map(
+      (initialData?.fixtures ?? []).map((item) => [item.id, item] as const),
+    );
+    const gamesById = new Map(
+      (initialData?.games ?? []).map((item) => [item.id, item] as const),
+    );
+    const broadcastsByKey = new Map(
+      (initialData?.broadcasts ?? []).map((item) => [
+        `${item.fixtureId ?? ""}|${item.region}|${item.competitionId ?? ""}`,
+        item,
+      ] as const),
+    );
+
+    const publish = () => {
+      const fixtures = Array.from(fixturesById.values()).sort((a, b) => {
+  const aLive = a.status?.toLowerCase() === "live";
+  const bLive = b.status?.toLowerCase() === "live";
+
+  if (aLive !== bLive) return aLive ? -1 : 1;
+
+  const aTime = a.sortAt ?? a.kickoff ?? a.scheduledDate ?? "9999-12-31";
+  const bTime = b.sortAt ?? b.kickoff ?? b.scheduledDate ?? "9999-12-31";
+
+  return aTime.localeCompare(bTime) || a.id.localeCompare(b.id);
 });
 
-const globalUpcomingFullDatasetQueryOptions = {
-  queryKey: ["frontend-dataset", "global-upcoming", "full"] as const,
-  queryFn: () => fetchGlobalUpcomingDataset(GLOBAL_UPCOMING_FULL_LIMIT),
-  staleTime: SPORTS_DATA_STALE_TIME,
-  gcTime: SPORTS_DATA_GC_TIME,
-  retry: 1,
-  refetchOnWindowFocus: false,
-};
+      const position = new Map(
+        fixtures.map((fixture, index) => [fixture.id, index]),
+      );
+      const last = Number.MAX_SAFE_INTEGER;
+
+      const games = Array.from(gamesById.values()).sort(
+        (a, b) =>
+          (position.get(a.id) ?? last) - (position.get(b.id) ?? last),
+      );
+
+      const broadcasts = Array.from(broadcastsByKey.values()).sort(
+        (a, b) =>
+          (position.get(a.fixtureId ?? "") ?? last) -
+          (position.get(b.fixtureId ?? "") ?? last),
+      );
+
+      setProgressiveData({ fixtures, games, broadcasts });
+    };
+
+    // Display the initial batch immediately while background batches load.
+    publish();
+
+    const loadBatches = async () => {
+      let offset = 0;
+      setIsProgressiveFetching(true);
+
+      try {
+        while (!cancelled) {
+          const batch = await fetchGlobalUpcomingDataset(
+            GLOBAL_UPCOMING_BATCH_SIZE,
+            offset,
+          );
+
+          if (cancelled) return;
+
+          for (const fixture of batch.fixtures) {
+            fixturesById.set(fixture.id, fixture);
+          }
+
+          for (const game of batch.games) {
+            gamesById.set(game.id, game);
+          }
+
+          for (const broadcast of batch.broadcasts) {
+            broadcastsByKey.set(
+              `${broadcast.fixtureId ?? ""}|${broadcast.region}|${broadcast.competitionId ?? ""}`,
+              broadcast,
+            );
+          }
+
+          publish();
+
+          if (batch.fixtures.length < GLOBAL_UPCOMING_BATCH_SIZE) break;
+
+          offset += batch.fixtures.length;
+
+          // Pause after each completed full batch; never overlap requests.
+          await new Promise<void>((resolve) => {
+            timeout = setTimeout(resolve, GLOBAL_UPCOMING_BATCH_DELAY_MS);
+          });
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Progressive fixture loading failed:", error);
+        }
+      } finally {
+        if (!cancelled) setIsProgressiveFetching(false);
+      }
+    };
+
+    void loadBatches();
+
+    return () => {
+      cancelled = true;
+      if (timeout !== undefined) clearTimeout(timeout);
+    };
+  }, [secondaryDataReady, initialQuery.data]);
+
+  return {
+    ...initialQuery,
+    data: progressiveData ?? initialQuery.data,
+    initialBatchReady: initialQuery.isSuccess,
+    secondaryDataReady,
+    isFetching: initialQuery.isFetching || isProgressiveFetching,
+  };
+}
+
 
 export function useFrontendCatalog(enabled = true) {
   return useQuery({
@@ -150,79 +269,4 @@ export function useUpcomingCompetitionDataset(competitionIds: string[]) {
 
 export function useSavedTeamsDataset(savedLeagues: Record<string, string[]>) {
   return useQuery(savedTeamsDatasetQueryOptions(savedLeagues));
-}
-
-export function useGlobalUpcomingDataset() {
-  const initialQuery = useQuery(globalUpcomingDatasetQueryOptions);
-  const [secondaryDataReady, setSecondaryDataReady] = useState(false);
-
-  useEffect(() => {
-    if (initialQuery.isPending) {
-      setSecondaryDataReady(false);
-      return;
-    }
-
-    /*
-     * Once the initial request settles, start the secondary/background reads
-     * whether the first request succeeded or failed. A transient failure in
-     * the first Home request must not prevent the established direct fixture
-     * query and catalog query from recovering the page.
-     */
-    const frame = window.requestAnimationFrame(() => {
-      setSecondaryDataReady(true);
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [initialQuery.isPending]);
-
-  const fullQuery = useQuery({
-    ...globalUpcomingFullDatasetQueryOptions,
-    enabled: secondaryDataReady,
-  });
-
-  const mergedData = useMemo(() => {
-    if (!initialQuery.data) return fullQuery.data;
-    if (!fullQuery.data) return initialQuery.data;
-
-    const fixturesById = new Map(
-      initialQuery.data.fixtures.map((fixture) => [fixture.id, fixture]),
-    );
-    for (const fixture of fullQuery.data.fixtures) {
-      fixturesById.set(fixture.id, fixture);
-    }
-
-    const gamesById = new Map(
-      initialQuery.data.games.map((game) => [game.id, game]),
-    );
-    for (const game of fullQuery.data.games) {
-      gamesById.set(game.id, game);
-    }
-
-    const broadcastsByKey = new Map(
-      initialQuery.data.broadcasts.map((broadcast) => [
-        `${broadcast.fixtureId ?? ""}|${broadcast.region}|${broadcast.competitionId ?? ""}`,
-        broadcast,
-      ]),
-    );
-    for (const broadcast of fullQuery.data.broadcasts) {
-      broadcastsByKey.set(
-        `${broadcast.fixtureId ?? ""}|${broadcast.region}|${broadcast.competitionId ?? ""}`,
-        broadcast,
-      );
-    }
-
-    return {
-      fixtures: Array.from(fixturesById.values()),
-      games: Array.from(gamesById.values()),
-      broadcasts: Array.from(broadcastsByKey.values()),
-    };
-  }, [initialQuery.data, fullQuery.data]);
-
-  return {
-    ...initialQuery,
-    data: mergedData,
-    initialBatchReady: initialQuery.isSuccess,
-    secondaryDataReady,
-    isFetching: initialQuery.isFetching || fullQuery.isFetching,
-  };
 }
