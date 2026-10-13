@@ -435,11 +435,6 @@ export const providers: Provider[] = [
     name: "Provider pending",
     url: "",
   },
-  {
-    id: "not-live-uk",
-    name: "Not televised live",
-    url: "",
-  },
 ];
 
 export type Game = {
