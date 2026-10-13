@@ -97,6 +97,18 @@ const GLOBAL_UPCOMING_INITIAL_LIMIT = 100;
 const GLOBAL_UPCOMING_BATCH_SIZE = 500;
 const GLOBAL_UPCOMING_BATCH_DELAY_MS = 3000;
 
+
+export const globalUpcomingDatasetQueryOptions = queryOptions({
+  queryKey: ["frontend-dataset", "global-upcoming", "initial"],
+  queryFn: () =>
+    fetchGlobalInitialUpcomingDataset(GLOBAL_UPCOMING_INITIAL_LIMIT),
+  staleTime: SPORTS_DATA_STALE_TIME,
+  gcTime: SPORTS_DATA_GC_TIME,
+  retry: 1,
+  refetchOnWindowFocus: false,
+});
+
+
 type GlobalUpcomingDataset = Awaited<
   ReturnType<typeof fetchGlobalUpcomingDataset>
 >;
@@ -142,9 +154,15 @@ export function useGlobalUpcomingDataset() {
     );
 
     const publish = () => {
-      const fixtures = Array.from(fixturesById.values()).sort((a, b) => {
-  const aLive = a.status?.toLowerCase() === "Live Now";
-  const bLive = b.status?.toLowerCase() === "live";
+      
+const isLiveStatus = (status?: string) =>
+  ["live", "live now", "in progress", "in-progress"].includes(
+    status?.trim().toLowerCase() ?? "",
+  );
+
+const fixtures = Array.from(fixturesById.values()).sort((a, b) => {
+  const aLive = isLiveStatus(a.status);
+  const bLive = isLiveStatus(b.status);
 
   if (aLive !== bLive) return aLive ? -1 : 1;
 
@@ -153,6 +171,7 @@ export function useGlobalUpcomingDataset() {
 
   return aTime.localeCompare(bTime) || a.id.localeCompare(b.id);
 });
+
 
       const position = new Map(
         fixtures.map((fixture, index) => [fixture.id, index]),
