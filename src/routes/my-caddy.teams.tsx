@@ -451,53 +451,21 @@ function TeamsPage() {
   /* TEAM TOGGLE                                          */
   /* ==================================================== */
 
-  function toggleTeam(
-    leagueId: string,
-    team: string,
-  ) {
-    setSavedLeagues(
-      (
-        current,
-      ) => {
-        const currentTeams =
-          current[
-            leagueId
-          ] ?? [];
+  function toggleTeam(leagueId: string, team: string) {
+    setSavedLeagues((current) => {
+      const currentTeams = current[leagueId] ?? [];
+      const wholeCompetitionSaved = currentTeams.includes(leagueId);
+      const availableTeams = liveTeamsByLeague[leagueId] ?? [];
+      const baseTeams = wholeCompetitionSaved
+        ? availableTeams.filter((availableTeam) => availableTeam !== team)
+        : currentTeams.filter((savedTeam) => savedTeam !== leagueId);
+      const alreadySaved = !wholeCompetitionSaved && currentTeams.includes(team);
+      const updatedTeams = alreadySaved
+        ? baseTeams.filter((savedTeam) => savedTeam !== team)
+        : wholeCompetitionSaved ? baseTeams : [...baseTeams, team];
 
-        const alreadySaved =
-          currentTeams.includes(
-            team,
-          );
-
-        const updatedTeams =
-          alreadySaved
-            ? currentTeams.filter(
-                (
-                  currentTeam,
-                ) =>
-                  currentTeam !==
-                  team,
-              )
-            : [
-                ...currentTeams,
-                team,
-              ];
-
-        return {
-          ...current,
-
-          /*
-           * Keep empty arrays.
-           * This allows SeasonCaddy to
-           * know the user explicitly
-           * removed every team from a league.
-           */
-
-          [leagueId]:
-            updatedTeams,
-        };
-      },
-    );
+      return { ...current, [leagueId]: updatedTeams };
+    });
   }
 
   /* ==================================================== */
@@ -1070,10 +1038,7 @@ function TeamsPage() {
                           sport.id,
                         )
                       }
-                      disabled={
-                        saveableSportLeagues.length ===
-                        0
-                      }
+                      disabled={false}
                     />
 
                     {sportActiveLeagues >
