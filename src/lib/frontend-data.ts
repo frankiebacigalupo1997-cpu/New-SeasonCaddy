@@ -6,7 +6,6 @@ import {
   fetchFrontendFixtures,
   fetchFrontendHomeInitial,
   fetchFrontendFixturesForSavedTeams,
-  fetchFrontendFixturesForSavedSports,
 } from "@/lib/supabase-fixtures";
 
 export async function fetchCatalog() {
@@ -44,23 +43,6 @@ export async function fetchDatasetForSavedTeams(savedLeagues, savedSports = []) 
     savedLeagues ?? {},
     savedSports ?? [],
   );
-
-  return {
-    fixtures,
-    games: fixtures.map(frontendFixtureToGame),
-    broadcasts: fixturesToBroadcasts(fixtures),
-  };
-}
-
-export async function fetchSavedSportsDatasetBatch(
-  savedSports: string[],
-  limit = 500,
-  offset = 100,
-) {
-  const fixtures = await fetchFrontendFixturesForSavedSports(savedSports, {
-    limit,
-    offset,
-  });
 
   return {
     fixtures,
