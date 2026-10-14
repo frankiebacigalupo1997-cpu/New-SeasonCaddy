@@ -84,6 +84,8 @@ function MyCaddyOverview() {
     >
   >({});
 
+  const [savedSports, setSavedSports] = useState<string[]>([]);
+
   const [
     preferencesLoaded,
     setPreferencesLoaded,
@@ -144,7 +146,7 @@ function MyCaddyOverview() {
 
   const {
     data: savedDataset,
-  } = useSavedTeamsDataset(savedLeagues);
+  } = useSavedTeamsDataset(savedLeagues, savedSports);
 
   const liveCompetitionGames =
     savedDataset?.games ?? [];
@@ -248,6 +250,7 @@ function MyCaddyOverview() {
                   prefs.teams,
               },
           );
+          setSavedSports(prefs.saved_sports ?? []);
         } else {
           setSavedLeagues(
             {},
