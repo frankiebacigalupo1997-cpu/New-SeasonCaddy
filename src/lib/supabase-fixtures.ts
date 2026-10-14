@@ -857,6 +857,32 @@ function fixtureMatchesSavedTeamLabels(
   );
 }
 
+const SAVED_SPORT_FIXTURE_INITIAL_LIMIT = 100;
+const SAVED_SPORT_FIXTURE_LOOKBACK_MS = 24 * 60 * 60 * 1000;
+
+export async function fetchFrontendFixturesForSavedSports(
+  savedSports: string[],
+  options: { limit: number; offset: number },
+): Promise<FrontendFixtureRow[]> {
+  const normalizedSavedSports = Array.from(
+    new Set(savedSports.map((sport) => sport.trim().toLowerCase()).filter(Boolean)),
+  ).sort();
+
+  if (normalizedSavedSports.length === 0) {
+    return [];
+  }
+
+  return fetchFrontendFixtures(undefined, {
+    sportIn: normalizedSavedSports,
+    limit: options.limit,
+    offset: options.offset,
+    // Prioritize live/recent and upcoming fixtures in the saved-sport feed.
+    sortAtOrAfter: new Date(
+      Date.now() - SAVED_SPORT_FIXTURE_LOOKBACK_MS,
+    ).toISOString(),
+  });
+}
+
 const MAX_TEAM_NAMES_PER_FILTERED_QUERY = 24;
 
 export async function fetchFrontendFixturesForSavedTeams(
@@ -962,7 +988,12 @@ export async function fetchFrontendFixturesForSavedTeams(
       );
     }),
     ...(normalizedSavedSports.length > 0
-      ? [fetchFrontendFixtures(undefined, { sportIn: normalizedSavedSports })]
+      ? [
+          fetchFrontendFixturesForSavedSports(normalizedSavedSports, {
+            limit: SAVED_SPORT_FIXTURE_INITIAL_LIMIT,
+            offset: 0,
+          }),
+        ]
       : []),
   ]);
 
