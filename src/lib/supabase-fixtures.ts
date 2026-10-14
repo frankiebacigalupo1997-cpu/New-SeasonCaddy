@@ -674,6 +674,7 @@ export async function fetchFrontendFixtures(
     statusIn?: string[];
     canonicalHomeIn?: string[];
     canonicalAwayIn?: string[];
+    sportIn?: string[];
   },
 ): Promise<FrontendFixtureRow[]> {
   const normalizedCompetitionIds = Array.isArray(competitionIds)
@@ -706,6 +707,10 @@ export async function fetchFrontendFixtures(
         "frontend_sort_at",
         options.sortAtOrAfter,
       );
+    }
+
+    if (options?.sportIn?.length) {
+      query = query.in("sport", options.sportIn);
     }
 
     if (options?.statusIn?.length) {
@@ -851,7 +856,12 @@ const MAX_TEAM_NAMES_PER_FILTERED_QUERY = 24;
 
 export async function fetchFrontendFixturesForSavedTeams(
   savedLeagues: Record<string, string[]>,
+  savedSports: string[] = [],
 ): Promise<FrontendFixtureRow[]> {
+  const normalizedSavedSports = Array.from(
+    new Set(savedSports.map((sport) => sport.trim()).filter(Boolean)),
+  ).sort();
+
   const entries = Object.entries(savedLeagues)
     .map(([competitionId, teamNames]) => [
       competitionId,
@@ -866,7 +876,7 @@ export async function fetchFrontendFixturesForSavedTeams(
     .filter(([, teamNames]) => teamNames.length > 0)
     .sort(([a], [b]) => a.localeCompare(b));
 
-  if (entries.length === 0) {
+  if (entries.length === 0 && normalizedSavedSports.length === 0) {
     return [];
   }
 
@@ -874,7 +884,9 @@ export async function fetchFrontendFixturesForSavedTeams(
   let identityByCompetition = new Map<string, FrontendCatalogRow>();
 
   try {
-    const identityRows = await fetchFrontendCompetitionIdentity(competitionIds);
+    const identityRows = competitionIds.length > 0
+      ? await fetchFrontendCompetitionIdentity(competitionIds)
+      : [];
     identityByCompetition = new Map(
       identityRows.map((competition) => [competition.competitionId, competition]),
     );
@@ -884,7 +896,8 @@ export async function fetchFrontendFixturesForSavedTeams(
     console.warn("Could not resolve saved-team identity filters", error);
   }
 
-  const resultSets = await Promise.all(
+  const resultSets = entries.length > 0
+    ? await Promise.all(
     entries.map(async ([competitionId, teamNames]) => {
       const identityCompetition = identityByCompetition.get(competitionId);
 
@@ -946,11 +959,16 @@ export async function fetchFrontendFixturesForSavedTeams(
         ),
       );
     }),
-  );
+  )
+    : [];
+
+  const sportFixtures = normalizedSavedSports.length > 0
+    ? await fetchFrontendFixtures(undefined, { sportIn: normalizedSavedSports })
+    : [];
 
   const byId = new Map<string, FrontendFixtureRow>();
 
-  for (const fixture of resultSets.flat()) {
+  for (const fixture of [...resultSets.flat(), ...sportFixtures]) {
     byId.set(fixture.id, fixture);
   }
 
