@@ -192,7 +192,7 @@ export const Route =
       competition.id === "bundesliga"  ||
       competition.id === "french-ligue-1" ||
       competition.id === "mls" ||
-      competition.id === "athletics" ||
+      competition.id === "athletics"
     ) {
       return 3;
     }
