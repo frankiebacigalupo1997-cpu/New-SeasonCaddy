@@ -167,12 +167,7 @@ export const Route =
     competition.id === "ufc" ||
     competition.id === "formula-1" ||
       competition.id === "champions-league" ||
-      competition.id === "europa-league" ||
-      competition.id === "premier-league" ||
-      competition.id === "serie-a" ||
-      competition.id === "la-liga" ||
-      competition.id === "bundesliga" ||
-      competition.id === "ligue-1"
+      competition.id === "europa-league"
     ) {
       return 0;
     }
@@ -180,13 +175,26 @@ export const Route =
     if (
       competition.id ===
       "ncaa-football" ||
-    competition.id === "wnba"
+    competition.id === "wnba" ||
+       competition.id === "premier-league" ||
+      competition.id === "serie-a"
     ) {
       return 1;
     }
   
-    return 2;
-  }
+  if (
+      competition.id === "la-liga"
+    ) {
+      return 2;
+    }
+
+    if (
+      competition.id === "bundesliga"  ||
+      competition.id === "ligue-1" ||
+      competition.id === "mls"
+    ) {
+      return 3;
+    }
 
   type CatalogLocationFields = {
     locationName?: unknown;
