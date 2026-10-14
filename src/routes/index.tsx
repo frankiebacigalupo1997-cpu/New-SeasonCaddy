@@ -184,7 +184,8 @@ export const Route =
     }
   
   if (
-      competition.id === "la-liga"
+      competition.id === "la-liga" ||
+      competition.id === "college-basketball"
     ) {
       return 2;
     }
