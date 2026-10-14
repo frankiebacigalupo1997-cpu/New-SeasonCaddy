@@ -168,10 +168,10 @@ export const Route =
     competition.id === "formula-1" ||
       competition.id === "champions-league" ||
       competition.id === "europa-league" ||
-      competition.id === "Premier-league" ||
-      competition.id === "Serie A" ||
-      competition.id === "La Liga" ||
-      competition.id === "Bundesliga" ||
+      competition.id === "premier-league" ||
+      competition.id === "serie-a" ||
+      competition.id === "la-liga" ||
+      competition.id === "bundesliga" ||
       competition.id === "ligue-1"
     ) {
       return 0;
