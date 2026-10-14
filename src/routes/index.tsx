@@ -196,6 +196,9 @@ export const Route =
       return 3;
     }
 
+    return 4;
+}
+
   type CatalogLocationFields = {
     locationName?: unknown;
     location_name?: unknown;
