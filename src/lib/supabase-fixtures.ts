@@ -857,29 +857,6 @@ function fixtureMatchesSavedTeamLabels(
   );
 }
 
-const SAVED_SPORT_FIXTURE_INITIAL_LIMIT = 100;
-
-export async function fetchFrontendFixturesForSavedSports(
-  savedSports: string[],
-  options: { limit: number; offset: number },
-): Promise<FrontendFixtureRow[]> {
-  const normalizedSavedSports = Array.from(
-    new Set(savedSports.map((sport) => sport.trim().toLowerCase()).filter(Boolean)),
-  ).sort();
-
-  if (normalizedSavedSports.length === 0) {
-    return [];
-  }
-
-  // Use the same stable ordering for every page so the full saved-sport
-  // fixture history is available progressively, not just recent events.
-  return fetchFrontendFixtures(undefined, {
-    sportIn: normalizedSavedSports,
-    limit: options.limit,
-    offset: options.offset,
-  });
-}
-
 const MAX_TEAM_NAMES_PER_FILTERED_QUERY = 24;
 
 export async function fetchFrontendFixturesForSavedTeams(
@@ -985,12 +962,7 @@ export async function fetchFrontendFixturesForSavedTeams(
       );
     }),
     ...(normalizedSavedSports.length > 0
-      ? [
-          fetchFrontendFixturesForSavedSports(normalizedSavedSports, {
-            limit: SAVED_SPORT_FIXTURE_INITIAL_LIMIT,
-            offset: 0,
-          }),
-        ]
+      ? [fetchFrontendFixtures(undefined, { sportIn: normalizedSavedSports })]
       : []),
   ]);
 
