@@ -1367,9 +1367,8 @@ function TeamsPage() {
                                         team,
                                       ) => {
                                         const selected =
-                                          selectedTeams.includes(
-                                            team,
-                                          );
+                                          selectedTeams.includes(league.id) ||
+                                          selectedTeams.includes(team);
 
                                         return (
                                           <button
