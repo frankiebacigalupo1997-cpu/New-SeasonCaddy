@@ -305,7 +305,7 @@ export function useSavedTeamsDataset(
   const normalizedSavedSports = Array.from(
     new Set(savedSports.map((sport) => sport.trim().toLowerCase()).filter(Boolean)),
   ).sort();
-  const savedSportsKey = normalizedSavedSports.join("|");
+  const savedSportsKey = JSON.stringify(normalizedSavedSports);
   const [progressiveState, setProgressiveState] = useState<{
     key: string;
     data: SavedTeamsDataset;
@@ -315,6 +315,7 @@ export function useSavedTeamsDataset(
   useEffect(() => {
     const initialData = initialQuery.data;
     if (!initialData || initialQuery.isPending) return;
+    const sportsForBatch = JSON.parse(savedSportsKey) as string[];
 
     let cancelled = false;
     let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -361,7 +362,7 @@ export function useSavedTeamsDataset(
     // Publish the first batch before requesting further saved-sport fixtures.
     publish();
 
-    if (normalizedSavedSports.length === 0) {
+    if (sportsForBatch.length === 0) {
       return () => {
         cancelled = true;
       };
@@ -374,7 +375,7 @@ export function useSavedTeamsDataset(
       try {
         while (!cancelled) {
           const batch = await fetchSavedSportsDatasetBatch(
-            normalizedSavedSports,
+            sportsForBatch,
             SAVED_SPORT_BATCH_SIZE,
             offset,
           );
