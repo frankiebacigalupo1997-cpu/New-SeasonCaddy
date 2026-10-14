@@ -168,7 +168,8 @@ export const Route =
     competition.id === "formula-1" ||
       competition.id === "champions-league" ||
       competition.id === "europa-league" ||
-      competition.id === "athletics"
+      competition.id === "athletics" ||
+      competition.id === "boxing"
     ) {
       return 0;
     }
@@ -178,7 +179,8 @@ export const Route =
       "ncaa-football" ||
     competition.id === "wnba" ||
        competition.id === "premier-league" ||
-      competition.id === "serie-a"
+      competition.id === "serie-a" ||
+      competition.id === "mma"
     ) {
       return 1;
     }
