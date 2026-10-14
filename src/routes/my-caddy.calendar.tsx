@@ -76,6 +76,8 @@ function CalendarPage() {
     >
   >({});
 
+  const [savedSports, setSavedSports] = useState<string[]>([]);
+
   const [
     preferencesLoaded,
     setPreferencesLoaded,
@@ -125,7 +127,7 @@ function CalendarPage() {
 
   const {
     data: savedDataset,
-  } = useSavedTeamsDataset(savedLeagues);
+  } = useSavedTeamsDataset(savedLeagues, savedSports);
 
   const liveCompetitionGames = savedDataset?.games ?? [];
   const liveBroadcasts = savedDataset?.broadcasts ?? [];
@@ -306,6 +308,7 @@ function CalendarPage() {
                 prefs.teams,
             },
         );
+        setSavedSports(prefs.saved_sports ?? []);
 
         setPreferencesLoaded(
           true,
