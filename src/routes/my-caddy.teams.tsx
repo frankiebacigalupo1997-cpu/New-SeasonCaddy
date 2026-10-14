@@ -132,6 +132,9 @@ function TeamsPage() {
     >
   >({});
 
+  const [savedSports, setSavedSports] = useState<string[]>([]);
+  const [originalSavedSports, setOriginalSavedSports] = useState<string[]>([]);
+
   /* ==================================================== */
   /* COLLAPSE STATE                                       */
   /* ==================================================== */
@@ -278,6 +281,8 @@ function TeamsPage() {
           setOriginalSavedLeagues(
             {},
           );
+          setSavedSports([]);
+          setOriginalSavedSports([]);
 
           setLoading(
             false,
@@ -297,6 +302,7 @@ function TeamsPage() {
           cloneSavedLeagues(
             loaded,
           );
+        const loadedSports = Array.from(new Set(prefs.saved_sports ?? [])).sort();
 
         setSavedLeagues(
           cloned,
@@ -307,6 +313,8 @@ function TeamsPage() {
             loaded,
           ),
         );
+        setSavedSports(loadedSports);
+        setOriginalSavedSports([...loadedSports]);
 
         setLegacySport(
           prefs.sport ??
@@ -396,20 +404,10 @@ function TeamsPage() {
   /* UNSAVED CHANGES                                      */
   /* ==================================================== */
 
-  const hasChanges =
-    useMemo(() => {
-      return (
-        normaliseSavedLeagues(
-          savedLeagues,
-        ) !==
-        normaliseSavedLeagues(
-          originalSavedLeagues,
-        )
-      );
-    }, [
-      savedLeagues,
-      originalSavedLeagues,
-    ]);
+  const hasChanges = useMemo(() => (
+    normaliseSavedLeagues(savedLeagues) !== normaliseSavedLeagues(originalSavedLeagues) ||
+    [...savedSports].sort().join("|") !== [...originalSavedSports].sort().join("|")
+  ), [savedLeagues, originalSavedLeagues, savedSports, originalSavedSports]);
 
   /* ==================================================== */
   /* COLLAPSE HANDLERS                                    */
@@ -506,150 +504,17 @@ function TeamsPage() {
   /* SPORT / COMPETITION BULK SAVE                       */
   /* ==================================================== */
 
-  function toggleSavedCompetition(
-    leagueId: string,
-  ) {
-    const availableTeams =
-      liveTeamsByLeague[
-        leagueId
-      ] ?? [];
-
-    if (
-      availableTeams.length ===
-      0
-    ) {
-      toast.error(
-        "No teams are available for this competition yet",
-      );
-
-      return;
-    }
-
-    setSavedLeagues(
-      (
-        current,
-      ) => {
-        const currentTeams =
-          current[
-            leagueId
-          ] ?? [];
-
-        const competitionIsSaved =
-          availableTeams.every(
-            (
-              team,
-            ) =>
-              currentTeams.includes(
-                team,
-              ),
-          );
-
-        return {
-          ...current,
-
-          [leagueId]:
-            competitionIsSaved
-              ? []
-              : [
-                  ...availableTeams,
-                ],
-        };
-      },
-    );
+  function toggleSavedCompetition(leagueId: string) {
+    setSavedLeagues((current) => ({
+      ...current,
+      [leagueId]: (current[leagueId] ?? []).includes(leagueId) ? [] : [leagueId],
+    }));
   }
 
-  function toggleSavedSport(
-    sportId: string,
-  ) {
-    const sportLeagues =
-      leagues.filter(
-        (
-          league,
-        ) =>
-          league.sport ===
-          sportId,
-      );
-
-    const saveableLeagues =
-      sportLeagues.filter(
-        (
-          league,
-        ) =>
-          (
-            liveTeamsByLeague[
-              league.id
-            ] ?? []
-          ).length >
-          0,
-      );
-
-    if (
-      saveableLeagues.length ===
-      0
-    ) {
-      toast.error(
-        "No teams are available for this sport yet",
-      );
-
-      return;
-    }
-
-    setSavedLeagues(
-      (
-        current,
-      ) => {
-        const sportIsSaved =
-          saveableLeagues.every(
-            (
-              league,
-            ) => {
-              const availableTeams =
-                liveTeamsByLeague[
-                  league.id
-                ] ?? [];
-
-              const currentTeams =
-                current[
-                  league.id
-                ] ?? [];
-
-              return availableTeams.every(
-                (
-                  team,
-                ) =>
-                  currentTeams.includes(
-                    team,
-                  ),
-              );
-            },
-          );
-
-        const updated = {
-          ...current,
-        };
-
-        for (
-          const league of
-          saveableLeagues
-        ) {
-          const availableTeams =
-            liveTeamsByLeague[
-              league.id
-            ] ?? [];
-
-          updated[
-            league.id
-          ] =
-            sportIsSaved
-              ? []
-              : [
-                  ...availableTeams,
-                ];
-        }
-
-        return updated;
-      },
-    );
+  function toggleSavedSport(sportId: string) {
+    setSavedSports((current) => current.includes(sportId)
+      ? current.filter((id) => id !== sportId)
+      : [...current, sportId].sort());
   }
 
   /* ==================================================== */
@@ -706,8 +571,8 @@ function TeamsPage() {
           region:
             activeRegion,
 
-          saved_leagues:
-            savedLeagues,
+          saved_leagues: savedLeagues,
+          saved_sports: savedSports,
         },
       );
 
@@ -716,6 +581,7 @@ function TeamsPage() {
           savedLeagues,
         ),
       );
+      setOriginalSavedSports([...savedSports]);
 
       toast.success(
         "Your teams have been updated",
@@ -748,6 +614,7 @@ function TeamsPage() {
         originalSavedLeagues,
       ),
     );
+    setSavedSports([...originalSavedSports]);
   }
 
   /* ==================================================== */
@@ -1004,20 +871,12 @@ function TeamsPage() {
             );
 
 
-            const sportSavedTeams =
-              sportLeagues.reduce(
-                (
-                  total,
-                  league,
-                ) =>
-                  total +
-                  (
-                    savedLeagues[
-                      league.id
-                    ] ?? []
-                  ).length,
-                0,
-              );
+            const sportSavedTeams = sportLeagues.reduce((total, league) => {
+              const selected = savedLeagues[league.id] ?? [];
+              return total + (selected.includes(league.id)
+                ? (liveTeamsByLeague[league.id] ?? []).length
+                : selected.length);
+            }, 0);
 
             const sportActiveLeagues =
               sportLeagues.filter(
@@ -1045,33 +904,7 @@ function TeamsPage() {
                   0,
               );
 
-            const sportIsSaved =
-              saveableSportLeagues.length >
-                0 &&
-              saveableSportLeagues.every(
-                (
-                  league,
-                ) => {
-                  const availableTeams =
-                    liveTeamsByLeague[
-                      league.id
-                    ] ?? [];
-
-                  const selectedTeams =
-                    savedLeagues[
-                      league.id
-                    ] ?? [];
-
-                  return availableTeams.every(
-                    (
-                      team,
-                    ) =>
-                      selectedTeams.includes(
-                        team,
-                      ),
-                  );
-                },
-              );
+            const sportIsSaved = savedSports.includes(sport.id);
 
             return (
               <div
@@ -1339,27 +1172,11 @@ function TeamsPage() {
                               ],
                             );
 
-                          const selectedTeams =
-                            savedLeagues[
-                              league.id
-                            ] ?? [];
+                          const selectedTeams = savedLeagues[league.id] ?? [];
 
-                          const availableTeams =
-                            liveTeamsByLeague[
-                              league.id
-                            ] ?? [];
+                          const availableTeams = liveTeamsByLeague[league.id] ?? [];
 
-                          const competitionIsSaved =
-                            availableTeams.length >
-                              0 &&
-                            availableTeams.every(
-                              (
-                                team,
-                              ) =>
-                                selectedTeams.includes(
-                                  team,
-                                ),
-                            );
+                          const competitionIsSaved = selectedTeams.includes(league.id);
 
                           return (
                             <div
@@ -1506,10 +1323,7 @@ function TeamsPage() {
                                         league.id,
                                       )
                                     }
-                                    disabled={
-                                      availableTeams.length ===
-                                      0
-                                    }
+                                    disabled={false}
                                   />
 
                                   {selectedTeams.length >
@@ -1601,10 +1415,7 @@ function TeamsPage() {
                                       (
                                         team,
                                       ) => {
-                                        const selected =
-                                          selectedTeams.includes(
-                                            team,
-                                          );
+                                        const selected = selectedTeams.includes(league.id) || selectedTeams.includes(team);
 
                                         return (
                                           <button
