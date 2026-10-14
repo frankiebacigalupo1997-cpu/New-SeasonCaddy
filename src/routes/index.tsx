@@ -165,7 +165,14 @@ export const Route =
     competition.id === "nba" ||
     competition.id === "nhl" ||
     competition.id === "ufc" ||
-    competition.id === "formula-1"
+    competition.id === "formula-1" ||
+      competition.id === "champions-league" ||
+      competition.id === "europa-league" ||
+      competition.id === "Premier-league" ||
+      competition.id === "Serie A" ||
+      competition.id === "La Liga" ||
+      competition.id === "Bundesliga" ||
+      competition.id === "ligue-1"
     ) {
       return 0;
     }
