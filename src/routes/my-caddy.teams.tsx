@@ -1328,7 +1328,7 @@ function TeamsPage() {
                     >
             
 
-                      {visibleSportLeagues.map(
+                      {sportLeagues.map(
                         (
                           league,
                         ) => {
@@ -1747,7 +1747,7 @@ function TeamsPage() {
                         },
                       )}
 
-                      {visibleSportLeagues.length ===
+                      {sportLeagues.length ===
                         0 && (
                         <div
                           className="text-muted-foreground"
