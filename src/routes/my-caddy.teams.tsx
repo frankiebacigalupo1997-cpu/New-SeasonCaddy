@@ -47,6 +47,10 @@ import {
   SeasonCaddySelect,
 } from "@/components/gamehub/SeasonCaddySelect";
 
+import {
+  sortCompetitions,
+} from "@/lib/competition-sorting";
+
 const SESSION_REGION_KEY =
   "sportstream-region";
 
