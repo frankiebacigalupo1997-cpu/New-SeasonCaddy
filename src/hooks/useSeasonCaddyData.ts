@@ -10,7 +10,6 @@ import {
   fetchGlobalInitialUpcomingDataset,
   fetchGlobalUpcomingDataset,
   fetchUpcomingDatasetForCompetitions,
-  fetchSavedSportsDatasetBatch,
 } from "@/lib/frontend-data";
 
 import {
@@ -291,145 +290,9 @@ export function useUpcomingCompetitionDataset(competitionIds: string[]) {
   return useQuery(upcomingCompetitionDatasetQueryOptions(competitionIds));
 }
 
-const SAVED_SPORT_INITIAL_LIMIT = 100;
-const SAVED_SPORT_BATCH_SIZE = 500;
-const SAVED_SPORT_BATCH_DELAY_MS = 3000;
-
-type SavedTeamsDataset = Awaited<ReturnType<typeof fetchDatasetForSavedTeams>>;
-
 export function useSavedTeamsDataset(
   savedLeagues: Record<string, string[]>,
   savedSports: string[] = [],
 ) {
-  const initialQuery = useQuery(savedTeamsDatasetQueryOptions(savedLeagues, savedSports));
-  const normalizedSavedSports = Array.from(
-    new Set(savedSports.map((sport) => sport.trim().toLowerCase()).filter(Boolean)),
-  ).sort();
-  const savedSportsKey = JSON.stringify(normalizedSavedSports);
-  const [progressiveState, setProgressiveState] = useState<{
-    key: string;
-    data: SavedTeamsDataset;
-  }>();
-  const [isProgressiveFetching, setIsProgressiveFetching] = useState(false);
-
-  useEffect(() => {
-    const initialData = initialQuery.data;
-    if (!initialData || initialQuery.isPending) return;
-    const sportsForBatch = JSON.parse(savedSportsKey) as string[];
-
-    let cancelled = false;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    setIsProgressiveFetching(false);
-
-    const fixturesById = new Map(
-      initialData.fixtures.map((fixture) => [fixture.id, fixture] as const),
-    );
-    const gamesById = new Map(
-      initialData.games.map((game) => [game.id, game] as const),
-    );
-    const broadcastsByKey = new Map(
-      initialData.broadcasts.map((broadcast) => [
-        `${broadcast.fixtureId ?? ""}|${broadcast.region}|${broadcast.competitionId ?? ""}`,
-        broadcast,
-      ] as const),
-    );
-
-    const publish = () => {
-      const fixtures = Array.from(fixturesById.values()).sort((a, b) => {
-        const aTime = a.sortAt ?? a.kickoff ?? a.scheduledDate ?? "9999-12-31";
-        const bTime = b.sortAt ?? b.kickoff ?? b.scheduledDate ?? "9999-12-31";
-        return aTime.localeCompare(bTime) || a.id.localeCompare(b.id);
-      });
-      const position = new Map(
-        fixtures.map((fixture, index) => [fixture.id, index]),
-      );
-      const last = Number.MAX_SAFE_INTEGER;
-      const games = Array.from(gamesById.values()).sort(
-        (a, b) => (position.get(a.id) ?? last) - (position.get(b.id) ?? last),
-      );
-      const broadcasts = Array.from(broadcastsByKey.values()).sort(
-        (a, b) =>
-          (position.get(a.fixtureId ?? "") ?? last) -
-          (position.get(b.fixtureId ?? "") ?? last),
-      );
-
-      setProgressiveState({
-        key: savedSportsKey,
-        data: { fixtures, games, broadcasts },
-      });
-    };
-
-    // Publish the first batch before requesting further saved-sport fixtures.
-    publish();
-
-    if (sportsForBatch.length === 0) {
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    const loadBatches = async () => {
-      let offset = SAVED_SPORT_INITIAL_LIMIT;
-      setIsProgressiveFetching(true);
-
-      try {
-        while (!cancelled) {
-          const batch = await fetchSavedSportsDatasetBatch(
-            sportsForBatch,
-            SAVED_SPORT_BATCH_SIZE,
-            offset,
-          );
-
-          if (cancelled) return;
-
-          for (const fixture of batch.fixtures) {
-            fixturesById.set(fixture.id, fixture);
-          }
-          for (const game of batch.games) {
-            gamesById.set(game.id, game);
-          }
-          for (const broadcast of batch.broadcasts) {
-            broadcastsByKey.set(
-              `${broadcast.fixtureId ?? ""}|${broadcast.region}|${broadcast.competitionId ?? ""}`,
-              broadcast,
-            );
-          }
-
-          publish();
-
-          if (batch.fixtures.length < SAVED_SPORT_BATCH_SIZE) break;
-
-          offset += batch.fixtures.length;
-          // Keep requests sequential and let the database recover between batches.
-          await new Promise<void>((resolve) => {
-            timeout = setTimeout(resolve, SAVED_SPORT_BATCH_DELAY_MS);
-          });
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.error("Progressive saved-sport fixture loading failed:", error);
-        }
-      } finally {
-        if (!cancelled) setIsProgressiveFetching(false);
-      }
-    };
-
-    void loadBatches();
-
-    return () => {
-      cancelled = true;
-      if (timeout !== undefined) clearTimeout(timeout);
-    };
-  }, [initialQuery.data, initialQuery.isPending, savedSportsKey]);
-
-  const currentProgressiveData =
-    progressiveState?.key === savedSportsKey ? progressiveState.data : undefined;
-
-  return {
-    ...initialQuery,
-    data: currentProgressiveData ?? initialQuery.data,
-    isFetching:
-      initialQuery.isFetching ||
-      (Boolean(currentProgressiveData) && isProgressiveFetching),
-  };
+  return useQuery(savedTeamsDatasetQueryOptions(savedLeagues, savedSports));
 }
