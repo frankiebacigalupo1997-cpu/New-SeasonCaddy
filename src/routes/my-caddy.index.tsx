@@ -59,6 +59,11 @@ import {
   useAuth,
 } from "@/hooks/useAuth";
 
+function normalizeSavedSports(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return Array.from(new Set(value.filter((sport): sport is string => typeof sport === "string").map((sport) => sport.trim().toLowerCase()).filter(Boolean))).sort();
+}
+
 const SESSION_REGION_KEY =
   "sportstream-region";
 
@@ -74,15 +79,8 @@ function MyCaddyOverview() {
   const { user } =
     useAuth();
 
-  const [
-    savedLeagues,
-    setSavedLeagues,
-  ] = useState<
-    Record<
-      string,
-      string[]
-    >
-  >({});
+  const [savedLeagues, setSavedLeagues] = useState<Record<string, string[]>>({});
+  const [savedSports, setSavedSports] = useState<string[]>([]);
 
   const [
     preferencesLoaded,
@@ -144,7 +142,7 @@ function MyCaddyOverview() {
 
   const {
     data: savedDataset,
-  } = useSavedTeamsDataset(savedLeagues);
+  } = useSavedTeamsDataset(savedLeagues, savedSports);
 
   const liveCompetitionGames =
     savedDataset?.games ?? [];
@@ -206,9 +204,8 @@ function MyCaddyOverview() {
         if (
           !cancelled
         ) {
-          setSavedLeagues(
-            {},
-          );
+          setSavedLeagues({});
+          setSavedSports([]);
 
           setSavedServices(
             [],
@@ -241,17 +238,11 @@ function MyCaddyOverview() {
         if (
           prefs
         ) {
-          setSavedLeagues(
-            prefs.saved_leagues ??
-              {
-                [prefs.league_id]:
-                  prefs.teams,
-              },
-          );
+          setSavedLeagues(prefs.saved_leagues ?? { [prefs.league_id]: prefs.teams });
+          setSavedSports(normalizeSavedSports(prefs.saved_sports));
         } else {
-          setSavedLeagues(
-            {},
-          );
+          setSavedLeagues({});
+          setSavedSports([]);
         }
 
         setSavedServices(
@@ -277,9 +268,8 @@ function MyCaddyOverview() {
         if (
           !cancelled
         ) {
-          setSavedLeagues(
-            {},
-          );
+          setSavedLeagues({});
+          setSavedSports([]);
 
           setSavedServices(
             [],

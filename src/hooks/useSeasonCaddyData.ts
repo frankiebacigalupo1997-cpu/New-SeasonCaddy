@@ -68,6 +68,7 @@ export function upcomingCompetitionDatasetQueryOptions(competitionIds: string[])
 
 export function savedTeamsDatasetQueryOptions(
   savedLeagues: Record<string, string[]>,
+  savedSports: string[] = [],
 ) {
   const normalizedEntries = Object.entries(savedLeagues)
     .map(([competitionId, teamNames]) => [
@@ -80,11 +81,14 @@ export function savedTeamsDatasetQueryOptions(
     .sort(([a], [b]) => a.localeCompare(b));
 
   const normalizedSavedLeagues = Object.fromEntries(normalizedEntries);
+  const normalizedSavedSports = Array.from(
+    new Set(savedSports.map((sport) => sport.trim().toLowerCase()).filter(Boolean)),
+  ).sort();
 
   return queryOptions({
-    queryKey: ["frontend-dataset", "saved-teams", normalizedEntries],
-    queryFn: () => fetchDatasetForSavedTeams(normalizedSavedLeagues),
-    enabled: normalizedEntries.length > 0,
+    queryKey: ["frontend-dataset", "saved-events", normalizedEntries, normalizedSavedSports],
+    queryFn: () => fetchDatasetForSavedTeams(normalizedSavedLeagues, normalizedSavedSports),
+    enabled: normalizedEntries.length > 0 || normalizedSavedSports.length > 0,
     staleTime: SPORTS_DATA_STALE_TIME,
     gcTime: SPORTS_DATA_GC_TIME,
     retry: 1,
@@ -286,6 +290,9 @@ export function useUpcomingCompetitionDataset(competitionIds: string[]) {
   return useQuery(upcomingCompetitionDatasetQueryOptions(competitionIds));
 }
 
-export function useSavedTeamsDataset(savedLeagues: Record<string, string[]>) {
-  return useQuery(savedTeamsDatasetQueryOptions(savedLeagues));
+export function useSavedTeamsDataset(
+  savedLeagues: Record<string, string[]>,
+  savedSports: string[] = [],
+) {
+  return useQuery(savedTeamsDatasetQueryOptions(savedLeagues, savedSports));
 }
