@@ -18,6 +18,7 @@ export type Preferences = {
   region: string;
 
   saved_leagues?: Record<string, string[]>;
+  saved_sports?: string[];
 };
 
 export type CloudService = {
@@ -32,6 +33,7 @@ type CloudPreferenceRow = {
   league_id: string;
   region: string;
   saved_leagues: unknown;
+  saved_sports: unknown;
   updated_at: string;
 };
 
@@ -121,6 +123,19 @@ function normalizeSavedLeagues(value: unknown): Record<string, string[]> {
   return normalized;
 }
 
+function normalizeSavedSports(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  return Array.from(
+    new Set(
+      value
+        .filter((sport): sport is string => typeof sport === "string")
+        .map((sport) => sport.trim())
+        .filter(Boolean),
+    ),
+  ).sort();
+}
+
 function normalizePreferences(prefs: Preferences): Preferences {
   const leagueId = prefs.league_id?.trim() ?? "";
   const savedLeagues = normalizeSavedLeagues(
@@ -132,6 +147,7 @@ function normalizePreferences(prefs: Preferences): Preferences {
         : {}),
   );
   const legacyTeams = savedLeagues[leagueId] ?? prefs.teams ?? [];
+  const savedSports = normalizeSavedSports(prefs.saved_sports);
 
   return {
     sport: prefs.sport?.trim() ?? "",
@@ -145,6 +161,7 @@ function normalizePreferences(prefs: Preferences): Preferences {
     ),
     region: prefs.region?.trim() || "United States",
     saved_leagues: savedLeagues,
+    saved_sports: savedSports,
   };
 }
 
@@ -157,6 +174,7 @@ function preferencesFromCloudRow(row: CloudPreferenceRow): Preferences {
     teams: savedLeagues[row.league_id] ?? [],
     region: row.region || "United States",
     saved_leagues: savedLeagues,
+    saved_sports: normalizeSavedSports(row.saved_sports),
   };
 }
 
@@ -295,6 +313,7 @@ async function persistCloudPreferences(
         league_id: normalized.league_id,
         region: normalized.region,
         saved_leagues: normalized.saved_leagues ?? {},
+        saved_sports: normalized.saved_sports ?? [],
         updated_at: new Date().toISOString(),
       },
       {
@@ -450,7 +469,7 @@ export async function fetchPreferences(options?: { canonicalize?: boolean }): Pr
 
   const { data, error } = await accountDataSupabase
     .from("user_caddy_preferences")
-    .select("user_id,sport,league_id,region,saved_leagues,updated_at")
+    .select("user_id,sport,league_id,region,saved_leagues,saved_sports,updated_at")
     .eq("user_id", userId)
     .maybeSingle();
 
