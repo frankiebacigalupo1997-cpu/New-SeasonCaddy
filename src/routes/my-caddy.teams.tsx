@@ -433,46 +433,26 @@ function TeamsPage() {
   /* TEAM TOGGLE                                          */
   /* ==================================================== */
 
-  function toggleTeam(
-    leagueId: string,
-    team: string,
-  ) {
-    setSavedLeagues(
-      (
-        current,
-      ) => {
-        const currentTeams =
-          current[
-            leagueId
-          ] ?? [];
+  function toggleTeam(leagueId: string, team: string) {
+    setSavedLeagues((current) => {
+      const currentTeams = current[leagueId] ?? [];
+      const hasWholeCompetitionMarker = currentTeams.includes(leagueId);
+      const availableTeams = liveTeamsByLeague[leagueId] ?? [];
 
-        const alreadySaved =
-          currentTeams.includes(
-            team,
-          );
+      // Clicking one team inside a whole-competition save converts that save
+      // to the remaining teams, so the clicked team can actually be removed.
+      const baseTeams = hasWholeCompetitionMarker
+        ? availableTeams.filter((availableTeam) => availableTeam !== team)
+        : currentTeams.filter((savedTeam) => savedTeam !== leagueId);
+      const alreadySaved = !hasWholeCompetitionMarker && currentTeams.includes(team);
+      const updatedTeams = alreadySaved
+        ? baseTeams.filter((savedTeam) => savedTeam !== team)
+        : hasWholeCompetitionMarker
+          ? baseTeams
+          : [...baseTeams, team];
 
-        const hasWholeCompetitionMarker = currentTeams.includes(leagueId);
-        const existingTeams = currentTeams.filter((currentTeam) => currentTeam !== leagueId);
-        const updatedTeams = [
-          ...(hasWholeCompetitionMarker ? [leagueId] : []),
-          ...(alreadySaved ? existingTeams.filter((currentTeam) => currentTeam !== team) : [...existingTeams, team]),
-        ];
-
-        return {
-          ...current,
-
-          /*
-           * Keep empty arrays.
-           * This allows SeasonCaddy to
-           * know the user explicitly
-           * removed every team from a league.
-           */
-
-          [leagueId]:
-            updatedTeams,
-        };
-      },
-    );
+      return { ...current, [leagueId]: updatedTeams };
+    });
   }
 
   /* ==================================================== */
