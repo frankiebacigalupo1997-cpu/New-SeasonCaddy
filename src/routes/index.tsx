@@ -167,7 +167,8 @@ export const Route =
     competition.id === "ufc" ||
     competition.id === "formula-1" ||
       competition.id === "champions-league" ||
-      competition.id === "europa-league"
+      competition.id === "europa-league" ||
+      competition.id === "athletics"
     ) {
       return 0;
     }
@@ -191,8 +192,7 @@ export const Route =
     if (
       competition.id === "bundesliga"  ||
       competition.id === "french-ligue-1" ||
-      competition.id === "mls" ||
-      competition.id === "athletics"
+      competition.id === "mls" 
     ) {
       return 3;
     }
