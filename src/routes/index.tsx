@@ -1069,13 +1069,11 @@ function savedItemDisplayName(
   /* GOOGLE CALENDAR                                      */
   /* ==================================================== */
 
-  if (
-  googleCalendarStatus === "syncing" &&
-  !automatic
-) {
-  return;
-}
-
+const [
+  googleCalendarSyncStatus,
+  setGoogleCalendarSyncStatus,
+] = useState<"idle" | "syncing" | "synced">("idle");
+  
   const [
     addingCalendarGameId,
     setAddingCalendarGameId,
