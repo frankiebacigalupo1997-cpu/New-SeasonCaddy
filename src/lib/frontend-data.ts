@@ -38,8 +38,11 @@ export async function fetchUpcomingDatasetForCompetitions(competitionIds) {
   };
 }
 
-export async function fetchDatasetForSavedTeams(savedLeagues) {
-  const fixtures = await fetchFrontendFixturesForSavedTeams(savedLeagues ?? {});
+export async function fetchDatasetForSavedTeams(savedLeagues, savedSports = []) {
+  const fixtures = await fetchFrontendFixturesForSavedTeams(
+    savedLeagues ?? {},
+    savedSports ?? [],
+  );
 
   return {
     fixtures,

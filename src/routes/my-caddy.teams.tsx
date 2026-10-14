@@ -132,6 +132,9 @@ function TeamsPage() {
     >
   >({});
 
+  const [savedSports, setSavedSports] = useState<string[]>([]);
+  const [originalSavedSports, setOriginalSavedSports] = useState<string[]>([]);
+
   /* ==================================================== */
   /* COLLAPSE STATE                                       */
   /* ==================================================== */
@@ -292,6 +295,9 @@ function TeamsPage() {
             [prefs.league_id]:
               prefs.teams,
           };
+        const loadedSports = normalizeSports(prefs.saved_sports ?? []);
+        setSavedSports(loadedSports);
+        setOriginalSavedSports(loadedSports);
 
         const cloned =
           cloneSavedLeagues(
@@ -362,35 +368,18 @@ function TeamsPage() {
   /* COUNTS                                               */
   /* ==================================================== */
 
-  const totalSavedTeams =
-    useMemo(() => {
-      return Object.values(
-        savedLeagues,
-      ).reduce(
-        (
-          total,
-          teams,
-        ) =>
-          total +
-          teams.length,
-        0,
-      );
-    }, [
-      savedLeagues,
-    ]);
+  const totalSavedTeams = useMemo(
+    () => Object.entries(savedLeagues).reduce(
+      (total, [competitionId, teams]) => total + teams.filter((team) => team !== competitionId).length,
+      0,
+    ),
+    [savedLeagues],
+  );
 
-  const followedLeagueCount =
-    useMemo(() => {
-      return Object.values(
-        savedLeagues,
-      ).filter(
-        (teams) =>
-          teams.length >
-          0,
-      ).length;
-    }, [
-      savedLeagues,
-    ]);
+  const followedLeagueCount = useMemo(
+    () => Object.values(savedLeagues).filter((teams) => teams.length > 0).length,
+    [savedLeagues],
+  );
 
   /* ==================================================== */
   /* UNSAVED CHANGES                                      */
@@ -398,18 +387,9 @@ function TeamsPage() {
 
   const hasChanges =
     useMemo(() => {
-      return (
-        normaliseSavedLeagues(
-          savedLeagues,
-        ) !==
-        normaliseSavedLeagues(
-          originalSavedLeagues,
-        )
-      );
-    }, [
-      savedLeagues,
-      originalSavedLeagues,
-    ]);
+      return normaliseSavedLeagues(savedLeagues) !== normaliseSavedLeagues(originalSavedLeagues) ||
+        JSON.stringify(normalizeSports(savedSports)) !== JSON.stringify(normalizeSports(originalSavedSports));
+    }, [savedLeagues, originalSavedLeagues, savedSports, originalSavedSports]);
 
   /* ==================================================== */
   /* COLLAPSE HANDLERS                                    */
@@ -471,19 +451,12 @@ function TeamsPage() {
             team,
           );
 
-        const updatedTeams =
-          alreadySaved
-            ? currentTeams.filter(
-                (
-                  currentTeam,
-                ) =>
-                  currentTeam !==
-                  team,
-              )
-            : [
-                ...currentTeams,
-                team,
-              ];
+        const hasWholeCompetitionMarker = currentTeams.includes(leagueId);
+        const existingTeams = currentTeams.filter((currentTeam) => currentTeam !== leagueId);
+        const updatedTeams = [
+          ...(hasWholeCompetitionMarker ? [leagueId] : []),
+          ...(alreadySaved ? existingTeams.filter((currentTeam) => currentTeam !== team) : [...existingTeams, team]),
+        ];
 
         return {
           ...current,
@@ -506,149 +479,24 @@ function TeamsPage() {
   /* SPORT / COMPETITION BULK SAVE                       */
   /* ==================================================== */
 
-  function toggleSavedCompetition(
-    leagueId: string,
-  ) {
-    const availableTeams =
-      liveTeamsByLeague[
-        leagueId
-      ] ?? [];
-
-    if (
-      availableTeams.length ===
-      0
-    ) {
-      toast.error(
-        "No teams are available for this competition yet",
-      );
-
-      return;
-    }
-
-    setSavedLeagues(
-      (
-        current,
-      ) => {
-        const currentTeams =
-          current[
-            leagueId
-          ] ?? [];
-
-        const competitionIsSaved =
-          availableTeams.every(
-            (
-              team,
-            ) =>
-              currentTeams.includes(
-                team,
-              ),
-          );
-
-        return {
-          ...current,
-
-          [leagueId]:
-            competitionIsSaved
-              ? []
-              : [
-                  ...availableTeams,
-                ],
-        };
-      },
-    );
+  function toggleSavedCompetition(leagueId: string) {
+    setSavedLeagues((current) => {
+      const currentTeams = current[leagueId] ?? [];
+      const wholeCompetitionIsSaved = currentTeams.includes(leagueId);
+      return {
+        ...current,
+        [leagueId]: wholeCompetitionIsSaved
+          ? currentTeams.filter((team) => team !== leagueId)
+          : [leagueId, ...currentTeams.filter((team) => team !== leagueId)],
+      };
+    });
   }
 
-  function toggleSavedSport(
-    sportId: string,
-  ) {
-    const sportLeagues =
-      leagues.filter(
-        (
-          league,
-        ) =>
-          league.sport ===
-          sportId,
-      );
-
-    const saveableLeagues =
-      sportLeagues.filter(
-        (
-          league,
-        ) =>
-          (
-            liveTeamsByLeague[
-              league.id
-            ] ?? []
-          ).length >
-          0,
-      );
-
-    if (
-      saveableLeagues.length ===
-      0
-    ) {
-      toast.error(
-        "No teams are available for this sport yet",
-      );
-
-      return;
-    }
-
-    setSavedLeagues(
-      (
-        current,
-      ) => {
-        const sportIsSaved =
-          saveableLeagues.every(
-            (
-              league,
-            ) => {
-              const availableTeams =
-                liveTeamsByLeague[
-                  league.id
-                ] ?? [];
-
-              const currentTeams =
-                current[
-                  league.id
-                ] ?? [];
-
-              return availableTeams.every(
-                (
-                  team,
-                ) =>
-                  currentTeams.includes(
-                    team,
-                  ),
-              );
-            },
-          );
-
-        const updated = {
-          ...current,
-        };
-
-        for (
-          const league of
-          saveableLeagues
-        ) {
-          const availableTeams =
-            liveTeamsByLeague[
-              league.id
-            ] ?? [];
-
-          updated[
-            league.id
-          ] =
-            sportIsSaved
-              ? []
-              : [
-                  ...availableTeams,
-                ];
-        }
-
-        return updated;
-      },
+  function toggleSavedSport(sportId: string) {
+    setSavedSports((current) =>
+      current.includes(sportId)
+        ? current.filter((sport) => sport !== sportId)
+        : normalizeSports([...current, sportId]),
     );
   }
 
@@ -708,14 +556,13 @@ function TeamsPage() {
 
           saved_leagues:
             savedLeagues,
+          saved_sports:
+            savedSports,
         },
       );
 
-      setOriginalSavedLeagues(
-        cloneSavedLeagues(
-          savedLeagues,
-        ),
-      );
+      setOriginalSavedLeagues(cloneSavedLeagues(savedLeagues));
+      setOriginalSavedSports(normalizeSports(savedSports));
 
       toast.success(
         "Your teams have been updated",
@@ -743,11 +590,8 @@ function TeamsPage() {
   /* ==================================================== */
 
   function discardChanges() {
-    setSavedLeagues(
-      cloneSavedLeagues(
-        originalSavedLeagues,
-      ),
-    );
+    setSavedLeagues(cloneSavedLeagues(originalSavedLeagues));
+    setSavedSports(normalizeSports(originalSavedSports));
   }
 
   /* ==================================================== */
@@ -1004,20 +848,10 @@ function TeamsPage() {
             );
 
 
-            const sportSavedTeams =
-              sportLeagues.reduce(
-                (
-                  total,
-                  league,
-                ) =>
-                  total +
-                  (
-                    savedLeagues[
-                      league.id
-                    ] ?? []
-                  ).length,
-                0,
-              );
+            const sportSavedTeams = sportLeagues.reduce(
+              (total, league) => total + (savedLeagues[league.id] ?? []).filter((team) => team !== league.id).length,
+              0,
+            );
 
             const sportActiveLeagues =
               sportLeagues.filter(
@@ -1045,33 +879,7 @@ function TeamsPage() {
                   0,
               );
 
-            const sportIsSaved =
-              saveableSportLeagues.length >
-                0 &&
-              saveableSportLeagues.every(
-                (
-                  league,
-                ) => {
-                  const availableTeams =
-                    liveTeamsByLeague[
-                      league.id
-                    ] ?? [];
-
-                  const selectedTeams =
-                    savedLeagues[
-                      league.id
-                    ] ?? [];
-
-                  return availableTeams.every(
-                    (
-                      team,
-                    ) =>
-                      selectedTeams.includes(
-                        team,
-                      ),
-                  );
-                },
-              );
+            const sportIsSaved = savedSports.includes(sport.id);
 
             return (
               <div
@@ -1237,10 +1045,7 @@ function TeamsPage() {
                           sport.id,
                         )
                       }
-                      disabled={
-                        saveableSportLeagues.length ===
-                        0
-                      }
+                      disabled={false}
                     />
 
                     {sportActiveLeagues >
@@ -1339,27 +1144,12 @@ function TeamsPage() {
                               ],
                             );
 
-                          const selectedTeams =
-                            savedLeagues[
-                              league.id
-                            ] ?? [];
+                          const selectedTeams = (savedLeagues[league.id] ?? []).filter((team) => team !== league.id);
 
                           const availableTeams =
                             liveTeamsByLeague[
                               league.id
                             ] ?? [];
-
-                          const competitionIsSaved =
-                            availableTeams.length >
-                              0 &&
-                            availableTeams.every(
-                              (
-                                team,
-                              ) =>
-                                selectedTeams.includes(
-                                  team,
-                                ),
-                            );
 
                           return (
                             <div
@@ -1496,9 +1286,7 @@ function TeamsPage() {
                                   }}
                                 >
                                   <SaveScopeButton
-                                    saved={
-                                      competitionIsSaved
-                                    }
+                                    saved={(savedLeagues[league.id] ?? []).includes(league.id)}
                                     unsavedLabel="Save competition"
                                     savedLabel="Competition Saved"
                                     onToggle={() =>
@@ -1506,10 +1294,7 @@ function TeamsPage() {
                                         league.id,
                                       )
                                     }
-                                    disabled={
-                                      availableTeams.length ===
-                                      0
-                                    }
+                                    disabled={false}
                                   />
 
                                   {selectedTeams.length >
@@ -2224,6 +2009,11 @@ function MiniStat({
 /* ====================================================== */
 /* HELPERS                                                */
 /* ====================================================== */
+
+function normalizeSports(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return Array.from(new Set(value.filter((sport): sport is string => typeof sport === "string").map((sport) => sport.trim().toLowerCase()).filter(Boolean))).sort();
+}
 
 function cloneSavedLeagues(
   savedLeagues: Record<

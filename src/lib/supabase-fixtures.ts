@@ -674,6 +674,7 @@ export async function fetchFrontendFixtures(
     statusIn?: string[];
     canonicalHomeIn?: string[];
     canonicalAwayIn?: string[];
+    sportIn?: string[];
   },
 ): Promise<FrontendFixtureRow[]> {
   const normalizedCompetitionIds = Array.isArray(competitionIds)
@@ -727,6 +728,15 @@ export async function fetchFrontendFixtures(
         "canonical_away",
         options.canonicalAwayIn,
       );
+    }
+
+    const normalizedSports = Array.from(
+      new Set((options?.sportIn ?? []).map((sport) => sport.trim().toLowerCase()).filter(Boolean)),
+    );
+    if (normalizedSports.length === 1) {
+      query = query.eq("sport", normalizedSports[0]);
+    } else if (normalizedSports.length > 1) {
+      query = query.in("sport", normalizedSports);
     }
 
     if (normalizedCompetitionIds.length === 1) {
@@ -851,6 +861,7 @@ const MAX_TEAM_NAMES_PER_FILTERED_QUERY = 24;
 
 export async function fetchFrontendFixturesForSavedTeams(
   savedLeagues: Record<string, string[]>,
+  savedSports: string[] = [],
 ): Promise<FrontendFixtureRow[]> {
   const entries = Object.entries(savedLeagues)
     .map(([competitionId, teamNames]) => [
@@ -866,7 +877,11 @@ export async function fetchFrontendFixturesForSavedTeams(
     .filter(([, teamNames]) => teamNames.length > 0)
     .sort(([a], [b]) => a.localeCompare(b));
 
-  if (entries.length === 0) {
+  const normalizedSavedSports = Array.from(
+    new Set(savedSports.map((sport) => sport.trim().toLowerCase()).filter(Boolean)),
+  ).sort();
+
+  if (entries.length === 0 && normalizedSavedSports.length === 0) {
     return [];
   }
 
@@ -884,8 +899,8 @@ export async function fetchFrontendFixturesForSavedTeams(
     console.warn("Could not resolve saved-team identity filters", error);
   }
 
-  const resultSets = await Promise.all(
-    entries.map(async ([competitionId, teamNames]) => {
+  const resultSets = await Promise.all([
+    ...entries.map(async ([competitionId, teamNames]) => {
       const identityCompetition = identityByCompetition.get(competitionId);
 
       /*
@@ -946,7 +961,10 @@ export async function fetchFrontendFixturesForSavedTeams(
         ),
       );
     }),
-  );
+    ...(normalizedSavedSports.length > 0
+      ? [fetchFrontendFixtures(undefined, { sportIn: normalizedSavedSports })]
+      : []),
+  ]);
 
   const byId = new Map<string, FrontendFixtureRow>();
 

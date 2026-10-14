@@ -47,6 +47,11 @@ import {
   useAuth,
 } from "@/hooks/useAuth";
 
+function normalizeSavedSports(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return Array.from(new Set(value.filter((sport): sport is string => typeof sport === "string").map((sport) => sport.trim().toLowerCase()).filter(Boolean))).sort();
+}
+
 const SESSION_REGION_KEY =
   "sportstream-region";
 
@@ -66,15 +71,8 @@ function CalendarPage() {
   /* SAVED TEAMS                                          */
   /* ==================================================== */
 
-  const [
-    savedLeagues,
-    setSavedLeagues,
-  ] = useState<
-    Record<
-      string,
-      string[]
-    >
-  >({});
+  const [savedLeagues, setSavedLeagues] = useState<Record<string, string[]>>({});
+  const [savedSports, setSavedSports] = useState<string[]>([]);
 
   const [
     preferencesLoaded,
@@ -125,7 +123,7 @@ function CalendarPage() {
 
   const {
     data: savedDataset,
-  } = useSavedTeamsDataset(savedLeagues);
+  } = useSavedTeamsDataset(savedLeagues, savedSports);
 
   const liveCompetitionGames = savedDataset?.games ?? [];
   const liveBroadcasts = savedDataset?.broadcasts ?? [];
@@ -263,9 +261,8 @@ function CalendarPage() {
         if (
           !cancelled
         ) {
-          setSavedLeagues(
-            {},
-          );
+          setSavedLeagues({});
+          setSavedSports([]);
 
           setPreferencesLoaded(
             true,
@@ -288,9 +285,8 @@ function CalendarPage() {
         if (
           !prefs
         ) {
-          setSavedLeagues(
-            {},
-          );
+          setSavedLeagues({});
+          setSavedSports([]);
 
           setPreferencesLoaded(
             true,
@@ -299,13 +295,8 @@ function CalendarPage() {
           return;
         }
 
-        setSavedLeagues(
-          prefs.saved_leagues ??
-            {
-              [prefs.league_id]:
-                prefs.teams,
-            },
-        );
+        setSavedLeagues(prefs.saved_leagues ?? { [prefs.league_id]: prefs.teams });
+        setSavedSports(normalizeSavedSports(prefs.saved_sports));
 
         setPreferencesLoaded(
           true,
@@ -321,9 +312,8 @@ function CalendarPage() {
         if (
           !cancelled
         ) {
-          setSavedLeagues(
-            {},
-          );
+          setSavedLeagues({});
+          setSavedSports([]);
 
           setPreferencesLoaded(
             true,
@@ -375,15 +365,13 @@ function CalendarPage() {
   /* ==================================================== */
 
  async function syncWithGoogleCalendar() {
-  const savedTeamCount =
-    Object.values(savedLeagues).reduce(
-      (total, competitionTeams) =>
-        total + competitionTeams.length,
-      0,
-    );
+  const savedTeamCount = Object.values(savedLeagues).reduce(
+    (total, competitionTeams) => total + competitionTeams.length,
+    0,
+  );
 
-  if (savedTeamCount === 0) {
-    toast.error("Save at least one team first");
+  if (savedTeamCount === 0 && savedSports.length === 0) {
+    toast.error("Save at least one team, competition, or sport first");
     return;
   }
 
@@ -439,6 +427,8 @@ function CalendarPage() {
           league: game.league,
           home: game.home,
           away: game.away,
+          eventName: game.eventName,
+          eventKind: game.eventKind,
           kickoff: game.kickoff,
           scheduledDate: game.scheduledDate,
           scheduleLabel: game.scheduleLabel,
