@@ -1762,9 +1762,9 @@ function TeamsPage() {
                               "12px",
                           }}
                         >
-                          {sport.id === "soccer" && soccerLocation
-                            ? `No soccer competitions are currently listed for ${soccerLocation}.`
-                            : "No competitions have been added for this sport yet."}
+                          
+                          No competitions have been added for this sport yet.
+
                         </div>
                       )}
                     </div>
