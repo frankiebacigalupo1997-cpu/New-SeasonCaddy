@@ -563,6 +563,8 @@ function Index() {
       >
     >({});
 
+  const [savedSports, setSavedSports] = useState<string[]>([]);
+
   const [
     savedServices,
     setSavedServices,
@@ -732,9 +734,8 @@ function Index() {
     data: savedTeamsDataset,
     isFetching: isSavedTeamsDatasetFetching,
   } = useSavedTeamsDataset(
-    onlySavedTeams && trackerCompetitionIds.length === 0
-      ? savedLeagues
-      : {},
+    onlySavedTeams && trackerCompetitionIds.length === 0 ? savedLeagues : {},
+    onlySavedTeams && trackerCompetitionIds.length === 0 ? savedSports : [],
   );
 
   const appGames =
@@ -1059,6 +1060,7 @@ const [
                   prefs.teams,
               },
           );
+        setSavedSports(prefs.saved_sports ?? []);
         },
       )
       .catch(() => {
@@ -1101,34 +1103,17 @@ const [
 /* ==================================================== */
 
 async function syncWithGoogleCalendar(
-  competitionsToSync?: Record<
-    string,
-    string[]
-  >,
+  competitionsToSync?: Record<string, string[]>,
   automatic = false,
+  sportsToSync: string[] = savedSports,
 ) {
   const competitions =
     competitionsToSync ??
     savedLeagues;
 
-  const savedTeamCount =
-    Object.values(
-      competitions,
-    ).reduce(
-      (
-        total,
-        competitionTeams,
-      ) =>
-        total +
-        competitionTeams.length,
-      0,
-    );
+  const savedTeamCount = Object.values(competitions).reduce((total, teams) => total + teams.length, 0);
 
-  if (
-    savedTeamCount ===
-      0 &&
-    !automatic
-  ) {
+  if (savedTeamCount === 0 && sportsToSync.length === 0 && !automatic) {
     toast.error(
       "Save at least one team first",
     );
@@ -1190,10 +1175,7 @@ async function syncWithGoogleCalendar(
       return;
     }
 
-    const syncDataset =
-      await fetchDatasetForSavedTeams(
-        competitions,
-      );
+    const syncDataset = await fetchDatasetForSavedTeams(competitions, sportsToSync);
 
     const syncEvents =
       syncDataset.games
@@ -1852,8 +1834,8 @@ async function syncWithGoogleCalendar(
               region,
             ),
 
-          saved_leagues:
-            updatedSavedLeagues,
+          saved_leagues: updatedSavedLeagues,
+          saved_sports: currentPrefs?.saved_sports ?? savedSports,
         },
       );
 
@@ -1868,10 +1850,7 @@ async function syncWithGoogleCalendar(
           : `Saved ${teams.length} team(s) to your slate`,
       );
 
-      await syncWithGoogleCalendar(
-        updatedSavedLeagues,
-        true,
-      );
+      await syncWithGoogleCalendar(updatedSavedLeagues, true, savedSports);
     } catch (
       error
     ) {
@@ -1975,8 +1954,8 @@ async function syncWithGoogleCalendar(
               region,
             ),
 
-          saved_leagues:
-            updatedSavedLeagues,
+          saved_leagues: updatedSavedLeagues,
+          saved_sports: currentPrefs?.saved_sports ?? savedSports,
         },
       );
 
@@ -2000,10 +1979,7 @@ async function syncWithGoogleCalendar(
         )} removed from your saved teams`,
       );
 
-      await syncWithGoogleCalendar(
-        updatedSavedLeagues,
-        true,
-      );
+      await syncWithGoogleCalendar(updatedSavedLeagues, true, savedSports);
     } catch (
       error
     ) {
@@ -2085,8 +2061,8 @@ async function syncWithGoogleCalendar(
               region,
             ),
 
-          saved_leagues:
-            updatedSavedLeagues,
+          saved_leagues: updatedSavedLeagues,
+          saved_sports: currentPrefs?.saved_sports ?? savedSports,
         },
       );
 
@@ -2107,10 +2083,7 @@ async function syncWithGoogleCalendar(
         `${competitionName} removed from your saved teams`,
       );
 
-      await syncWithGoogleCalendar(
-        updatedSavedLeagues,
-        true,
-      );
+      await syncWithGoogleCalendar(updatedSavedLeagues, true, savedSports);
     } catch (
       error
     ) {
