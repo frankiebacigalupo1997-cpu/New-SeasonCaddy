@@ -190,7 +190,7 @@ export const Route =
 
     if (
       competition.id === "bundesliga"  ||
-      competition.id === "ligue-1" ||
+      competition.id === "fra.1" ||
       competition.id === "mls"
     ) {
       return 3;
