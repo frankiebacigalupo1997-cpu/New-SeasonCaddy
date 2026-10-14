@@ -44,10 +44,6 @@ import {
 } from "@/hooks/useAuth";
 
 import {
-  SeasonCaddySelect,
-} from "@/components/gamehub/SeasonCaddySelect";
-
-import {
   sortCompetitions,
 } from "@/lib/competition-sorting";
 
@@ -83,36 +79,16 @@ function TeamsPage() {
     data: frontendCatalog = [],
   } = useFrontendCatalog();
 
+  
   const leagues = useMemo(
     () =>
       frontendCatalog.map((competition) => ({
         id: competition.competitionId,
         name: competition.competitionName,
         sport: competition.sport,
-        location:
-          competition.locationName ??
-          competition.countryName ??
-          competition.regionName ??
-          "",
         teams: catalogDisplayTeamNames(competition),
       })),
     [frontendCatalog],
-  );
-
-  const soccerLocationOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          leagues
-            .filter(
-              (league) =>
-                league.sport === "soccer" &&
-                Boolean(league.location),
-            )
-            .map((league) => league.location),
-        ),
-      ).sort((a, b) => a.localeCompare(b)),
-    [leagues],
   );
 
   const sports = useMemo(() => {
@@ -262,11 +238,6 @@ function TeamsPage() {
   ] = useState(
     "United States · Eastern",
   );
-
-  const [
-    soccerLocation,
-    setSoccerLocation,
-  ] = useState("");
 
   /* ==================================================== */
   /* LOAD USER PREFERENCES                                */
@@ -1025,21 +996,13 @@ function TeamsPage() {
                 ],
               );
 
-            const sportLeagues =
+            
+            const sportLeagues = sortCompetitions(
               leagues.filter(
-                (
-                  league,
-                ) =>
-                  league.sport ===
-                  sport.id,
-              );
+                (league) => league.sport === sport.id,
+              ),
+            );
 
-            const visibleSportLeagues =
-              sport.id === "soccer" && soccerLocation
-                ? sportLeagues.filter(
-                    (league) => league.location === soccerLocation,
-                  )
-                : sportLeagues;
 
             const sportSavedTeams =
               sportLeagues.reduce(
@@ -1363,30 +1326,7 @@ function TeamsPage() {
                           "8px",
                       }}
                     >
-                      {sport.id === "soccer" &&
-                        soccerLocationOptions.length > 0 && (
-                          <div
-                            style={{
-                              padding: "4px 0 2px",
-                            }}
-                          >
-                            <SeasonCaddySelect
-                              value={soccerLocation}
-                              placeholder="All Locations"
-                              options={[
-                                {
-                                  value: "",
-                                  label: "All Locations",
-                                },
-                                ...soccerLocationOptions.map((location) => ({
-                                  value: location,
-                                  label: location,
-                                })),
-                              ]}
-                              onChange={setSoccerLocation}
-                            />
-                          </div>
-                        )}
+            
 
                       {visibleSportLeagues.map(
                         (
