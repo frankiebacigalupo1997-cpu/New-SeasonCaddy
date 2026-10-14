@@ -203,39 +203,6 @@ export const Route =
     return 4;
 }
 
-  type CatalogLocationFields = {
-    locationName?: unknown;
-    location_name?: unknown;
-    countryName?: unknown;
-    country_name?: unknown;
-    regionName?: unknown;
-    region_name?: unknown;
-    location?: unknown;
-    country?: unknown;
-    geography?: unknown;
-  };
-  
-  function catalogLocation(item: unknown) {
-    const locationItem =
-      item as CatalogLocationFields;
-  
-    const rawLocation =
-      locationItem.locationName ??
-      locationItem.location_name ??
-      locationItem.countryName ??
-      locationItem.country_name ??
-      locationItem.regionName ??
-      locationItem.region_name ??
-      locationItem.location ??
-      locationItem.country ??
-      locationItem.geography;
-  
-    return typeof rawLocation === "string"
-      ? rawLocation.trim()
-      : "";
-  }
-
-
 type ViewportStickyProps = {
   children: React.ReactNode;
   wrapperClassName?: string;
@@ -556,12 +523,6 @@ function Index() {
     useState("");
 
   const [
-    trackerLocation,
-    setTrackerLocation,
-  ] =
-    useState("");
-
-  const [
     trackerLeague,
     setTrackerLeague,
   ] =
@@ -586,10 +547,6 @@ function Index() {
     useState<
       string[]
     >([]);
-
-  const isSoccerTracker =
-    trackerSport ===
-    "soccer";
 
   /* ==================================================== */
   /* SAVED USER DATA                                      */
@@ -646,18 +603,6 @@ function Index() {
           return false;
         }
 
-        if (
-          trackerSport ===
-            "soccer" &&
-          trackerLocation &&
-          catalogLocation(
-            item,
-          ) !==
-            trackerLocation
-        ) {
-          return false;
-        }
-
         return true;
       });
 
@@ -681,7 +626,6 @@ function Index() {
     }, [
       frontendCatalog,
       trackerSport,
-      trackerLocation,
       trackerLeague,
     ]);
 
@@ -868,7 +812,6 @@ function Index() {
           id: item.competitionId,
           name: item.competitionName || formatCloudflareOptionLabel(item.competitionId),
           sport: normalizeCloudflareOptionValue(item.sport),
-          location: catalogLocation(item),
         }))
         .sort((a, b) => a.name.localeCompare(b.name)),
     [frontendCatalog],
@@ -926,76 +869,6 @@ function savedItemDisplayName(
 
   return savedValue;
 }
-
-  const trackerLocationOptions =
-    useMemo(() => {
-      if (
-        !isSoccerTracker
-      ) {
-        return [];
-      }
-
-      return Array.from(
-        new Set(
-          liveCompetitionOptions
-            .filter(
-              (
-                competition,
-              ) =>
-                competition.sport ===
-                  "soccer" &&
-                Boolean(
-                  competition.location,
-                ),
-            )
-            .map(
-              (
-                competition,
-              ) =>
-                competition.location,
-            ),
-        ),
-      ).sort(
-        (
-          a,
-          b,
-        ) =>
-          a.localeCompare(
-            b,
-          ),
-      );
-    }, [
-      liveCompetitionOptions,
-      isSoccerTracker,
-    ]);
-
-  const trackerLocationCompetitionIds =
-    useMemo(
-      () =>
-        new Set(
-          liveCompetitionOptions
-            .filter(
-              (
-                competition,
-              ) =>
-                competition.sport ===
-                  "soccer" &&
-                (!trackerLocation ||
-                  competition.location ===
-                    trackerLocation),
-            )
-            .map(
-              (
-                competition,
-              ) =>
-                competition.id,
-            ),
-        ),
-      [
-        liveCompetitionOptions,
-        trackerLocation,
-      ],
-    );
 
   const competitionIdByName =
     useMemo(
@@ -1221,69 +1094,6 @@ const [
     );
   }, [
     sport,
-  ]);
-
-  /* ==================================================== */
-  /* TRACKER SOCCER LOCATION                              */
-  /* ==================================================== */
-
-  useEffect(() => {
-    if (
-      isSoccerTracker ||
-      !trackerLocation
-    ) {
-      return;
-    }
-
-    setTrackerLocation(
-      "",
-    );
-  }, [
-    isSoccerTracker,
-    trackerLocation,
-  ]);
-
-  useEffect(() => {
-    if (
-      !isSoccerTracker ||
-      !trackerLocation ||
-      !trackerLeague
-    ) {
-      return;
-    }
-
-    const selectedCompetition =
-      liveCompetitionOptions.find(
-        (
-          competition,
-        ) =>
-          competition.name ===
-          trackerLeague,
-      );
-
-    if (
-      selectedCompetition?.location ===
-      trackerLocation
-    ) {
-      return;
-    }
-
-    setTrackerLeague(
-      "",
-    );
-
-    setTrackerTeam(
-      "",
-    );
-
-    setSelectedProviderIds(
-      [],
-    );
-  }, [
-    isSoccerTracker,
-    trackerLocation,
-    trackerLeague,
-    liveCompetitionOptions,
   ]);
 
 /* ==================================================== */
@@ -2439,15 +2249,6 @@ async function syncWithGoogleCalendar(
               return false;
             }
 
-            if (
-              isSoccerTracker &&
-              trackerLocation &&
-              item.location !==
-                trackerLocation
-            ) {
-              return false;
-            }
-
             return true;
           },
         )
@@ -2474,8 +2275,6 @@ async function syncWithGoogleCalendar(
     }, [
       liveCompetitionOptions,
       trackerSport,
-      trackerLocation,
-      isSoccerTracker,
     ]);
 
   const trackerTeamOptions =
@@ -2506,26 +2305,6 @@ async function syncWithGoogleCalendar(
                   trackerSport
               ) {
                 return false;
-              }
-
-              if (
-                isSoccerTracker &&
-                trackerLocation
-              ) {
-                const gameCompetitionId =
-                  game.competitionId ??
-                  competitionIdByName.get(
-                    game.league,
-                  );
-
-                if (
-                  !gameCompetitionId ||
-                  !trackerLocationCompetitionIds.has(
-                    gameCompetitionId,
-                  )
-                ) {
-                  return false;
-                }
               }
 
               if (
@@ -2574,11 +2353,7 @@ async function syncWithGoogleCalendar(
       appGames,
       liveCompetitionOptions,
       trackerSport,
-      trackerLocation,
       trackerLeague,
-      isSoccerTracker,
-      trackerLocationCompetitionIds,
-      competitionIdByName,
     ]);
 
   /* ==================================================== */
@@ -2611,26 +2386,6 @@ async function syncWithGoogleCalendar(
                     trackerSport
                 ) {
                   return false;
-                }
-
-                if (
-                  isSoccerTracker &&
-                  trackerLocation
-                ) {
-                  const gameCompetitionId =
-                    game.competitionId ??
-                    competitionIdByName.get(
-                      game.league,
-                    );
-
-                  if (
-                    !gameCompetitionId ||
-                    !trackerLocationCompetitionIds.has(
-                      gameCompetitionId,
-                    )
-                  ) {
-                    return false;
-                  }
                 }
 
                 if (
@@ -2723,12 +2478,8 @@ async function syncWithGoogleCalendar(
       liveBroadcasts,
       liveCompetitionOptions,
       trackerSport,
-      trackerLocation,
       trackerLeague,
       trackerTeam,
-      isSoccerTracker,
-      trackerLocationCompetitionIds,
-      competitionIdByName,
       region,
     ]);
 
@@ -2748,26 +2499,6 @@ async function syncWithGoogleCalendar(
 ) {
   return false;
 }
-
-          if (
-            isSoccerTracker &&
-            trackerLocation
-          ) {
-            const gameCompetitionId =
-              game.competitionId ??
-              competitionIdByName.get(
-                game.league,
-              );
-
-            if (
-              !gameCompetitionId ||
-              !trackerLocationCompetitionIds.has(
-                gameCompetitionId,
-              )
-            ) {
-              return false;
-            }
-          }
 
           if (
             trackerLeague &&
@@ -2868,11 +2599,8 @@ async function syncWithGoogleCalendar(
     }, [
       upcomingGames,
       trackerSport,
-      trackerLocation,
       trackerLeague,
       trackerTeam,
-      isSoccerTracker,
-      trackerLocationCompetitionIds,
       competitionIdByName,
       onlySavedTeams,
       selectedProviderIds,
@@ -2888,7 +2616,6 @@ async function syncWithGoogleCalendar(
   const hasActiveTrackerFilters =
     Boolean(
       trackerSport ||
-      trackerLocation ||
       trackerLeague ||
       trackerTeam ||
       onlySavedTeams ||
@@ -2929,7 +2656,6 @@ async function syncWithGoogleCalendar(
       () =>
         JSON.stringify({
           trackerSport,
-          trackerLocation,
           trackerLeague,
           trackerTeam,
           onlySavedTeams,
@@ -2939,7 +2665,6 @@ async function syncWithGoogleCalendar(
         }),
       [
         trackerSport,
-        trackerLocation,
         trackerLeague,
         trackerTeam,
         onlySavedTeams,
@@ -3577,15 +3302,6 @@ async function syncWithGoogleCalendar(
                       onChange={(newSport) => {
                         setTrackerSport(newSport);
 
-                        if (
-                          newSport !==
-                          "soccer"
-                        ) {
-                          setTrackerLocation(
-                            "",
-                          );
-                        }
-
                         const defaultCompetition =
                           liveCompetitionOptions
                             .filter(
@@ -3609,58 +3325,6 @@ async function syncWithGoogleCalendar(
                     
                     />
                   </div>
-
-                  {/* SOCCER LOCATION */}
-
-                  {isSoccerTracker && (
-                    <div className="min-w-0 flex-1">
-                      <SeasonCaddySelect
-                        value={
-                          trackerLocation
-                        }
-                        placeholder="All Locations"
-                        options={[
-                          {
-                            value:
-                              "",
-                            label:
-                              "All Locations",
-                          },
-
-                          ...trackerLocationOptions.map(
-                            (
-                              location,
-                            ) => ({
-                              value:
-                                location,
-
-                              label:
-                                location,
-                            }),
-                          ),
-                        ]}
-                        onChange={(
-                          newLocation,
-                        ) => {
-                          setTrackerLocation(
-                            newLocation,
-                          );
-
-                          setTrackerLeague(
-                            "",
-                          );
-
-                          setTrackerTeam(
-                            "",
-                          );
-
-                          setSelectedProviderIds(
-                            [],
-                          );
-                        }}
-                      />
-                    </div>
-                  )}
 
                   {/* ALL COMPETITIONS */}
 
@@ -3903,7 +3567,6 @@ async function syncWithGoogleCalendar(
                     type="button"
                     disabled={
                       !trackerSport &&
-                      !trackerLocation &&
                       !trackerLeague &&
                       !trackerTeam &&
                       !onlySavedTeams &&
@@ -3912,10 +3575,6 @@ async function syncWithGoogleCalendar(
                     }
                     onClick={() => {
                       setTrackerSport(
-                        "",
-                      );
-
-                      setTrackerLocation(
                         "",
                       );
 
@@ -4641,4 +4300,3 @@ function normalizeRegion(
 
   return "United States";
 }
-
