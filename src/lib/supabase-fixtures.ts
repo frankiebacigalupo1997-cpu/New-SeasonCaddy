@@ -889,7 +889,9 @@ export async function fetchFrontendFixturesForSavedTeams(
   let identityByCompetition = new Map<string, FrontendCatalogRow>();
 
   try {
-    const identityRows = await fetchFrontendCompetitionIdentity(competitionIds);
+    const identityRows = competitionIds.length > 0
+      ? await fetchFrontendCompetitionIdentity(competitionIds)
+      : [];
     identityByCompetition = new Map(
       identityRows.map((competition) => [competition.competitionId, competition]),
     );
