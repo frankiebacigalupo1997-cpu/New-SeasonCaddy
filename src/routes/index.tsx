@@ -4088,24 +4088,6 @@ function gameDate(
 
   return null;
 }
-
-function sortGamesByDate(
-  a: Game,
-  b: Game,
-) {
-  const aDate =
-    gameDate(
-      a,
-    );
-
-  const bDate =
-    gameDate(
-      b,
-    );
-
-  if (
-    !aDate &&
-    !bDate
  
 function sortGamesByDate(
   a: Game,
