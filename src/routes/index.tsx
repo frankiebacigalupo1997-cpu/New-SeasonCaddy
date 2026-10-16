@@ -4106,27 +4106,38 @@ function sortGamesByDate(
   if (
     !aDate &&
     !bDate
-  ) {
+ 
+function sortGamesByDate(
+  a: Game,
+  b: Game,
+) {
+  // Fixtures with confirmed kickoff times come first.
+  // Fixtures with TBD kickoff times come after them.
+  const aHasKickoff = Boolean(a.kickoff);
+  const bHasKickoff = Boolean(b.kickoff);
+
+  if (aHasKickoff !== bHasKickoff) {
+    return aHasKickoff ? -1 : 1;
+  }
+
+  const aDate = gameDate(a);
+  const bDate = gameDate(b);
+
+  if (!aDate && !bDate) {
     return 0;
   }
 
-  if (
-    !aDate
-  ) {
+  if (!aDate) {
     return 1;
   }
 
-  if (
-    !bDate
-  ) {
+  if (!bDate) {
     return -1;
   }
 
-  return (
-    aDate.getTime() -
-    bDate.getTime()
-  );
+  return aDate.getTime() - bDate.getTime();
 }
+
 
 /* ====================================================== */
 /* CLOUDFLARE OPTION HELPERS                              */
