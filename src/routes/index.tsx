@@ -4111,15 +4111,6 @@ function sortGamesByDate(
   a: Game,
   b: Game,
 ) {
-  // Fixtures with confirmed kickoff times come first.
-  // Fixtures with TBD kickoff times come after them.
-  const aHasKickoff = Boolean(a.kickoff);
-  const bHasKickoff = Boolean(b.kickoff);
-
-  if (aHasKickoff !== bHasKickoff) {
-    return aHasKickoff ? -1 : 1;
-  }
-
   const aDate = gameDate(a);
   const bDate = gameDate(b);
 
@@ -4135,9 +4126,34 @@ function sortGamesByDate(
     return -1;
   }
 
+  // Sort by calendar day first.
+  const aDay = new Date(
+    aDate.getFullYear(),
+    aDate.getMonth(),
+    aDate.getDate(),
+  ).getTime();
+
+  const bDay = new Date(
+    bDate.getFullYear(),
+    bDate.getMonth(),
+    bDate.getDate(),
+  ).getTime();
+
+  if (aDay !== bDay) {
+    return aDay - bDay;
+  }
+
+  // On the same day, confirmed kickoffs come before TBDs.
+  const aHasKickoff = Boolean(a.kickoff);
+  const bHasKickoff = Boolean(b.kickoff);
+
+  if (aHasKickoff !== bHasKickoff) {
+    return aHasKickoff ? -1 : 1;
+  }
+
+  // Within each group, sort by time.
   return aDate.getTime() - bDate.getTime();
 }
-
 
 /* ====================================================== */
 /* CLOUDFLARE OPTION HELPERS                              */
