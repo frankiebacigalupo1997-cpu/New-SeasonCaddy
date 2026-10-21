@@ -62,7 +62,6 @@ export type FrontendFixtureRow = {
 export type FrontendCanonicalTeamRow = {
   teamId: string;
   displayName: string;
-  preferredName?: string;
   gender?: string;
   aliases: string[];
   crestUrl?: string;
@@ -181,7 +180,6 @@ function normalizeCanonicalTeam(value: unknown): FrontendCanonicalTeamRow | null
   return {
     teamId,
     displayName,
-    preferredName: stringValue(row, "preferred_name", "preferredName"),
     gender: stringValue(row, "gender"),
     aliases: stringArrayValue(row.aliases),
     crestUrl: stringValue(row, "crest_url", "crestUrl"),
@@ -789,7 +787,7 @@ function resolveSavedTeamLabels(
   for (const savedLabel of savedLabels) {
     const key = identityLookupKey(savedLabel);
     const match = competition.canonicalTeams.find((team) =>
-      [team.displayName, team.preferredName, ...team.aliases].some(
+      [team.displayName, ...team.aliases].some(
         (candidate) => candidate && identityLookupKey(candidate) === key,
       ),
     );
@@ -829,7 +827,7 @@ function fixtureMatchesSavedTeamLabels(
     for (const savedLabel of savedLabels) {
       const savedKey = identityLookupKey(savedLabel);
       const canonicalTeam = competition.canonicalTeams.find((team) =>
-        [team.displayName, team.preferredName, ...team.aliases].some(
+        [team.displayName, ...team.aliases].some(
           (candidate) => candidate && identityLookupKey(candidate) === savedKey,
         ),
       );
@@ -838,7 +836,7 @@ function fixtureMatchesSavedTeamLabels(
 
       for (const candidate of [
         canonicalTeam.displayName,
-        canonicalTeam.preferredName,
+        
         ...canonicalTeam.aliases,
       ]) {
         if (!candidate) continue;
@@ -988,7 +986,7 @@ export function catalogDisplayTeamNames(row: FrontendCatalogRow): string[] {
    * exists: doing that made unresolved teams disappear from My Teams.
    *
    * Prefer the canonical display name for any raw/legacy name that can be
-   * matched to a canonical team's display name, preferred name, or alias, and
+   * matched to a canonical team's canonical display name or alias, and
    * preserve unmatched legacy names as a fallback.
    */
   const canonicalByKey = new Map<string, string>();
@@ -1002,7 +1000,7 @@ export function catalogDisplayTeamNames(row: FrontendCatalogRow): string[] {
 
     for (const candidate of [
       team.displayName,
-      team.preferredName,
+      
       ...team.aliases,
     ]) {
       if (!candidate) continue;
