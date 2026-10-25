@@ -401,29 +401,12 @@ const FRONTEND_CATALOG_SUMMARY_SELECT = [
 ].join(",");
 
 const FRONTEND_CATALOG_IDENTITY_SELECT = [
-  "competition_id",
-  "competition_name",
   "sport",
-  "team_names",
-  "canonical_teams",
-  "provider_ids",
-  "fixture_count",
-  "upcoming_count",
-  "first_event_date",
-  "last_event_date",
-  "next_event_at",
-  "refreshed_at",
-  "location_name",
-  "country_name",
-  "country_code",
-  "region_name",
-  "confederation",
-  "geo_scope",
-  "competition_gender",
-  "competition_type",
-  "geo_confidence",
-  "geo_reference_id",
-  "geo_match_method",
+  "competition_id",
+  "competition_label",
+  '"Canonical name"',
+  "Aliases",
+  "active",
 ].join(",");
 
 let identityCatalogCache: {
