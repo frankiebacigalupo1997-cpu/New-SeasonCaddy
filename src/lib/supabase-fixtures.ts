@@ -420,29 +420,105 @@ const identityCompetitionCache = new Map<
   { data: FrontendCatalogRow; expiresAt: number }
 >();
 
-async function queryIdentityCatalog(competitionIds?: string[]) {
-  let query = sportsDataSupabase
-    .from("frontend_catalog_identity")
-    .select(FRONTEND_CATALOG_IDENTITY_SELECT)
-    .order("sport", { ascending: true })
-    .order("competition_name", { ascending: true })
-    .order("competition_id", { ascending: true });
+async function queryIdentityCatalog(
+  competitionIds?: string[],
+): Promise<FrontendCatalogRow[]> {
+  const rows: Record<string, unknown>[] = [];
 
-  if (competitionIds?.length === 1) {
-    query = query.eq("competition_id", competitionIds[0]);
-  } else if (competitionIds && competitionIds.length > 1) {
-    query = query.in("competition_id", competitionIds);
+  for (let from = 0; ; from += SUPABASE_PAGE_SIZE) {
+    let query = sportsDataSupabase
+      .from("New Gate Name Table")
+      .select(FRONTEND_CATALOG_IDENTITY_SELECT)
+      .eq("active", true)
+      .order("sport", { ascending: true })
+      .order("competition_id", { ascending: true })
+      .order('"Canonical name"', { ascending: true })
+      .range(from, from + SUPABASE_PAGE_SIZE - 1);
+
+    if (competitionIds?.length === 1) {
+      query = query.eq("competition_id", competitionIds[0]);
+    } else if (competitionIds && competitionIds.length > 1) {
+      query = query.in("competition_id", competitionIds);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw new Error(
+        `Supabase New Gate Name Table query failed: ${error.message}`,
+      );
+    }
+
+    const page = Array.isArray(data)
+      ? (data as Record<string, unknown>[])
+      : [];
+
+    rows.push(...page);
+
+    if (page.length < SUPABASE_PAGE_SIZE) {
+      break;
+    }
   }
 
-  const { data, error } = await query;
+  const competitions = new Map<string, FrontendCatalogRow>();
 
-  if (error) {
-    throw new Error(`Supabase frontend_catalog_identity query failed: ${error.message}`);
+  for (const row of rows) {
+    const sport = stringValue(row, "sport");
+    const competitionId = stringValue(row, "competition_id");
+    const competitionName =
+      stringValue(row, "competition_label") ?? competitionId;
+    const displayName = stringValue(row, "Canonical name");
+
+    if (!sport || !competitionId || !displayName) {
+      continue;
+    }
+
+    const key = `${sport}::${competitionId}`;
+
+    let competition = competitions.get(key);
+
+    if (!competition) {
+      competition = {
+        competitionId,
+        competitionName,
+        sport,
+        teamNames: [],
+        canonicalTeams: [],
+        providerIds: [],
+        fixtureCount: 0,
+        upcomingCount: 0,
+      };
+
+      competitions.set(key, competition);
+    }
+
+    const aliases = stringArrayValue(row.Aliases);
+
+    competition.teamNames.push(displayName);
+
+    competition.canonicalTeams.push({
+      teamId: `${competitionId}:${displayName}`,
+      displayName,
+      aliases,
+    });
   }
 
-  return (Array.isArray(data) ? data : [])
-    .map(normalizeCatalogRow)
-    .filter((row): row is FrontendCatalogRow => row !== null);
+  return Array.from(competitions.values())
+    .map((competition) => ({
+      ...competition,
+      teamNames: Array.from(new Set(competition.teamNames)).sort(
+        (a, b) => a.localeCompare(b),
+      ),
+      canonicalTeams: competition.canonicalTeams.sort(
+        (a, b) => a.displayName.localeCompare(b.displayName),
+      ),
+    }))
+    .sort(
+      (a, b) =>
+        a.sport.localeCompare(b.sport) ||
+        a.competitionName.localeCompare(b.competitionName) ||
+        a.competitionId.localeCompare(b.competitionId),
+    );
 }
 
 export async function fetchFrontendIdentityCatalog(): Promise<FrontendCatalogRow[]> {
