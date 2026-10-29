@@ -2270,7 +2270,11 @@ const trackerCompetitionOptions = useMemo(() => {
   });
 }, [upcomingGames, liveCompetitionOptions, competitionIdByName]);
 
-
+const trackerLeagueOptions = useMemo(() => {
+  return trackerCompetitionOptions.filter(
+    (item) => !trackerSport || item.sport === trackerSport,
+  );
+}, [trackerCompetitionOptions, trackerSport]);
 
   
 const trackerTeamOptions = useMemo(() => {
