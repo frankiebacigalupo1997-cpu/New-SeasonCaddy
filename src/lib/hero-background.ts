@@ -73,6 +73,9 @@ const COMPETITION_HERO_IMAGES: Record<string, string> = {
   "formula-one": brandingHero("Formula One Hero.png"),
   f1: brandingHero("Formula One Hero.png"),
   motogp: brandingHero("MotoGP Hero.png"),
+  boxing: brandingHero("Boxing Hero.png"),
+  grappling: brandingHero("Grappling Hero.png"),
+  wrestling: brandingHero("Wrestling Hero.png"),
 };
 
 const RUGBY_LEAGUE_COMPETITIONS = new Set([
