@@ -2201,83 +2201,57 @@ async function syncWithGoogleCalendar(
 const trackerSportOptions = useMemo(() => {
   const bySport = new Map<string, string>();
 
-  upcomingGames.forEach((game) => {
-    const sportId = normalizeCloudflareOptionValue(game.sport);
+  frontendCatalog
+    .filter((item) => item.upcomingCount > 0)
+    .forEach((item) => {
+      const sportId = normalizeCloudflareOptionValue(item.sport);
 
-    if (
-      !sportId ||
-      sportId === "unknown" ||
-      sportId === "unclassified" ||
-      sportId === "other"
-    ) {
-      return;
-    }
+      if (
+        !sportId ||
+        sportId === "unknown" ||
+        sportId === "unclassified" ||
+        sportId === "other"
+      ) {
+        return;
+      }
 
-    if (!bySport.has(sportId)) {
-      bySport.set(sportId, formatCloudflareOptionLabel(sportId));
-    }
-  });
+      if (!bySport.has(sportId)) {
+        bySport.set(sportId, formatCloudflareOptionLabel(sportId));
+      }
+    });
 
   return Array.from(bySport, ([id, name]) => ({ id, name })).sort(
     (a, b) => a.name.localeCompare(b.name),
   );
-}, [upcomingGames]);
-
+}, [frontendCatalog]);
   
 const trackerCompetitionOptions = useMemo(() => {
-  const byCompetition = new Map<
-    string,
-    { id: string; name: string; sport: string }
-  >();
+  return frontendCatalog
+    .filter((item) => item.upcomingCount > 0)
+    .map((item) => ({
+      id: item.competitionId,
+      name:
+        item.competitionName ||
+        formatCloudflareOptionLabel(item.competitionId),
+      sport: normalizeCloudflareOptionValue(item.sport),
+    }))
+    .filter(
+      (item) =>
+        item.sport &&
+        item.sport !== "unknown" &&
+        item.sport !== "unclassified" &&
+        item.sport !== "other",
+    )
+    .sort((a, b) => {
+      const rankDifference = competitionSortRank(a) - competitionSortRank(b);
 
-  upcomingGames.forEach((game) => {
-    const competitionId =
-      game.competitionId ?? competitionIdByName.get(game.league);
+      if (rankDifference !== 0) {
+        return rankDifference;
+      }
 
-    if (!competitionId) {
-      return;
-    }
-
-    const sport = normalizeCloudflareOptionValue(game.sport);
-
-    if (
-      !sport ||
-      sport === "unknown" ||
-      sport === "unclassified" ||
-      sport === "other"
-    ) {
-      return;
-    }
-
-    const catalogItem = frontendCatalog.find(
-      (item) => item.competitionId === competitionId,
-    );
-
-    const name =
-      catalogItem?.competitionName ||
-      game.league ||
-      formatCloudflareOptionLabel(competitionId);
-
-    byCompetition.set(competitionId, {
-      id: competitionId,
-      name,
-      sport,
+      return a.name.localeCompare(b.name);
     });
-  });
-
-  return Array.from(byCompetition.values()).sort((a, b) => {
-    const rankDifference = competitionSortRank(a) - competitionSortRank(b);
-
-    if (rankDifference !== 0) {
-      return rankDifference;
-    }
-
-    return a.name.localeCompare(b.name);
-  });
-}, [upcomingGames, frontendCatalog, competitionIdByName]);
-
-  
-
+}, [frontendCatalog]);
     
 const trackerLeagueOptions = useMemo(() => {
   return trackerCompetitionOptions.filter(
