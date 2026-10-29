@@ -2198,66 +2198,78 @@ async function syncWithGoogleCalendar(
     ]);
 
   
+
 const trackerSportOptions = useMemo(() => {
   const bySport = new Map<string, string>();
 
-  frontendCatalog
-    .filter((item) => item.upcomingCount > 0)
-    .forEach((item) => {
-      const sportId = normalizeCloudflareOptionValue(item.sport);
+  upcomingGames.forEach((game) => {
+    const sportId = normalizeCloudflareOptionValue(game.sport);
 
-      if (
-        !sportId ||
-        sportId === "unknown" ||
-        sportId === "unclassified" ||
-        sportId === "other"
-      ) {
-        return;
-      }
+    if (
+      !sportId ||
+      sportId === "unknown" ||
+      sportId === "unclassified" ||
+      sportId === "other"
+    ) {
+      return;
+    }
 
-      if (!bySport.has(sportId)) {
-        bySport.set(sportId, formatCloudflareOptionLabel(sportId));
-      }
-    });
+    if (!bySport.has(sportId)) {
+      bySport.set(sportId, formatCloudflareOptionLabel(sportId));
+    }
+  });
 
   return Array.from(bySport, ([id, name]) => ({ id, name })).sort(
     (a, b) => a.name.localeCompare(b.name),
   );
-}, [frontendCatalog]);
-  
+}, [upcomingGames]);
+
 const trackerCompetitionOptions = useMemo(() => {
-  return frontendCatalog
-    .filter((item) => item.upcomingCount > 0)
-    .map((item) => ({
-      id: item.competitionId,
+  const byCompetition = new Map<
+    string,
+    { id: string; name: string; sport: string }
+  >();
+
+  upcomingGames.forEach((game) => {
+    const competitionId =
+      game.competitionId || competitionIdByName.get(game.league);
+
+    const sport = normalizeCloudflareOptionValue(game.sport);
+
+    if (
+      !competitionId ||
+      !sport ||
+      sport === "unknown" ||
+      sport === "unclassified" ||
+      sport === "other"
+    ) {
+      return;
+    }
+
+    const catalogCompetition = liveCompetitionOptions.find(
+      (item) => item.id === competitionId,
+    );
+
+    byCompetition.set(competitionId, {
+      id: competitionId,
       name:
-        item.competitionName ||
-        formatCloudflareOptionLabel(item.competitionId),
-      sport: normalizeCloudflareOptionValue(item.sport),
-    }))
-    .filter(
-      (item) =>
-        item.sport &&
-        item.sport !== "unknown" &&
-        item.sport !== "unclassified" &&
-        item.sport !== "other",
-    )
-    .sort((a, b) => {
-      const rankDifference = competitionSortRank(a) - competitionSortRank(b);
-
-      if (rankDifference !== 0) {
-        return rankDifference;
-      }
-
-      return a.name.localeCompare(b.name);
+        catalogCompetition?.name ||
+        formatCloudflareOptionLabel(game.league || competitionId),
+      sport,
     });
-}, [frontendCatalog]);
-    
-const trackerLeagueOptions = useMemo(() => {
-  return trackerCompetitionOptions.filter(
-    (item) => !trackerSport || item.sport === trackerSport,
-  );
-}, [trackerCompetitionOptions, trackerSport]);
+  });
+
+  return Array.from(byCompetition.values()).sort((a, b) => {
+    const rankDifference = competitionSortRank(a) - competitionSortRank(b);
+
+    if (rankDifference !== 0) {
+      return rankDifference;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
+}, [upcomingGames, liveCompetitionOptions, competitionIdByName]);
+
 
 
   
