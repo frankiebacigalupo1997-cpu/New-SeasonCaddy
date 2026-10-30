@@ -180,6 +180,7 @@ export function NextFixtureHero({
   competitionId={game.competitionId}
   crestUrl={game.homeCrestUrl}
 />
+                )}
 
                   <span className="text-center text-sm font-extrabold sm:text-base">
                     {
@@ -203,6 +204,7 @@ export function NextFixtureHero({
   competitionId={game.competitionId}
   crestUrl={game.awayCrestUrl}
 />
+                )}
 
                   <span className="text-center text-sm font-extrabold sm:text-base">
                     {
