@@ -126,6 +126,11 @@ export const providers: Provider[] = [
     name: "CBS Sports Network",
     url: "https://www.cbssportsnetwork.com",
   },
+   {
+    id: "cnbc",
+    name: "CNBC",
+    url: "https://www.nbc.com/sign-up",
+  },
   {
     id: "dazn-us",
     name: "DAZN",
@@ -492,6 +497,11 @@ export const providers: Provider[] = [
     id: "FloElite",
     name: "FloElite",
     url: "https://www.floelite.com",
+  },
+    {
+    id: "bein sports",
+    name: "beIN Sports",
+    url: "https://connect-au.beinsports.com/en",
   },
   {
     id: "B1G+",
