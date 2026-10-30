@@ -591,7 +591,9 @@ export const providers: Provider[] = [
     id: "tbd",
     name: "Provider pending",
     url: "",
-  },
+   },
+];
+
 export type Game = {
   id: string;
   competitionId?: string;
