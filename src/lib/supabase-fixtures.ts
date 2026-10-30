@@ -69,6 +69,15 @@ export type FrontendCanonicalTeamRow = {
   crestSourceUrl?: string;
   artworkStatus?: string;
   artworkConfidence?: number;
+  artworkSourceHost?: string;
+  artworkLicenseName?: string;
+  artworkAttribution?: string;
+  artworkWikidataId?: string;
+  artworkWikipediaTitle?: string;
+  artworkCheckedAt?: string;
+  artworkMetadata?: unknown;
+  artworkCreatedAt?: string;
+  artworkUpdatedAt?: string;
 };
 
 export type FrontendCatalogRow = {
@@ -182,11 +191,20 @@ function normalizeCanonicalTeam(value: unknown): FrontendCanonicalTeamRow | null
     displayName,
     gender: stringValue(row, "gender"),
     aliases: stringArrayValue(row.aliases),
-    crestUrl: stringValue(row, "crest_url", "crestUrl"),
-    crestSourceKind: stringValue(row, "crest_source_kind", "crestSourceKind"),
-    crestSourceUrl: stringValue(row, "crest_source_url", "crestSourceUrl"),
+    crestUrl: stringValue(row, "artwork_crest_url", "crest_url", "crestUrl"),
+    crestSourceKind: stringValue(row, "artwork_source_kind", "crest_source_kind", "crestSourceKind"),
+    crestSourceUrl: stringValue(row, "artwork_source_url", "crest_source_url", "crestSourceUrl"),
     artworkStatus: stringValue(row, "artwork_status", "artworkStatus"),
     artworkConfidence: numberValue(row, "artwork_confidence", "artworkConfidence"),
+    artworkSourceHost: stringValue(row, "artwork_source_host", "artworkSourceHost"),
+    artworkLicenseName: stringValue(row, "artwork_license_name", "artworkLicenseName"),
+    artworkAttribution: stringValue(row, "artwork_attribution", "artworkAttribution"),
+    artworkWikidataId: stringValue(row, "artwork_wikidata_id", "artworkWikidataId"),
+    artworkWikipediaTitle: stringValue(row, "artwork_wikipedia_title", "artworkWikipediaTitle"),
+    artworkCheckedAt: stringValue(row, "artwork_checked_at", "artworkCheckedAt"),
+    artworkMetadata: row.artwork_metadata ?? row.artworkMetadata,
+    artworkCreatedAt: stringValue(row, "artwork_created_at", "artworkCreatedAt"),
+    artworkUpdatedAt: stringValue(row, "artwork_updated_at", "artworkUpdatedAt"),
   };
 }
 
@@ -407,6 +425,20 @@ const FRONTEND_CATALOG_IDENTITY_SELECT = [
   '"Canonical name"',
   "Aliases",
   "active",
+  "artwork_crest_url",
+  "artwork_source_url",
+  "artwork_source_kind",
+  "artwork_source_host",
+  "artwork_license_name",
+  "artwork_attribution",
+  "artwork_wikidata_id",
+  "artwork_wikipedia_title",
+  "artwork_status",
+  "artwork_confidence",
+  "artwork_checked_at",
+  "artwork_metadata",
+  "artwork_created_at",
+  "artwork_updated_at",
 ].join(",");
 
 let identityCatalogCache: {
@@ -500,6 +532,20 @@ async function queryIdentityCatalog(
       teamId: `${competitionId}:${displayName}`,
       displayName,
       aliases,
+      crestUrl: stringValue(row, "artwork_crest_url"),
+      crestSourceKind: stringValue(row, "artwork_source_kind"),
+      crestSourceUrl: stringValue(row, "artwork_source_url"),
+      artworkStatus: stringValue(row, "artwork_status"),
+      artworkConfidence: numberValue(row, "artwork_confidence"),
+      artworkSourceHost: stringValue(row, "artwork_source_host"),
+      artworkLicenseName: stringValue(row, "artwork_license_name"),
+      artworkAttribution: stringValue(row, "artwork_attribution"),
+      artworkWikidataId: stringValue(row, "artwork_wikidata_id"),
+      artworkWikipediaTitle: stringValue(row, "artwork_wikipedia_title"),
+      artworkCheckedAt: stringValue(row, "artwork_checked_at"),
+      artworkMetadata: row.artwork_metadata ?? undefined,
+      artworkCreatedAt: stringValue(row, "artwork_created_at"),
+      artworkUpdatedAt: stringValue(row, "artwork_updated_at"),
     });
   }
 
