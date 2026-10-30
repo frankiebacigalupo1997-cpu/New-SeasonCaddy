@@ -41,7 +41,9 @@ import {
   fetchPreferences,
 } from "@/lib/gamehub-cloud";
 
-import { getTeamArtwork } from "@/lib/team-artwork";
+import {
+  fetchFrontendIdentityCatalog,
+} from "@/lib/supabase-fixtures";
 
 import { getSportHeroStyle } from "@/lib/hero-background";
 
