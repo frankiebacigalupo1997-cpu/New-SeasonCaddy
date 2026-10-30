@@ -29,8 +29,8 @@ import {
 } from "@/lib/gamehub-data";
 
 import {
-  getTeamArtwork,
-} from "@/lib/team-artwork";
+  fetchFrontendIdentityCatalog,
+} from "@/lib/supabase-fixtures";
 
 import { getSportHeroStyle } from "@/lib/hero-background";
 
@@ -174,12 +174,12 @@ export function NextFixtureHero({
                 <div className={`flex min-w-0 flex-1 flex-col items-center ${textOnlyCombatHero ? "gap-1" : "gap-3"}`}>
                   {!textOnlyCombatHero && (
                     <TeamCrest
-                      team={
-                        competitors?.home ?? game.home
-                      }
-                      crestUrl={game.homeCrestUrl}
-                    />
-                  )}
+  team={competitors?.home ?? game.home}
+  canonicalTeam={game.canonicalHome ?? game.home}
+  sport={game.sport}
+  competitionId={game.competitionId}
+  crestUrl={game.homeCrestUrl}
+/>
 
                   <span className="text-center text-sm font-extrabold sm:text-base">
                     {
@@ -197,12 +197,12 @@ export function NextFixtureHero({
                 <div className={`flex min-w-0 flex-1 flex-col items-center ${textOnlyCombatHero ? "gap-1" : "gap-3"}`}>
                   {!textOnlyCombatHero && (
                     <TeamCrest
-                      team={
-                        competitors?.away ?? game.away
-                      }
-                      crestUrl={game.awayCrestUrl}
-                    />
-                  )}
+  team={competitors?.away ?? game.away}
+  canonicalTeam={game.canonicalAway ?? game.away}
+  sport={game.sport}
+  competitionId={game.competitionId}
+  crestUrl={game.awayCrestUrl}
+/>
 
                   <span className="text-center text-sm font-extrabold sm:text-base">
                     {
@@ -382,57 +382,134 @@ function FixtureHeroLoading() {
 /* TEAM CREST                                             */
 /* ====================================================== */
 
+async function lookupSupabaseCrest({
+  canonicalTeam,
+  sport,
+  competitionId,
+}: {
+  canonicalTeam: string;
+  sport: string;
+  competitionId?: string;
+}): Promise<string | undefined> {
+  if (!competitionId) {
+    return undefined;
+  }
+
+  try {
+    const catalog = await fetchFrontendIdentityCatalog();
+
+    const competition = catalog.find(
+      (item) =>
+        item.competitionId === competitionId &&
+        item.sport.toLowerCase() === sport.toLowerCase(),
+    );
+
+    if (!competition) {
+      return undefined;
+    }
+
+    const normalize = (value: string) =>
+      value.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+
+    const target = normalize(canonicalTeam);
+
+    const matchingTeam = competition.canonicalTeams.find(
+      (item) =>
+        normalize(item.displayName) === target ||
+        item.aliases.some(
+          (alias) => normalize(alias) === target,
+        ),
+    );
+
+    return matchingTeam?.crestUrl || undefined;
+  } catch (error) {
+    console.error("Supabase crest lookup failed:", error);
+    return undefined;
+  }
+}
+
 function TeamCrest({
   team,
+  canonicalTeam,
+  sport,
+  competitionId,
   crestUrl,
 }: {
   team: string;
+  canonicalTeam: string;
+  sport: string;
+  competitionId?: string;
   crestUrl?: string;
 }) {
-  const artwork =
-    getTeamArtwork(
-      team,
-    );
-
-  const resolvedCrest =
-    crestUrl || artwork?.crest;
-
-  const [
-    imageFailed,
-    setImageFailed,
-  ] =
-    useState(false);
+  const [fallbackUrl, setFallbackUrl] = useState<string>();
+  const [imageFailed, setImageFailed] = useState(false);
+  const [fallbackChecked, setFallbackChecked] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
+    setFallbackUrl(undefined);
     setImageFailed(false);
-  }, [team, crestUrl]);
+    setFallbackChecked(false);
 
-  const initials =
-    team
-      .split(" ")
-      .map(
-        (
-          word,
-        ) =>
-          word[0],
-      )
-      .join("")
-      .slice(
-        0,
-        3,
-      )
-      .toUpperCase();
+    if (!crestUrl) {
+      void lookupSupabaseCrest({
+        canonicalTeam,
+        sport,
+        competitionId,
+      }).then((url) => {
+        if (cancelled) return;
 
-  if (
-    !resolvedCrest ||
-    imageFailed
-  ) {
+        setFallbackUrl(url);
+        setFallbackChecked(true);
+
+        if (!url) {
+          setImageFailed(true);
+        }
+      });
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [team, canonicalTeam, sport, competitionId, crestUrl]);
+
+  const handleImageError = async () => {
+    if (fallbackChecked) {
+      setImageFailed(true);
+      return;
+    }
+
+    setFallbackChecked(true);
+
+    const url = await lookupSupabaseCrest({
+      canonicalTeam,
+      sport,
+      competitionId,
+    });
+
+    if (url && url !== crestUrl) {
+      setFallbackUrl(url);
+      return;
+    }
+
+    setImageFailed(true);
+  };
+
+  const initials = team
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 3)
+    .toUpperCase();
+
+  const resolvedCrest = fallbackUrl || crestUrl;
+
+  if (imageFailed || !resolvedCrest) {
     return (
       <div className="flex h-24 w-full items-center justify-center">
         <span className="grid size-20 place-items-center rounded-full border border-border bg-surface-2 text-sm font-black shadow-lg">
-          {
-            initials
-          }
+          {initials}
         </span>
       </div>
     );
@@ -441,16 +518,10 @@ function TeamCrest({
   return (
     <div className="flex h-24 w-full items-center justify-center">
       <img
-        src={
-          resolvedCrest
-        }
+        src={resolvedCrest}
         alt={`${team} crest`}
         className="h-24 w-24 object-contain drop-shadow-xl"
-        onError={() =>
-          setImageFailed(
-            true,
-          )
-        }
+        onError={handleImageError}
       />
     </div>
   );
