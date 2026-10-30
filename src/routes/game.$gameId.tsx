@@ -670,6 +670,52 @@ function GamePage() {
   );
 }
 
+async function lookupSupabaseCrest({
+  canonicalTeam,
+  sport,
+  competitionId,
+}: {
+  canonicalTeam: string;
+  sport: string;
+  competitionId?: string;
+}): Promise<string | undefined> {
+  if (!competitionId) {
+    return undefined;
+  }
+
+  try {
+    const catalog = await fetchFrontendIdentityCatalog();
+
+    const competition = catalog.find(
+      (item) =>
+        item.competitionId === competitionId &&
+        item.sport.toLowerCase() === sport.toLowerCase(),
+    );
+
+    if (!competition) {
+      return undefined;
+    }
+
+    const normalize = (value: string) =>
+      value.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+
+    const target = normalize(canonicalTeam);
+
+    const matchingTeam = competition.canonicalTeams.find(
+      (item) =>
+        normalize(item.displayName) === target ||
+        item.aliases.some(
+          (alias) => normalize(alias) === target,
+        ),
+    );
+
+    return matchingTeam?.crestUrl || undefined;
+  } catch (error) {
+    console.error("Supabase crest lookup failed:", error);
+    return undefined;
+  }
+}
+
 function TeamCrest({
   team,
   crestUrl,
