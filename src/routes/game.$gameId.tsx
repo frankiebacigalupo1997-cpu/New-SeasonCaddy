@@ -534,6 +534,7 @@ function GamePage() {
   competitionId={game.competitionId}
   crestUrl={game.homeCrestUrl}
 />
+       )}         
 
                       <span className="text-center text-sm font-extrabold">
                         {competitors.home}
@@ -553,7 +554,8 @@ function GamePage() {
   competitionId={game.competitionId}
   crestUrl={game.awayCrestUrl}
 />
-
+)}
+                      
                       <span className="text-center text-sm font-extrabold">
                         {competitors.away}
                       </span>
