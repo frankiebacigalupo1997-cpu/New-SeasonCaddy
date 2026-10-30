@@ -5,129 +5,63 @@ export type Provider = {
 };
 
 export const providers: Provider[] = [
-  // United States
   {
-    id: "peacock",
-    name: "Peacock",
-    url: "https://www.peacocktv.com",
+    id: "abc",
+    name: "ABC",
+    url: "https://abc.com",
   },
   {
-    id: "Fandango",
-    name: "Fandango at Home",
-    url: "https://www.fandangoathome.com",
+    id: "ABC",
+    name: "ABC",
+    url: "https://abc.com",
   },
   {
-    id: "FOX Deportes",
-    name: "FOX Deportes",
-    url: "https://www.foxdeportes.com",
+    id: "ACC Network",
+    name: "ACC Network",
+    url: "https://www.espn.com/watch/espnplus/",
   },
   {
-    id: "FuboTV",
-    name: "Fubo",
-    url: "https://www.fubo.tv",
+    id: "apple-tv",
+    name: "Apple TV",
+    url: "https://tv.apple.com",
   },
   {
-    id: "Peacock",
-    name: "Peacock",
-    url: "https://www.peacocktv.com",
+    id: "appletv",
+    name: "Apple TV",
+    url: "https://tv.apple.com",
   },
   {
-  id: "Paramount+",
-  name: "Paramount+",
-  url: "https://www.paramountplus.com",
-},
-  {
-    id: "espn",
-    name: "ESPN",
-    url: "https://www.espn.com/watch",
+    id: "Apple TV",
+    name: "Apple TV",
+    url: "https://tv.apple.com",
   },
   {
-    id: "usa",
-    name: "USA Network",
-    url: "https://www.usanetwork.com",
+    id: "bein sports",
+    name: "beIN Sports",
+    url: "https://connect-au.beinsports.com/en",
   },
   {
-    id: "nbc",
-    name: "NBC",
-    url: "https://www.nbc.com",
+    id: "BTN",
+    name: "Big Ten Network",
+    url: "https://www.foxsports.com",
   },
   {
-    id: "tbs",
-    name: "TBS",
-    url: "https://www.tbs.com",
+    id: "big-ten-plus",
+    name: "Big Ten Plus",
+    url: "https://www.bigtenplus.com",
   },
   {
-    id: "max",
-    name: "HBO Max",
-    url: "https://www.hbomax.com",
-  },
-  {
-    id: "paramount",
-    name: "Paramount+",
-    url: "https://www.paramountplus.com",
-  },
-  {
-    id: "paramount-plus",
-    name: "Paramount+",
-    url: "https://www.paramountplus.com",
-  },
-  {
-  id: "prime-video",
-  name: "Prime Video",
-  url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
-},
-  {
-  id: "Prime Video",
-  name: "Prime Video",
-  url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
-},
-  {
-    id: "espn-plus",
-    name: "ESPN+",
-    url: "https://plus.espn.com",
-  },
-  {
-  id: "NBA TV",
-  name: "NBA TV",
-  url: "https://www.nba.com/watch/nba-tv",
-},
-{
-  id: "ESPN",
-  name: "ESPN",
-  url: "https://www.espn.com/watch",
-},
-  {
-    id: "fox-one",
-    name: "FOX One",
-    url: "https://www.fox.com",
-  },
-  {
-    id: "nfl-plus",
-    name: "NFL+",
-    url: "https://www.nfl.com/plus",
-  },
-  {
-    id: "netflix",
-    name: "Netflix",
-    url: "https://www.netflix.com",
-  },
-  {
-    id: "nba-tv",
-    name: "NBA TV",
-    url: "https://www.nba.com/watch/nba-tv",
-  },
-  {
-    id: "nba-league-pass",
-    name: "NBA League Pass",
-    url: "https://www.nba.com/watch/league-pass-stream",
-  },
-  {
-    id: "nbcsn",
-    name: "NBC Sports Network",
-    url: "https://www.nbc.com/sports",
+    id: "B1G+",
+    name: "Big Ten+",
+    url: "https://www.bigtenplus.com",
   },
   {
     id: "cbs",
+    name: "CBS",
+    url: "https://www.cbs.com",
+  },
+  {
+    id: "CBS",
     name: "CBS",
     url: "https://www.cbs.com",
   },
@@ -141,7 +75,12 @@ export const providers: Provider[] = [
     name: "CBS Sports Network",
     url: "https://www.cbssportsnetwork.com",
   },
-   {
+  {
+    id: "CBSSN",
+    name: "CBS Sports Network",
+    url: "https://www.cbssports.com/watch",
+  },
+  {
     id: "cnbc",
     name: "CNBC",
     url: "https://www.nbc.com/sign-up",
@@ -157,271 +96,39 @@ export const providers: Provider[] = [
     url: "https://www.dazn.com/en-US",
   },
   {
-    id: "telemundo",
-    name: "Telemundo",
-    url: "https://www.telemundo.com/deportes",
-  },
-  {
-    id: "universo",
-    name: "Universo",
-    url: "https://www.nbc.com/networks/universo",
-  },
-  {
-    id: "telemundo-app",
-    name: "Telemundo App",
-    url: "https://www.telemundo.com/deportes",
-  },
-  {
-    id: "telemundo-deportes-ahora",
-    name: "Telemundo Deportes Ahora",
-    url: "https://www.telemundo.com/deportes",
-  },
-  {
-    id: "tln",
-    name: "TLN",
-    url: "https://www.tln.ca",
-  },
-  {
-    id: "tnt-sports",
-    name: "TNT Sports",
-    url: "https://www.tntsports.co.uk",
-  },
-  {
-    id: "fubo",
-    name: "Fubo",
-    url: "https://www.fubo.tv",
-  },
-  {
-    id: "big-ten-plus",
-    name: "Big Ten Plus",
-    url: "https://www.bigtenplus.com",
-  },
-  {
-    id: "apple-tv",
-    name: "Apple TV",
-    url: "https://tv.apple.com",
-  },
-  {
-    id: "sportsnet",
-    name: "Sportsnet",
-    url: "https://www.sportsnet.ca",
-  },
-  {
-    id: "sportsnet-ca",
-    name: "Sportsnet",
-    url: "https://watch.sportsnet.ca",
-  },
-  {
-    id: "vix",
-    name: "ViX",
-    url: "https://vix.com",
-  },
-  {
-    id: "flosports",
-    name: "FloSports",
-    url: "https://www.flosports.tv",
-  },
-  {
-    id: "mlb-tv",
-    name: "MLB.TV",
-    url: "https://www.mlb.com/live-stream-games/subscribe",
-  },
-  {
-    id: "wnba-league-pass",
-    name: "WNBA League Pass",
-    url: "https://www.wnba.com/leaguepass",
-  },
-  {
-    id: "sling",
-    name: "Sling TV",
-    url: "https://www.sling.com",
-  },
-  {
-    id: "tubi",
-    name: "Tubi",
-    url: "https://tubitv.com/live",
-  },
-  {
-    id: "roku",
-    name: "The Roku Channel",
-    url: "https://therokuchannel.roku.com",
-  },
-  {
-    id: "tsn",
-    name: "TSN",
-    url: "https://www.tsn.ca",
-  },
-  {
-    id: "abc",
-    name: "ABC",
-    url: "https://abc.com",
-  },
-  {
-    id: "hulu",
-    name: "Hulu",
-    url: "https://www.hulu.com",
-  },
-  {
-    id: "trutv",
-    name: "truTV",
-    url: "https://www.trutv.com",
-  },
-  {
-    id: "hbo-max",
-    name: "HBO Max",
-    url: "https://www.hbomax.com",
-  },
-  {
-    id: "tva-sports",
-    name: "TVA Sports",
-    url: "https://www.tvasports.ca",
-  },
-  {
-    id: "nhl-tv-dazn-uk",
-    name: "NHL.TV on DAZN",
-    url: "https://www.dazn.com/en-GB",
-  },
-  {
-    id: "appletv",
-    name: "Apple TV",
-    url: "https://tv.apple.com",
-  },
-  {
-    id: "tnt",
-    name: "TNT",
-    url: "https://www.tntdrama.com",
-  },
-  {
-  id: "Apple TV",
-  name: "Apple TV",
-  url: "https://tv.apple.com",
-},
-{
-  id: "ESPN+",
-  name: "ESPN+",
-  url: "https://plus.espn.com",
-},
-{
-  id: "CBS",
-  name: "CBS",
-  url: "https://www.cbs.com",
-},
-{
-  id: "NBC",
-  name: "NBC",
-  url: "https://www.nbc.com",
-},
-{
-  id: "RugbyPass",
-  name: "RugbyPass",
-  url: "https://www.rugbypass.com",
-},
-{
-  id: "Varsity TV",
-  name: "Varsity TV",
-  url: "https://www.varsity.tv",
-},
-{
-  id: "FloHoops",
-  name: "FloHoops",
-  url: "https://www.flohoops.com",
-},
-{
-  id: "FloMarching",
-  name: "FloMarching",
-  url: "https://www.flomarching.com",
-},
-{
-  id: "FloFootball",
-  name: "FloFootball",
-  url: "https://www.flofootball.com",
-},
-{
-  id: "ION",
-  name: "ION",
-  url: "https://iontelevision.com",
-},
-{
-  id: "NWSL+",
-  name: "NWSL+",
-  url: "https://plus.nwslsoccer.com",
-},
-{
-  id: "NBCSN",
-  name: "NBC Sports Network",
-  url: "https://www.nbc.com/sports",
-},
-{
-  id: "Sling",
-  name: "Sling TV",
-  url: "https://www.sling.com",
-},
-{
-  id: "TBS",
-  name: "TBS",
-  url: "https://www.tbs.com",
-},
-{
-  id: "ABC",
-  name: "ABC",
-  url: "https://abc.com",
-},
-{
-  id: "Roku",
-  name: "The Roku Channel",
-  url: "https://therokuchannel.roku.com",
-},
-{
-  id: "FloSports",
-  name: "FloSports",
-  url: "https://www.flosports.tv",
-},
-{
-  id: "Fox",
-  name: "FOX",
-  url: "https://www.fox.com",
-},
-{
-  id: "directv",
-  name: "DIRECTV Streaming",
-  url: "https://www.directv.com/sports",
-},
-{
-  id: "fanduel-sports-network",
-  name: "FanDuel Sports Network",
-  url: "https://fanduelsportsnetwork.com",
-},
-{
-  id: "hulu-live",
-  name: "Hulu + Live TV",
-  url: "https://www.hulu.com",
-},
-{
-  id: "victory-plus",
-  name: "Victory+",
-  url: "https://victoryplus.com",
-},
-{
-  id: "youtube-tv",
-  name: "YouTube TV",
-  url: "https://tv.youtube.com",
-},
-
-  // Exact backend provider IDs
-  {
     id: "DAZN",
     name: "DAZN",
     url: "https://www.dazn.com/en-US",
   },
   {
-    id: "FS1",
-    name: "FS1",
-    url: "https://www.foxsports.com",
+    id: "DAZN PPV",
+    name: "DAZN PPV",
+    url: "https://www.dazn.com/en-US",
   },
   {
-    id: "FS2",
-    name: "FS2",
-    url: "https://www.foxsports.com",
+    id: "directv",
+    name: "DIRECTV Streaming",
+    url: "https://www.directv.com/sports",
+  },
+  {
+    id: "espn",
+    name: "ESPN",
+    url: "https://www.espn.com/watch",
+  },
+  {
+    id: "ESPN",
+    name: "ESPN",
+    url: "https://www.espn.com/watch",
+  },
+  {
+    id: "espn-plus",
+    name: "ESPN+",
+    url: "https://plus.espn.com",
+  },
+  {
+    id: "ESPN+",
+    name: "ESPN+",
+    url: "https://plus.espn.com",
   },
   {
     id: "ESPN2",
@@ -429,39 +136,24 @@ export const providers: Provider[] = [
     url: "https://www.espn.com/watch",
   },
   {
-    id: "CBSSN",
-    name: "CBS Sports Network",
-    url: "https://www.cbssports.com/watch",
-  },
-  {
-    id: "NHL Net",
-    name: "NHL Network",
-    url: "https://www.nhl.com/network",
-  },
-  {
-    id: "SEC Network",
-    name: "SEC Network",
+    id: "ESPNU",
+    name: "ESPNU",
     url: "https://www.espn.com/watch/espnplus/",
   },
   {
-    id: "USA Net",
-    name: "USA Network",
-    url: "https://www.usanetwork.com",
+    id: "Fandango",
+    name: "Fandango at Home",
+    url: "https://www.fandangoathome.com",
   },
   {
-    id: "Ticket",
-    name: "NFL Sunday Ticket",
-    url: "https://tv.youtube.com/",
+    id: "fanduel-sports-network",
+    name: "FanDuel Sports Network",
+    url: "https://fanduelsportsnetwork.com",
   },
   {
-    id: "MW+",
-    name: "Mountain West+",
-    url: "https://www.mountainwestplus.com",
-  },
-  {
-    id: "ACC Network",
-    name: "ACC Network",
-    url: "https://www.espn.com/watch/espnplus/",
+    id: "FloBikes",
+    name: "FloBikes",
+    url: "https://www.flobikes.com",
   },
   {
     id: "FloCollege",
@@ -469,14 +161,39 @@ export const providers: Provider[] = [
     url: "https://www.flocollege.com",
   },
   {
+    id: "FloElite",
+    name: "FloElite",
+    url: "https://www.floelite.com",
+  },
+  {
+    id: "FloFootball",
+    name: "FloFootball",
+    url: "https://www.flofootball.com",
+  },
+  {
+    id: "FloGrappling",
+    name: "FloGrappling",
+    url: "https://www.flograppling.com",
+  },
+  {
     id: "FloHockey",
     name: "FloHockey",
     url: "https://www.flohockey.tv",
   },
   {
+    id: "FloHoops",
+    name: "FloHoops",
+    url: "https://www.flohoops.com",
+  },
+  {
     id: "FloLive",
     name: "FloLive",
     url: "https://www.flolive.tv",
+  },
+  {
+    id: "FloMarching",
+    name: "FloMarching",
+    url: "https://www.flomarching.com",
   },
   {
     id: "FloRacing",
@@ -489,19 +206,14 @@ export const providers: Provider[] = [
     url: "https://www.florugby.com",
   },
   {
-    id: "FloWrestling",
-    name: "FloWrestling",
-    url: "https://www.flowrestling.org",
+    id: "flosports",
+    name: "FloSports",
+    url: "https://www.flosports.tv",
   },
   {
-    id: "FloBikes",
-    name: "FloBikes",
-    url: "https://www.flobikes.com",
-  },
-  {
-    id: "FloGrappling",
-    name: "FloGrappling",
-    url: "https://www.flograppling.com",
+    id: "FloSports",
+    name: "FloSports",
+    url: "https://www.flosports.tv",
   },
   {
     id: "FloTrack",
@@ -509,29 +221,14 @@ export const providers: Provider[] = [
     url: "https://www.flotrack.org",
   },
   {
-    id: "FloElite",
-    name: "FloElite",
-    url: "https://www.floelite.com",
-  },
-    {
-    id: "bein sports",
-    name: "beIN Sports",
-    url: "https://connect-au.beinsports.com/en",
+    id: "FloWrestling",
+    name: "FloWrestling",
+    url: "https://www.flowrestling.org",
   },
   {
-    id: "B1G+",
-    name: "Big Ten+",
-    url: "https://www.bigtenplus.com",
-  },
-  {
-    id: "SECN+",
-    name: "SEC Network+",
-    url: "https://www.espn.com/watch/espnplus/",
-  },
-  {
-    id: "ESPNU",
-    name: "ESPNU",
-    url: "https://www.espn.com/watch/espnplus/",
+    id: "Fox",
+    name: "FOX",
+    url: "https://www.fox.com",
   },
   {
     id: "FOX",
@@ -539,24 +236,29 @@ export const providers: Provider[] = [
     url: "https://www.fox.com",
   },
   {
-    id: "CW",
-    name: "The CW",
-    url: "https://www.cwtv.com",
+    id: "FOX Deportes",
+    name: "FOX Deportes",
+    url: "https://www.foxdeportes.com",
   },
   {
-    id: "HBO Max",
-    name: "HBO Max",
-    url: "https://www.hbomax.com",
+    id: "fox-one",
+    name: "FOX One",
+    url: "https://www.fox.com",
   },
   {
-    id: "Sportsnet",
-    name: "Sportsnet",
-    url: "https://www.sportsnet.ca",
+    id: "FS1",
+    name: "FS1",
+    url: "https://www.foxsports.com",
   },
   {
-    id: "TSN",
-    name: "TSN",
-    url: "https://www.tsn.ca",
+    id: "FS2",
+    name: "FS2",
+    url: "https://www.foxsports.com",
+  },
+  {
+    id: "FuboTV",
+    name: "Fubo",
+    url: "https://www.fubo.tv",
   },
   {
     id: "fubo",
@@ -564,19 +266,89 @@ export const providers: Provider[] = [
     url: "https://www.fubo.tv",
   },
   {
-    id: "YouTube",
-    name: "YouTube",
-    url: "https://www.youtube.com",
+    id: "fubo",
+    name: "Fubo",
+    url: "https://www.fubo.tv",
   },
   {
-    id: "Tele",
-    name: "Tele",
-    url: "https://www.televisaunivision.com",
+    id: "max",
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
   },
   {
-    id: "DAZN PPV",
-    name: "DAZN PPV",
-    url: "https://www.dazn.com/en-US",
+    id: "hbo-max",
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
+  },
+  {
+    id: "HBO Max",
+    name: "HBO Max",
+    url: "https://www.hbomax.com",
+  },
+  {
+    id: "hulu",
+    name: "Hulu",
+    url: "https://www.hulu.com",
+  },
+  {
+    id: "hulu-live",
+    name: "Hulu + Live TV",
+    url: "https://www.hulu.com",
+  },
+  {
+    id: "ION",
+    name: "ION",
+    url: "https://iontelevision.com",
+  },
+  {
+    id: "mlb-tv",
+    name: "MLB.TV",
+    url: "https://www.mlb.com/live-stream-games/subscribe",
+  },
+  {
+    id: "MW+",
+    name: "Mountain West+",
+    url: "https://www.mountainwestplus.com",
+  },
+  {
+    id: "nba-league-pass",
+    name: "NBA League Pass",
+    url: "https://www.nba.com/watch/league-pass-stream",
+  },
+  {
+    id: "NBA TV",
+    name: "NBA TV",
+    url: "https://www.nba.com/watch/nba-tv",
+  },
+  {
+    id: "nba-tv",
+    name: "NBA TV",
+    url: "https://www.nba.com/watch/nba-tv",
+  },
+  {
+    id: "nbc",
+    name: "NBC",
+    url: "https://www.nbc.com",
+  },
+  {
+    id: "NBC",
+    name: "NBC",
+    url: "https://www.nbc.com",
+  },
+  {
+    id: "nbcsn",
+    name: "NBC Sports Network",
+    url: "https://www.nbc.com/sports",
+  },
+  {
+    id: "NBCSN",
+    name: "NBC Sports Network",
+    url: "https://www.nbc.com/sports",
+  },
+  {
+    id: "netflix",
+    name: "Netflix",
+    url: "https://www.netflix.com",
   },
   {
     id: "NFL Net",
@@ -584,9 +356,234 @@ export const providers: Provider[] = [
     url: "https://www.nfl.com/network",
   },
   {
-    id: "BTN",
-    name: "Big Ten Network",
-    url: "https://www.foxsports.com",
+    id: "Ticket",
+    name: "NFL Sunday Ticket",
+    url: "https://tv.youtube.com/",
+  },
+  {
+    id: "nfl-plus",
+    name: "NFL+",
+    url: "https://www.nfl.com/plus",
+  },
+  {
+    id: "NHL Net",
+    name: "NHL Network",
+    url: "https://www.nhl.com/network",
+  },
+  {
+    id: "nhl-tv-dazn-uk",
+    name: "NHL.TV on DAZN",
+    url: "https://www.dazn.com/en-GB",
+  },
+  {
+    id: "NWSL+",
+    name: "NWSL+",
+    url: "https://plus.nwslsoccer.com",
+  },
+  {
+    id: "Paramount+",
+    name: "Paramount+",
+    url: "https://www.paramountplus.com",
+  },
+  {
+    id: "paramount",
+    name: "Paramount+",
+    url: "https://www.paramountplus.com",
+  },
+  {
+    id: "paramount-plus",
+    name: "Paramount+",
+    url: "https://www.paramountplus.com",
+  },
+  {
+    id: "peacock",
+    name: "Peacock",
+    url: "https://www.peacocktv.com",
+  },
+  {
+    id: "Peacock",
+    name: "Peacock",
+    url: "https://www.peacocktv.com",
+  },
+  {
+    id: "prime-video",
+    name: "Prime Video",
+    url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
+  },
+  {
+    id: "Prime Video",
+    name: "Prime Video",
+    url: "https://www.amazon.com/gp/video/sports?&linkCode=ll2&tag=seasoncaddy-20&linkId=d02ea4d90ced4bafb0da769b759da82a&language=en_US&ref_=as_li_ss_tl",
+  },
+  {
+    id: "RugbyPass",
+    name: "RugbyPass",
+    url: "https://www.rugbypass.com",
+  },
+  {
+    id: "SEC Network",
+    name: "SEC Network",
+    url: "https://www.espn.com/watch/espnplus/",
+  },
+  {
+    id: "SECN+",
+    name: "SEC Network+",
+    url: "https://www.espn.com/watch/espnplus/",
+  },
+  {
+    id: "sling",
+    name: "Sling TV",
+    url: "https://www.sling.com",
+  },
+  {
+    id: "Sling",
+    name: "Sling TV",
+    url: "https://www.sling.com",
+  },
+  {
+    id: "sportsnet",
+    name: "Sportsnet",
+    url: "https://www.sportsnet.ca",
+  },
+  {
+    id: "sportsnet-ca",
+    name: "Sportsnet",
+    url: "https://watch.sportsnet.ca",
+  },
+  {
+    id: "Sportsnet",
+    name: "Sportsnet",
+    url: "https://www.sportsnet.ca",
+  },
+  {
+    id: "tbs",
+    name: "TBS",
+    url: "https://www.tbs.com",
+  },
+  {
+    id: "TBS",
+    name: "TBS",
+    url: "https://www.tbs.com",
+  },
+  {
+    id: "Tele",
+    name: "Tele",
+    url: "https://www.televisaunivision.com",
+  },
+  {
+    id: "telemundo",
+    name: "Telemundo",
+    url: "https://www.telemundo.com/deportes",
+  },
+  {
+    id: "telemundo-app",
+    name: "Telemundo App",
+    url: "https://www.telemundo.com/deportes",
+  },
+  {
+    id: "telemundo-deportes-ahora",
+    name: "Telemundo Deportes Ahora",
+    url: "https://www.telemundo.com/deportes",
+  },
+  {
+    id: "CW",
+    name: "The CW",
+    url: "https://www.cwtv.com",
+  },
+  {
+    id: "roku",
+    name: "The Roku Channel",
+    url: "https://therokuchannel.roku.com",
+  },
+  {
+    id: "Roku",
+    name: "The Roku Channel",
+    url: "https://therokuchannel.roku.com",
+  },
+  {
+    id: "tln",
+    name: "TLN",
+    url: "https://www.tln.ca",
+  },
+  {
+    id: "tnt",
+    name: "TNT",
+    url: "https://www.tntdrama.com",
+  },
+  {
+    id: "tnt-sports",
+    name: "TNT Sports",
+    url: "https://www.tntsports.co.uk",
+  },
+  {
+    id: "trutv",
+    name: "truTV",
+    url: "https://www.trutv.com",
+  },
+  {
+    id: "tsn",
+    name: "TSN",
+    url: "https://www.tsn.ca",
+  },
+  {
+    id: "TSN",
+    name: "TSN",
+    url: "https://www.tsn.ca",
+  },
+  {
+    id: "tubi",
+    name: "Tubi",
+    url: "https://tubitv.com/live",
+  },
+  {
+    id: "tva-sports",
+    name: "TVA Sports",
+    url: "https://www.tvasports.ca",
+  },
+  {
+    id: "universo",
+    name: "Universo",
+    url: "https://www.nbc.com/networks/universo",
+  },
+  {
+    id: "usa",
+    name: "USA Network",
+    url: "https://www.usanetwork.com",
+  },
+  {
+    id: "USA Net",
+    name: "USA Network",
+    url: "https://www.usanetwork.com",
+  },
+  {
+    id: "Varsity TV",
+    name: "Varsity TV",
+    url: "https://www.varsity.tv",
+  },
+  {
+    id: "victory-plus",
+    name: "Victory+",
+    url: "https://victoryplus.com",
+  },
+  {
+    id: "vix",
+    name: "ViX",
+    url: "https://vix.com",
+  },
+  {
+    id: "wnba-league-pass",
+    name: "WNBA League Pass",
+    url: "https://www.wnba.com/leaguepass",
+  },
+  {
+    id: "YouTube",
+    name: "YouTube",
+    url: "https://www.youtube.com",
+  },
+  {
+    id: "youtube-tv",
+    name: "YouTube TV",
+    url: "https://tv.youtube.com",
   },
 
   // Other
@@ -595,8 +592,6 @@ export const providers: Provider[] = [
     name: "Provider pending",
     url: "",
   },
-];
-
 export type Game = {
   id: string;
   competitionId?: string;
