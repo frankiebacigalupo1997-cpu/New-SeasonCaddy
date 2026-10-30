@@ -12,6 +12,21 @@ export const providers: Provider[] = [
     url: "https://www.peacocktv.com",
   },
   {
+    id: "Fandango",
+    name: "Fandango at Home",
+    url: "https://www.fandangoathome.com",
+  },
+  {
+    id: "FOX Deportes",
+    name: "FOX Deportes",
+    url: "https://www.foxdeportes.com",
+  },
+  {
+    id: "FuboTV",
+    name: "Fubo",
+    url: "https://www.fubo.tv",
+  },
+  {
     id: "Peacock",
     name: "Peacock",
     url: "https://www.peacocktv.com",
