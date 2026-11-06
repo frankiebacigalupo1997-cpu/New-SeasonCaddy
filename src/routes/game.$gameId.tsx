@@ -17,7 +17,12 @@ import {
 
 import { Shell } from "@/components/gamehub/Shell";
 
-import { googleCalendarUrl } from "@/lib/calendar";
+import { toast } from "sonner";
+
+import {
+  googleCalendarApiFetch,
+  startGoogleCalendarOAuth,
+} from "@/lib/google-calendar-api";
 
 import {
   formatKickoff,
@@ -218,6 +223,81 @@ function GamePage() {
           "United States",
       ),
     );
+
+  async function addGameToGoogleCalendar() {
+  if (!game.kickoff) {
+    toast.error("This fixture does not have a confirmed kickoff time yet.");
+    return;
+  }
+
+  if (addingToCalendar) return;
+
+  setAddingToCalendar(true);
+
+  try {
+    const statusResponse = await googleCalendarApiFetch("/google/status");
+    const status = await statusResponse.json();
+
+    if (!statusResponse.ok || !status.success) {
+      throw new Error(
+        status.error ?? "Could not check Google Calendar connection",
+      );
+    }
+
+    if (!status.connected) {
+      await startGoogleCalendarOAuth(
+        regionLabel,
+        `${window.location.pathname}${window.location.search}`,
+      );
+      return;
+    }
+
+    const response = await googleCalendarApiFetch("/google/add-event", {
+      method: "POST",
+      body: JSON.stringify({
+        game: {
+          id: game.id,
+          sport: game.sport,
+          league: game.league,
+          home: game.home,
+          away: game.away,
+          kickoff: game.kickoff,
+          scheduledDate: game.scheduledDate,
+          scheduleLabel: game.scheduleLabel,
+        },
+        providerNames: realProviders.map((provider) => provider.name),
+        region: regionLabel,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.error ?? "Could not add game to Google Calendar",
+      );
+    }
+
+    toast.success(
+      result.alreadyExists
+        ? "This game is already in Google Calendar"
+        : "Game added to Google Calendar",
+    );
+  } catch (error) {
+    console.error(
+      "Could not add Google Calendar event from watch options",
+      error,
+    );
+
+    toast.error(
+      error instanceof Error
+        ? error.message
+        : "Could not add game to Google Calendar",
+    );
+  } finally {
+    setAddingToCalendar(false);
+  }
+}
 
   useEffect(() => {
     let cancelled =
@@ -505,20 +585,18 @@ function GamePage() {
                 ) : null}
               </p>
 
-              {calendarUrl && (
-                <div className="mt-6">
-                  <a
-                    href={
-                      calendarUrl
-                    }
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex min-w-60 items-center justify-center whitespace-nowrap rounded-lg border border-brand/40 px-6 py-3 text-sm font-bold text-brand transition hover:bg-brand/10"
-                  >
-                    Add to Google Calendar
-                  </a>
-                </div>
-              )}
+              {game.kickoff && (
+  <div className="mt-6">
+    <button
+      type="button"
+      onClick={addGameToGoogleCalendar}
+      disabled={addingToCalendar}
+      className="inline-flex min-w-60 items-center justify-center whitespace-nowrap rounded-lg border border-brand/40 px-6 py-3 text-sm font-bold text-brand transition hover:bg-brand/10 disabled:cursor-wait disabled:opacity-60"
+    >
+      {addingToCalendar ? "Adding..." : "Add to Google Calendar"}
+    </button>
+  </div>
+)}
             </div>
 
             {!eventTitleOnly && (
