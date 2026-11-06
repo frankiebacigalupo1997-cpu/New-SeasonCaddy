@@ -1186,28 +1186,18 @@ async function syncWithGoogleCalendar(
                   1000
           );
         })
-        .map((game) => ({
+                .map((game) => ({
           id: game.id,
           sport: game.sport,
-          competition:
-            game.league,
-                  .map((game) => ({
-          id: game.id,
-          sport: game.sport,
-          competition:
-            game.league,
-          league:
-            game.league,
+          competition: game.league,
+          league: game.league,
           home: game.home,
           away: game.away,
           eventName: game.eventName,
           eventKind: game.eventKind,
-          kickoff:
-            game.kickoff,
-          scheduledDate:
-            game.scheduledDate,
-          scheduleLabel:
-            game.scheduleLabel,
+          kickoff: game.kickoff,
+          scheduledDate: game.scheduledDate,
+          scheduleLabel: game.scheduleLabel,
           providerNames: regionalProviderIds(game)
             .map((providerId) => providerById(providerId))
             .filter(
