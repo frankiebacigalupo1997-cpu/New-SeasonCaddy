@@ -224,6 +224,8 @@ function GamePage() {
       ),
     );
 
+  const [addingToCalendar, setAddingToCalendar] = useState(false);
+
   async function addGameToGoogleCalendar() {
   if (!game.kickoff) {
     toast.error("This fixture does not have a confirmed kickoff time yet.");
