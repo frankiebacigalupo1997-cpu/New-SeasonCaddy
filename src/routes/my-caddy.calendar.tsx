@@ -92,6 +92,12 @@ function CalendarPage() {
     | "synced"
   >("idle");
 
+  const [googleCalendarConnected, setGoogleCalendarConnected] =
+  useState(false);
+
+const [googleCalendarDisconnecting, setGoogleCalendarDisconnecting] =
+  useState(false);
+
   /* ==================================================== */
   /* REGION                                               */
   /* ==================================================== */
@@ -154,18 +160,16 @@ function CalendarPage() {
           return;
         }
 
-        if (
-          status.connected &&
-          status.lastSyncedAt
-        ) {
-          setGoogleCalendarSyncStatus(
-            "synced",
-          );
-        } else {
-          setGoogleCalendarSyncStatus(
-            "idle",
-          );
-        }
+        setGoogleCalendarConnected(Boolean(status.connected));
+
+if (
+  status.connected &&
+  status.lastSyncedAt
+) {
+  setGoogleCalendarSyncStatus("synced");
+} else {
+  setGoogleCalendarSyncStatus("idle");
+}
       } catch (
         error
       ) {
@@ -364,7 +368,68 @@ function CalendarPage() {
   /* GOOGLE CALENDAR SYNC                                 */
   /* ==================================================== */
 
- async function syncWithGoogleCalendar() {
+async function disconnectGoogleCalendar() {
+  if (
+    googleCalendarDisconnecting ||
+    googleCalendarSyncStatus === "syncing"
+  ) {
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Disconnect Google Calendar? Existing events in Google Calendar will not be deleted."
+  );
+
+  if (!confirmed) return;
+
+  setGoogleCalendarDisconnecting(true);
+
+  try {
+    const response = await googleCalendarApiFetch(
+      "/google/disconnect",
+      { method: "POST" },
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.error ?? "Could not disconnect Google Calendar",
+      );
+    }
+
+    setGoogleCalendarConnected(false);
+    setGoogleCalendarSyncStatus("idle");
+
+        toast.success("Google Calendar disconnected");
+  } catch (error) {
+    toast.error(
+      error instanceof Error
+        ? error.message
+        : "Could not disconnect Google Calendar",
+    );
+
+    try {
+      const statusResponse =
+        await googleCalendarApiFetch("/google/status");
+
+      const status = await statusResponse.json();
+
+      if (statusResponse.ok && status.success) {
+        setGoogleCalendarConnected(Boolean(status.connected));
+      }
+    } catch (statusError) {
+      console.error(
+        "Could not refresh Google Calendar status",
+        statusError,
+      );
+    }
+  } finally {
+    setGoogleCalendarDisconnecting(false);
+  }
+}
+  
+  async function syncWithGoogleCalendar() {
   const savedTeamCount = Object.values(savedLeagues).reduce(
     (total, competitionTeams) => total + competitionTeams.length,
     0,
@@ -375,7 +440,10 @@ function CalendarPage() {
     return;
   }
 
-  if (googleCalendarSyncStatus === "syncing") {
+   if (
+    googleCalendarSyncStatus === "syncing" ||
+    googleCalendarDisconnecting
+  ) {
     return;
   }
 
@@ -385,7 +453,7 @@ function CalendarPage() {
     const statusResponse =
       await googleCalendarApiFetch("/google/status");
 
-    const status = await statusResponse.json();
+        const status = await statusResponse.json();
 
     if (!statusResponse.ok || !status.success) {
       throw new Error(
@@ -393,6 +461,8 @@ function CalendarPage() {
           "Could not check Google Calendar connection",
       );
     }
+
+    setGoogleCalendarConnected(Boolean(status.connected));
 
     if (!status.connected) {
       setGoogleCalendarSyncStatus("idle");
@@ -716,9 +786,9 @@ function CalendarPage() {
             onClick={
               syncWithGoogleCalendar
             }
-            disabled={
-              googleCalendarSyncStatus ===
-              "syncing"
+                        disabled={
+              googleCalendarSyncStatus === "syncing" ||
+              googleCalendarDisconnecting
             }
             style={{
               width:
@@ -746,16 +816,16 @@ function CalendarPage() {
                 750,
 
               cursor:
-                googleCalendarSyncStatus ===
-                "syncing"
-                  ? "wait"
-                  : "pointer",
+  googleCalendarSyncStatus === "syncing" ||
+  googleCalendarDisconnecting
+    ? "wait"
+    : "pointer",
 
-              opacity:
-                googleCalendarSyncStatus ===
-                "syncing"
-                  ? 0.72
-                  : 1,
+opacity:
+  googleCalendarSyncStatus === "syncing" ||
+  googleCalendarDisconnecting
+    ? 0.72
+    : 1,
             }}
           >
             {googleCalendarSyncStatus ===
@@ -766,6 +836,33 @@ function CalendarPage() {
                 ? "Synced with your Google Calendar"
                 : "Sync with Google Calendar"}
           </button>
+          {googleCalendarConnected && (
+  <button
+    type="button"
+    onClick={disconnectGoogleCalendar}
+    disabled={
+      googleCalendarSyncStatus === "syncing" ||
+      googleCalendarDisconnecting
+    }
+    style={{
+      width: "100%",
+      minHeight: "34px",
+      marginTop: "8px",
+      borderRadius: "8px",
+      border: "1px solid var(--border)",
+      background: "transparent",
+      color: "var(--muted-foreground)",
+      fontSize: "11px",
+      fontWeight: 650,
+      cursor: "pointer",
+      opacity: googleCalendarDisconnecting ? 0.6 : 1,
+    }}
+  >
+    {googleCalendarDisconnecting
+      ? "Disconnecting..."
+      : "Disconnect Google Calendar"}
+  </button>
+)}
         </div>
       </div>
 
