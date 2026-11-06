@@ -442,19 +442,6 @@ function GamePage() {
         "not-live-uk",
     );
 
-  const calendarUrl =
-    googleCalendarUrl({
-      game,
-
-      providerNames:
-        realProviders.map(
-          (
-            provider,
-          ) =>
-            provider.name,
-        ),
-    });
-
   const eventTitleOnly =
     isEventTitleOnlyGame(
       game,
