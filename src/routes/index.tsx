@@ -1191,6 +1191,11 @@ async function syncWithGoogleCalendar(
           sport: game.sport,
           competition:
             game.league,
+                  .map((game) => ({
+          id: game.id,
+          sport: game.sport,
+          competition:
+            game.league,
           league:
             game.league,
           home: game.home,
@@ -1203,6 +1208,14 @@ async function syncWithGoogleCalendar(
             game.scheduledDate,
           scheduleLabel:
             game.scheduleLabel,
+          providerNames: regionalProviderIds(game)
+            .map((providerId) => providerById(providerId))
+            .filter(
+              (provider) =>
+                provider.id !== "tbd" &&
+                provider.id !== "not-live-uk",
+            )
+            .map((provider) => provider.name),
         }));
 
     const SYNC_BATCH_SIZE =
