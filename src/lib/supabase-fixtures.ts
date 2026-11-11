@@ -646,21 +646,8 @@ export async function fetchFrontendCompetitionIdentity(
 }
 
 export async function fetchFrontendCatalog(): Promise<FrontendCatalogRow[]> {
-  /*
-   * Sport and competition navigation is defined by the canonical competition
-   * registry, not by the fixture serving cache. This means adding/removing an
-   * active canonical competition immediately changes the tracker taxonomy,
-   * even when that competition has no current fixture rows.
-   */
-  const { data, error } = await sportsDataSupabase
-    .from("competitions")
-    .select("id,name,sport,active")
-    .eq("active", true)
-    .not("sport", "is", null)
-    .not("sport", "eq", "")
-    .order("sport", { ascending: true })
-    .order("name", { ascending: true })
-    .order("id", { ascending: true });
+  return fetchFrontendCatalogIdentityRows();
+}
 
   if (error) {
     throw new Error(`Supabase canonical competition query failed: ${error.message}`);
