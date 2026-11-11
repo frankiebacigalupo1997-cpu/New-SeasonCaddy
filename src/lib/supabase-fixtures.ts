@@ -646,7 +646,7 @@ export async function fetchFrontendCompetitionIdentity(
 }
 
 export async function fetchFrontendCatalog(): Promise<FrontendCatalogRow[]> {
-  return fetchFrontendCatalogIdentityRows();
+  return fetchFrontendIdentityCatalog();
 }
 
 export async function fetchFrontendHomeInitial(
