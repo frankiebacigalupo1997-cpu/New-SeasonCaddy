@@ -649,20 +649,6 @@ export async function fetchFrontendCatalog(): Promise<FrontendCatalogRow[]> {
   return fetchFrontendCatalogIdentityRows();
 }
 
-  return (Array.isArray(data) ? data : [])
-    .map((row) => ({
-      competitionId: String(row.id),
-      competitionName: String(row.name ?? row.id),
-      sport: String(row.sport),
-      teamNames: [],
-      canonicalTeams: [],
-      providerIds: [],
-      fixtureCount: 0,
-      upcomingCount: 0,
-    }))
-    .map(normalizeCatalogRow)
-    .filter((row): row is FrontendCatalogRow => row !== null);
-}
 export async function fetchFrontendHomeInitial(
   limit = 100,
 ): Promise<FrontendFixtureRow[]> {
