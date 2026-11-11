@@ -649,10 +649,6 @@ export async function fetchFrontendCatalog(): Promise<FrontendCatalogRow[]> {
   return fetchFrontendCatalogIdentityRows();
 }
 
-  if (error) {
-    throw new Error(`Supabase canonical competition query failed: ${error.message}`);
-  }
-
   return (Array.isArray(data) ? data : [])
     .map((row) => ({
       competitionId: String(row.id),
