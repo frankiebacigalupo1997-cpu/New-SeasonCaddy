@@ -316,6 +316,61 @@ export const providers: Provider[] = [
     url: "https://www.nba.com/watch/league-pass-stream",
   },
   {
+  id: "NBA League Pass",
+  name: "NBA League Pass",
+  url: "https://www.nba.com/watch/league-pass-stream",
+},
+{
+  id: "fox",
+  name: "FOX",
+  url: "https://www.fox.com",
+},
+{
+  id: "TNT",
+  name: "TNT",
+  url: "https://www.tntdrama.com",
+},
+{
+  id: "truTV",
+  name: "truTV",
+  url: "https://www.trutv.com",
+},
+{
+  id: "espn_plus",
+  name: "ESPN+",
+  url: "https://plus.espn.com",
+},
+{
+  id: "beIn Sports",
+  name: "beIN Sports",
+  url: "https://connect-au.beinsports.com/en",
+},
+{
+  id: "Universo",
+  name: "Universo",
+  url: "https://www.nbc.com/networks/universo",
+},
+{
+  id: "CNBC",
+  name: "CNBC",
+  url: "https://www.nbc.com/sign-up",
+},
+{
+  id: "Netflix",
+  name: "Netflix",
+  url: "https://www.netflix.com",
+},
+{
+  id: "usa-network",
+  name: "USA Network",
+  url: "https://www.usanetwork.com",
+},
+{
+  id: "TUBI",
+  name: "Tubi",
+  url: "https://tubitv.com/live",
+},
+  {
     id: "NBA TV",
     name: "NBA TV",
     url: "https://www.nba.com/watch/nba-tv",
