@@ -651,9 +651,8 @@ function MyCaddyOverview() {
           />
 
           <MyTeamsPanel
-            savedLeagues={
-              savedLeagues
-            }
+            savedLeagues={savedLeagues}
+            savedSports={savedSports}
             preferencesLoaded={
               preferencesLoaded
             }
@@ -2079,18 +2078,21 @@ function NextGamesMessage({
 
 function MyTeamsPanel({
   savedLeagues,
+  savedSports,
   preferencesLoaded,
 }: {
-  savedLeagues: Record<
-    string,
-    string[]
-  >;
-
+  savedLeagues: Record<string, string[]>;
+  savedSports: string[];
   preferencesLoaded: boolean;
 }) {
   const {
     data: frontendCatalog = [],
   } = useFrontendCatalog();
+
+  const followedSports = normalizeSavedSports(savedSports).map((sport) => ({
+    id: sport,
+    name: sport.replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase()),
+  }));
 
   const followedCompetitionIds =
     useMemo(
@@ -2152,15 +2154,12 @@ function MyTeamsPanel({
                 ? catalogDisplayTeamNames(identityCompetition)
                 : [];
 
-            const competitionSaved =
-              availableTeams.length >
-                0 &&
-              availableTeams.every(
-                (team) =>
-                  teams.includes(
-                    team,
-                  ),
-              );
+            const wholeCompetitionSaved = teams.includes(competitionId);
+            const selectedTeams = teams.filter((team) => team !== competitionId);
+            const competitionSaved = wholeCompetitionSaved || (
+              availableTeams.length > 0 &&
+              availableTeams.every((team) => selectedTeams.includes(team))
+            );
 
             return {
               league: {
@@ -2178,7 +2177,8 @@ function MyTeamsPanel({
                     )
                     .join(" "),
               },
-              teams,
+              teams: selectedTeams,
+              wholeCompetitionSaved,
               competitionSaved,
             };
           },
@@ -2195,13 +2195,12 @@ function MyTeamsPanel({
     ]);
 
   const totalTeams =
+    followedSports.length +
     followedLeagues.reduce(
-      (
-        total,
-        item,
-      ) =>
+      (total, item) =>
         total +
-        item.teams.length,
+        item.teams.length +
+        (item.wholeCompetitionSaved ? 1 : 0),
       0,
     );
 
@@ -2363,6 +2362,20 @@ function MyTeamsPanel({
               "14px 18px 18px",
           }}
         >
+          {followedSports.length > 0 && (
+            <div style={{ marginBottom: "16px" }}>
+              <div className="text-muted-foreground" style={{ marginBottom: "8px", fontSize: "11px", fontWeight: 750, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Followed sports
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>
+                {followedSports.map((sport) => (
+                  <div key={sport.id} style={{ padding: "7px 10px", borderRadius: "8px", border: "1px solid color-mix(in oklch, var(--brand) 22%, var(--border))", background: "color-mix(in oklch, var(--brand) 10%, transparent)", color: "var(--foreground)", fontSize: "12px", fontWeight: 700 }}>
+                    {sport.name} · all fixtures
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {followedLeagues.map(
             ({
               league,
