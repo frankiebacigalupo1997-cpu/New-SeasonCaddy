@@ -641,236 +641,238 @@ export const providers: Provider[] = [
     url: "https://tv.youtube.com",
   },
   
-  {
-    id: "ABC32",
-    name: "ABC32",
-    url: "",
-  },
-  {
-    id: "ABTV",
-    name: "ABTV",
-    url: "",
-  },
-  {
-    id: "acc-network",
-    name: "ACC Network",
-    url: "",
-  },
-  {
-    id: "ALT",
-    name: "ALT",
-    url: "",
-  },
-  {
-    id: "ALT2",
-    name: "ALT2",
-    url: "",
-  },
-  {
-    id: "BN+",
-    name: "BN+",
-    url: "",
-  },
-  {
-    id: "CARNHL",
-    name: "CARNHL",
-    url: "",
-  },
-  {
-    id: "CBJHN",
-    name: "CBJHN",
-    url: "",
-  },
-  {
-    id: "CBJNHL",
-    name: "CBJNHL",
-    url: "",
-  },
-  {
-    id: "CHSN",
-    name: "CHSN",
-    url: "",
-  },
-  {
-    id: "DSN",
-    name: "DSN",
-    url: "",
-  },
-  {
-    id: "espnu",
-    name: "ESPNU",
-    url: "",
-  },
-  {
-    id: "FloLacrosse",
-    name: "FloLacrosse",
-    url: "",
-  },
-  {
-    id: "FOXLA+",
-    name: "FOXLA+",
-    url: "",
-  },
-  {
-    id: "HHN",
-    name: "HHN",
-    url: "",
-  },
-  {
-    id: "KDFI",
-    name: "KDFI",
-    url: "",
-  },
-  {
-    id: "KDFW 4",
-    name: "KDFW 4",
-    url: "",
-  },
-  {
-    id: "KING",
-    name: "KING",
-    url: "",
-  },
-  {
-    id: "KONG",
-    name: "KONG",
-    url: "",
-  },
-  {
-    id: "KSTC",
-    name: "KSTC",
-    url: "",
-  },
-  {
-    id: "KSTP",
-    name: "KSTP",
-    url: "",
-  },
-  {
-    id: "KTTV",
-    name: "KTTV",
-    url: "",
-  },
-  {
-    id: "KTVD",
-    name: "KTVD",
-    url: "",
-  },
-  {
-    id: "KUSA",
-    name: "KUSA",
-    url: "",
-  },
-  {
-    id: "Mammoth+",
-    name: "Mammoth+",
-    url: "",
-  },
-  {
-    id: "MINNHL",
-    name: "MINNHL",
-    url: "",
-  },
-  {
-    id: "MNMT",
-    name: "MNMT",
-    url: "",
-  },
-  {
-    id: "MNMT2",
-    name: "MNMT2",
-    url: "",
-  },
-  {
-    id: "MSG",
-    name: "MSG",
-    url: "",
-  },
-  {
-    id: "MSG 2",
-    name: "MSG 2",
-    url: "",
-  },
-  {
-    id: "MSG-B",
-    name: "MSG-B",
-    url: "",
-  },
-  {
-    id: "MSGSN",
-    name: "MSGSN",
-    url: "",
-  },
-  {
-    id: "MSGSN2",
-    name: "MSGSN2",
-    url: "",
-  },
-  {
-    id: "NBCSCA",
-    name: "NBCSCA",
-    url: "",
-  },
-  {
-    id: "NBCSP",
-    name: "NBCSP",
-    url: "",
-  },
-  {
-    id: "NBCSP+",
-    name: "NBCSP+",
-    url: "",
-  },
-  {
-    id: "NESN",
-    name: "NESN",
-    url: "",
-  },
-  {
-    id: "SCRIPPS",
-    name: "SCRIPPS",
-    url: "",
-  },
-  {
-    id: "sec-network",
-    name: "SEC Network",
-    url: "",
-  },
-  {
-    id: "SN-PIT",
-    name: "SN-PIT",
-    url: "",
-  },
-  {
-    id: "STLNHL",
-    name: "STLNHL",
-    url: "",
-  },
-  {
-    id: "The Spot",
-    name: "The Spot",
-    url: "",
-  },
-  {
-    id: "Utah16",
-    name: "Utah16",
-    url: "",
-  },
-  {
-    id: "Wild+",
-    name: "Wild+",
-    url: "",
-  },
-  {
-    id: "WRAL",
-    name: "WRAL",
-    url: "",
-  },
-  {
-    id: "WWHO",
-    name: "WWHO",
-    url: "",
-  },
+ 
+{
+  id: "ABC32",
+  name: "ABC32",
+  url: "https://www.abc.com/watch-live/",
+},
+{
+  id: "ABTV",
+  name: "ABTV",
+  url: "",
+},
+{
+  id: "ALT",
+  name: "Altitude+",
+  url: "https://www.altitudeplus.com/",
+},
+{
+  id: "ALT2",
+  name: "Altitude+",
+  url: "https://www.altitudeplus.com/",
+},
+{
+  id: "BN+",
+  name: "BN+",
+  url: "https://www.nhl.com/blues/",
+},
+{
+  id: "CARNHL",
+  name: "Hurricanes Hockey Network",
+  url: "https://www.nhl.com/hurricanes/team/broadcast-info/",
+},
+{
+  id: "CBJHN",
+  name: "Blue Jackets Hockey Network",
+  url: "https://www.nhl.com/bluejackets/",
+},
+{
+  id: "CBJNHL",
+  name: "Blue Jackets Hockey Network",
+  url: "https://www.nhl.com/bluejackets/",
+},
+{
+  id: "CHSN",
+  name: "Chicago Sports Network",
+  url: "https://subscribe.chsn.com/",
+},
+{
+  id: "DSN",
+  name: "Delmarva Sports Network",
+  url: "https://www.delmarvasportsnetwork.com/subscribe/",
+},
+{
+  id: "FOXLA+",
+  name: "FOX 11 Los Angeles",
+  url: "https://www.foxla.com/live",
+},
+{
+  id: "FloLacrosse",
+  name: "FloLacrosse",
+  url: "https://www.flolacrosse.com/signup",
+},
+{
+  id: "HHN",
+  name: "Hurricanes Hockey Network",
+  url: "https://www.nhl.com/hurricanes/team/broadcast-info/",
+},
+{
+  id: "KDFI",
+  name: "KDFI MyNetworkTV",
+  url: "https://www.fox4news.com/",
+},
+{
+  id: "KDFW 4",
+  name: "FOX 4 Dallas",
+  url: "https://www.fox4news.com/",
+},
+{
+  id: "KING",
+  name: "KING 5 Seattle",
+  url: "https://www.king5.com/",
+},
+{
+  id: "KONG",
+  name: "KONG Seattle",
+  url: "https://www.king5.com/",
+},
+{
+  id: "KSTC",
+  name: "KSTC 45TV",
+  url: "https://www.45tv.com/",
+},
+{
+  id: "KSTP",
+  name: "KSTP",
+  url: "https://kstp.com/",
+},
+{
+  id: "KTTV",
+  name: "FOX 11 Los Angeles",
+  url: "https://www.foxla.com/",
+},
+{
+  id: "KTVD",
+  name: "Colorado 20",
+  url: "https://www.9news.com/",
+},
+{
+  id: "KUSA",
+  name: "9NEWS Denver",
+  url: "https://www.9news.com/",
+},
+{
+  id: "Mammoth+",
+  name: "Mammoth+",
+  url: "https://www.segplus.com/utahmammothplus/",
+},
+{
+  id: "MINNHL",
+  name: "Minnesota Wild",
+  url: "https://watch.wild.com/",
+},
+{
+  id: "MNMT",
+  name: "Monumental Sports Network",
+  url: "https://www.monumentalsportsnetwork.com/",
+},
+{
+  id: "MNMT2",
+  name: "Monumental Sports Network",
+  url: "https://www.monumentalsportsnetwork.com/",
+},
+{
+  id: "MSG",
+  name: "MSG+",
+  url: "https://www.msgplus.com/",
+},
+{
+  id: "MSG 2",
+  name: "MSG+",
+  url: "https://www.msgplus.com/",
+},
+{
+  id: "MSG-B",
+  name: "MSG+",
+  url: "https://www.msgplus.com/",
+},
+{
+  id: "MSGSN",
+  name: "MSG Sports Network",
+  url: "https://www.msgplus.com/",
+},
+{
+  id: "MSGSN2",
+  name: "MSG Sports Network",
+  url: "https://www.msgplus.com/",
+},
+{
+  id: "NBCSCA",
+  name: "NBC Sports California",
+  url: "https://www.nbcsports.com/watch",
+},
+{
+  id: "NBCSP",
+  name: "NBC Sports Philadelphia",
+  url: "https://www.nbcsports.com/watch",
+},
+{
+  id: "NBCSP+",
+  name: "NBC Sports Philadelphia+",
+  url: "https://www.nbcsports.com/watch",
+},
+{
+  id: "NESN",
+  name: "NESN 360",
+  url: "https://nesn.com/nesn360/",
+},
+{
+  id: "SCRIPPS",
+  name: "Scripps Sports Network",
+  url: "https://scrippssportsnetwork.com/",
+},
+{
+  id: "SN-PIT",
+  name: "SportsNet Pittsburgh",
+  url: "https://www.sportsnetpittsburgh.com/",
+},
+{
+  id: "STLNHL",
+  name: "St. Louis Blues",
+  url: "https://www.nhl.com/blues/",
+},
+{
+  id: "The Spot",
+  name: "The Spot",
+  url: "https://thespottv.com/",
+},
+{
+  id: "Utah16",
+  name: "Utah 16",
+  url: "https://utah16.com/",
+},
+{
+  id: "Wild+",
+  name: "Wild+",
+  url: "https://watch.wild.com/",
+},
+{
+  id: "WRAL",
+  name: "WRAL",
+  url: "https://www.wral.com/",
+},
+{
+  id: "WWHO",
+  name: "WWHO",
+  url: "https://www.cwcolumbus.com/",
+},
+{
+  id: "acc-network",
+  name: "ACC Network",
+  url: "https://www.espn.com/watch/",
+},
+{
+  id: "espnu",
+  name: "ESPNU",
+  url: "https://www.espn.com/watch/",
+},
+{
+  id: "sec-network",
+  name: "SEC Network",
+  url: "https://www.espn.com/watch/",
+},
+
 
 
   // Other
