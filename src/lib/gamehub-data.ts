@@ -640,6 +640,238 @@ export const providers: Provider[] = [
     name: "YouTube TV",
     url: "https://tv.youtube.com",
   },
+  
+  {
+    id: "ABC32",
+    name: "ABC32",
+    url: "",
+  },
+  {
+    id: "ABTV",
+    name: "ABTV",
+    url: "",
+  },
+  {
+    id: "acc-network",
+    name: "ACC Network",
+    url: "",
+  },
+  {
+    id: "ALT",
+    name: "ALT",
+    url: "",
+  },
+  {
+    id: "ALT2",
+    name: "ALT2",
+    url: "",
+  },
+  {
+    id: "BN+",
+    name: "BN+",
+    url: "",
+  },
+  {
+    id: "CARNHL",
+    name: "CARNHL",
+    url: "",
+  },
+  {
+    id: "CBJHN",
+    name: "CBJHN",
+    url: "",
+  },
+  {
+    id: "CBJNHL",
+    name: "CBJNHL",
+    url: "",
+  },
+  {
+    id: "CHSN",
+    name: "CHSN",
+    url: "",
+  },
+  {
+    id: "DSN",
+    name: "DSN",
+    url: "",
+  },
+  {
+    id: "espnu",
+    name: "ESPNU",
+    url: "",
+  },
+  {
+    id: "FloLacrosse",
+    name: "FloLacrosse",
+    url: "",
+  },
+  {
+    id: "FOXLA+",
+    name: "FOXLA+",
+    url: "",
+  },
+  {
+    id: "HHN",
+    name: "HHN",
+    url: "",
+  },
+  {
+    id: "KDFI",
+    name: "KDFI",
+    url: "",
+  },
+  {
+    id: "KDFW 4",
+    name: "KDFW 4",
+    url: "",
+  },
+  {
+    id: "KING",
+    name: "KING",
+    url: "",
+  },
+  {
+    id: "KONG",
+    name: "KONG",
+    url: "",
+  },
+  {
+    id: "KSTC",
+    name: "KSTC",
+    url: "",
+  },
+  {
+    id: "KSTP",
+    name: "KSTP",
+    url: "",
+  },
+  {
+    id: "KTTV",
+    name: "KTTV",
+    url: "",
+  },
+  {
+    id: "KTVD",
+    name: "KTVD",
+    url: "",
+  },
+  {
+    id: "KUSA",
+    name: "KUSA",
+    url: "",
+  },
+  {
+    id: "Mammoth+",
+    name: "Mammoth+",
+    url: "",
+  },
+  {
+    id: "MINNHL",
+    name: "MINNHL",
+    url: "",
+  },
+  {
+    id: "MNMT",
+    name: "MNMT",
+    url: "",
+  },
+  {
+    id: "MNMT2",
+    name: "MNMT2",
+    url: "",
+  },
+  {
+    id: "MSG",
+    name: "MSG",
+    url: "",
+  },
+  {
+    id: "MSG 2",
+    name: "MSG 2",
+    url: "",
+  },
+  {
+    id: "MSG-B",
+    name: "MSG-B",
+    url: "",
+  },
+  {
+    id: "MSGSN",
+    name: "MSGSN",
+    url: "",
+  },
+  {
+    id: "MSGSN2",
+    name: "MSGSN2",
+    url: "",
+  },
+  {
+    id: "NBCSCA",
+    name: "NBCSCA",
+    url: "",
+  },
+  {
+    id: "NBCSP",
+    name: "NBCSP",
+    url: "",
+  },
+  {
+    id: "NBCSP+",
+    name: "NBCSP+",
+    url: "",
+  },
+  {
+    id: "NESN",
+    name: "NESN",
+    url: "",
+  },
+  {
+    id: "SCRIPPS",
+    name: "SCRIPPS",
+    url: "",
+  },
+  {
+    id: "sec-network",
+    name: "SEC Network",
+    url: "",
+  },
+  {
+    id: "SN-PIT",
+    name: "SN-PIT",
+    url: "",
+  },
+  {
+    id: "STLNHL",
+    name: "STLNHL",
+    url: "",
+  },
+  {
+    id: "The Spot",
+    name: "The Spot",
+    url: "",
+  },
+  {
+    id: "Utah16",
+    name: "Utah16",
+    url: "",
+  },
+  {
+    id: "Wild+",
+    name: "Wild+",
+    url: "",
+  },
+  {
+    id: "WRAL",
+    name: "WRAL",
+    url: "",
+  },
+  {
+    id: "WWHO",
+    name: "WWHO",
+    url: "",
+  },
+
 
   // Other
   {
