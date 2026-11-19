@@ -3647,7 +3647,7 @@ const defaultCompetition = trackerCompetitionOptions
 
                         {/* FIXTURE */}
 
-                        <div className="home-fixture-match min-w-[150px] flex-1">
+                  <div className="home-fixture-match min-w-[150px] flex-1">
   <p className="font-semibold">
     {gameDisplayTitle(
       game,
@@ -3655,7 +3655,7 @@ const defaultCompetition = trackerCompetitionOptions
   </p>
 
   <p className="mt-1 text-xs text-muted-foreground">
-    {game.league}
+    {formatCloudflareOptionLabel(game.sport)} - {game.league}
   </p>
 </div>
 
