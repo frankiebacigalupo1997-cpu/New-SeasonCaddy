@@ -155,15 +155,16 @@ export function NextFixtureHero({
                 ? "Next event"
                 : "Next fixture"}
           </span>
-
-          {game && (
-            <span className="text-sm font-semibold text-muted-foreground">
-              {
-                game.league
-              }
-            </span>
-          )}
-        </div>
+          
+            {game && (
+  <span className="text-sm font-semibold text-muted-foreground">
+    {game.sport
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (character) => character.toUpperCase())}
+    {" - "}
+    {game.league}
+  </span>
+)}
 
         {loading ? (
           <FixtureHeroLoading />
@@ -259,28 +260,30 @@ export function NextFixtureHero({
                   )}
             </p>
 
-            <p className="mt-3 text-sm font-medium text-muted-foreground">
-              {getProviderIds(
-                game,
-              )
-                .map(
-                  (
-                    providerId,
-                  ) =>
-                    providerById(
-                      providerId,
-                    ).name,
-                )
-                .join(
-                  " · ",
-                )}
+           <p className="mt-3 text-sm font-medium text-muted-foreground">
+  {getProviderIds(
+    game,
+  )
+    .map(
+      (
+        providerId,
+      ) =>
+        providerById(
+          providerId,
+        ).name,
+    )
+    .join(
+      " · ",
+    )}
 
-              {" · "}
+  {" · "}
 
-              {
-                game.league
-              }
-            </p>
+  {game.sport
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase())}
+  {" - "}
+  {game.league}
+</p>
 
             <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
               {game.kickoff &&
