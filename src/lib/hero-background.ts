@@ -19,7 +19,6 @@ const HERO_IMAGES = {
   "bare-knuckle-fighting": brandingHero("Bare Knuckle Hero.png"),
   baseball: brandingHero("Baseball Hero.png"),
   basketball: brandingHero("Basketball Hero.png"),
-  boxing: brandingHero("Boxing Hero.png"),
   "bull-riding": brandingHero("Bull Riding Hero.png"),
   cricket: brandingHero("Cricket Hero.png"),
   cycling: brandingHero("Cycling Hero.png"),
@@ -77,7 +76,9 @@ const COMPETITION_HERO_IMAGES: Record<string, string> = {
   grappling: brandingHero("Grappling Hero.png"),
   wrestling: brandingHero("Wrestling Hero.png"),
   mma: brandingHero("MMA Hero.png"),
-  ufc: brandingHero("MMA Hero.png")
+  ufc: brandingHero("MMA Hero.png"),
+  "kick-boxing": brandingHero("Boxing Hero.png"),
+  "muay-thai": brandingHero("Boxing Hero.png")
 };
 
 const RUGBY_LEAGUE_COMPETITIONS = new Set([
