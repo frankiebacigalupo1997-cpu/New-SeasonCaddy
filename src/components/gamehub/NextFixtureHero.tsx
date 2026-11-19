@@ -165,6 +165,7 @@ export function NextFixtureHero({
     {game.league}
   </span>
 )}
+        </div>        
 
         {loading ? (
           <FixtureHeroLoading />
