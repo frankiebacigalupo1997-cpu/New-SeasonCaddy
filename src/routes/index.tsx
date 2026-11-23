@@ -160,42 +160,42 @@ export const Route =
     },
   ) {
     if (
-      competition.id === "nfl" ||
-    competition.id === "mlb" ||
-    competition.id === "nba" ||
-    competition.id === "nhl" ||
-    competition.id === "ufc" ||
-      competition.id === "champions-league" ||
-      competition.id === "europa-league"
+      competition.id === "NFL" ||
+    competition.id === "MLB" ||
+    competition.id === "NBA" ||
+    competition.id === "NHL" ||
+    competition.id === "UFC" ||
+      competition.id === "UEFA Champions League" ||
+      competition.id === "UEFA Europa League"
     ) {
       return 0;
     }
   
     if (
       competition.id ===
-      "ncaa-football" ||
-    competition.id === "wnba" ||
-       competition.id === "premier-league" ||
-      competition.id === "serie-a" ||
-      competition.id === "mma" ||
-      competition.id === "formula-1" ||
-      competition.id === "athletics" ||
-      competition.id === "boxing"
+      "College Football" ||
+    competition.id === "WNBA" ||
+       competition.id === "Premier League" ||
+      competition.id === "Serie A" ||
+      competition.id === "MMA" ||
+      competition.id === "Formula 1" ||
+      competition.id === "Athletics" ||
+      competition.id === "Boxing"
     ) {
       return 1;
     }
   
   if (
-      competition.id === "la-liga" ||
-      competition.id === "college-basketball"
+      competition.id === "La Liga" ||
+      competition.id === "College Basketball"
     ) {
       return 2;
     }
 
     if (
-      competition.id === "bundesliga"  ||
-      competition.id === "french-ligue-1" ||
-      competition.id === "mls" 
+      competition.id === "Bundesliga"  ||
+      competition.id === "French Ligue 1" ||
+      competition.id === "MLS" 
     ) {
       return 3;
     }
