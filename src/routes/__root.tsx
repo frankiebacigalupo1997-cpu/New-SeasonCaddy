@@ -186,6 +186,38 @@ export const Route =
         },
 
         {
+          property:
+            "og:image",
+
+          content:
+            "https://ekxmoxjvnohdbbrpbqdq.supabase.co/storage/v1/object/public/branding/SeasonCaddy%20Logo%20Blue.png",
+        },
+
+        {
+          property:
+            "og:image:alt",
+
+          content:
+            "SeasonCaddy emblem",
+        },
+
+        {
+          name:
+            "twitter:image",
+
+          content:
+            "https://ekxmoxjvnohdbbrpbqdq.supabase.co/storage/v1/object/public/branding/SeasonCaddy%20Logo%20Blue.png",
+        },
+
+        {
+          name:
+            "twitter:image:alt",
+
+          content:
+            "SeasonCaddy emblem",
+        },
+
+        {
           name:
             "twitter:card",
 
