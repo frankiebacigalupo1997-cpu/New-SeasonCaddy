@@ -2911,7 +2911,7 @@ const trackerTeamOptions = useMemo(() => {
 
         <ViewportSticky
   top={80}
-  wrapperClassName="w-full shrink-0 lg:w-72 lg:self-start"
+  wrapperClassName="home-follow-teams w-full shrink-0 lg:w-72 lg:self-start"
   contentClassName="sportstream-scrollbar w-full"
 >
   <aside className="panel h-fit space-y-5 p-6">
