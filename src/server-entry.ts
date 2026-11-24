@@ -14,7 +14,7 @@ type ServerEntry = {
 
 type ServerContext = {
   waitUntil?: (promise: Promise<unknown>) => void;
-};
+} | undefined;
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
@@ -22,7 +22,7 @@ async function getServerEntry(ctx: ServerContext): Promise<ServerEntry> {
   if (!serverEntryPromise) {
     serverEntryPromise = import("@tanstack/react-start/server-entry").then(
       (m) => {
-        ctx.waitUntil?.(
+        ctx?.waitUntil?.(
           posthogLogger.info("TanStack Start server entry initialized", {
             runtime: "node",
           }),
@@ -50,7 +50,7 @@ async function normalizeCatastrophicSsrResponse(
   console.error(
     consumeLastCapturedError() ?? new Error(`h3 swallowed SSR error: ${body}`),
   );
-  ctx.waitUntil?.(
+  ctx?.waitUntil?.(
     posthogLogger.warn("SSR error response normalized", {
       response_status: response.status,
     }),
@@ -81,7 +81,7 @@ export default {
       return await normalizeCatastrophicSsrResponse(response, ctx);
     } catch (error) {
       console.error(error);
-      ctx.waitUntil?.(
+      ctx?.waitUntil?.(
         posthogLogger.error(
           "SSR request failed before a response was produced",
         ),
