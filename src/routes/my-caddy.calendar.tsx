@@ -509,6 +509,7 @@ async function disconnectGoogleCalendar() {
           home: game.home,
           away: game.away,
           eventName: game.eventName,
+          summary: gameDisplayTitle(game),
           eventKind: game.eventKind,
           kickoff: game.kickoff,
           scheduledDate: game.scheduledDate,
