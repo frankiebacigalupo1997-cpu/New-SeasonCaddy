@@ -961,10 +961,12 @@ function CalendarPanel({
     currentDate,
     setCurrentDate,
   ] = useState(
-    new Date(
-      today.year,
-      today.month - 1,
-      1,
+    startOfWeek(
+      new Date(
+        today.year,
+        today.month - 1,
+        today.day,
+      ),
     ),
   );
 
@@ -982,143 +984,36 @@ function CalendarPanel({
     () => new Set(),
   );
 
-  const monthLabel =
-    currentDate.toLocaleDateString(
-      "en-US",
-      {
-        month:
-          "long",
+  const rangeEnd = new Date(currentDate);
+  rangeEnd.setDate(currentDate.getDate() + 27);
 
-        year:
-          "numeric",
-      },
-    );
+  const rangeLabel = `${currentDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })} – ${rangeEnd.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })}`;
 
   const calendarDays =
     useMemo(() => {
-      const year =
-        currentDate.getFullYear();
-
-      const month =
-        currentDate.getMonth();
-
-      const firstDay =
-        new Date(
-          year,
-          month,
-          1,
-        ).getDay();
-
-      const daysInMonth =
-        new Date(
-          year,
-          month +
-            1,
-          0,
-        ).getDate();
-
-      const daysInPreviousMonth =
-        new Date(
-          year,
-          month,
-          0,
-        ).getDate();
-
       const days: {
         day: number;
         currentMonth: boolean;
         dateKey: string;
       }[] = [];
 
-      for (
-        let i =
-          firstDay -
-          1;
-        i >=
-        0;
-        i--
-      ) {
-        const day =
-          daysInPreviousMonth -
-          i;
-
-        const date =
-          new Date(
-            year,
-            month -
-              1,
-            day,
-          );
+      for (let i = 0; i < 28; i++) {
+        const date = new Date(currentDate);
+        date.setDate(currentDate.getDate() + i);
 
         days.push({
-          day,
-
+          day: date.getDate(),
           currentMonth:
-            false,
-
-          dateKey:
-            formatDateKey(
-              date,
-            ),
+            date.getMonth() === currentDate.getMonth(),
+          dateKey: formatDateKey(date),
         });
-      }
-
-      for (
-        let day =
-          1;
-        day <=
-        daysInMonth;
-        day++
-      ) {
-        const date =
-          new Date(
-            year,
-            month,
-            day,
-          );
-
-        days.push({
-          day,
-
-          currentMonth:
-            true,
-
-          dateKey:
-            formatDateKey(
-              date,
-            ),
-        });
-      }
-
-      let nextDay =
-        1;
-
-      while (
-        days.length <
-        42
-      ) {
-        const date =
-          new Date(
-            year,
-            month +
-              1,
-            nextDay,
-          );
-
-        days.push({
-          day:
-            nextDay,
-
-          currentMonth:
-            false,
-
-          dateKey:
-            formatDateKey(
-              date,
-            ),
-        });
-
-        nextDay++;
       }
 
       return days;
@@ -1211,52 +1106,21 @@ function CalendarPanel({
     );
   }
 
-  function previousMonth() {
-    setExpandedDays(
-      new Set(),
-    );
+  function shiftRange(days: number) {
+    setExpandedDays(new Set());
 
-    setCurrentDate(
-      new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() -
-          1,
-        1,
-      ),
-    );
-  }
-
-  function nextMonth() {
-    setExpandedDays(
-      new Set(),
-    );
-
-    setCurrentDate(
-      new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() +
-          1,
-        1,
-      ),
-    );
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(currentDate.getDate() + days);
+    setCurrentDate(nextDate);
   }
 
   function goToToday() {
-    setExpandedDays(
-      new Set(),
-    );
+    setExpandedDays(new Set());
 
-    const today =
-      todayForRegion(
-        region,
-      );
-
+    const today = todayForRegion(region);
     setCurrentDate(
-      new Date(
-        today.year,
-        today.month -
-          1,
-        1,
+      startOfWeek(
+        new Date(today.year, today.month - 1, today.day),
       ),
     );
   }
@@ -1295,10 +1159,8 @@ function CalendarPanel({
         >
           <button
             type="button"
-            aria-label="Previous month"
-            onClick={
-              previousMonth
-            }
+            aria-label="Previous four weeks"
+            onClick={() => shiftRange(-28)}
             style={
               calendarControlStyle
             }
@@ -1336,10 +1198,8 @@ function CalendarPanel({
 
           <button
             type="button"
-            aria-label="Next month"
-            onClick={
-              nextMonth
-            }
+            aria-label="Next four weeks"
+            onClick={() => shiftRange(28)}
             style={
               calendarControlStyle
             }
@@ -1362,7 +1222,7 @@ function CalendarPanel({
           }}
         >
           {
-            monthLabel
+            rangeLabel
           }
         </div>
 
