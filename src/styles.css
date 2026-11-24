@@ -664,7 +664,7 @@
     grid-template-areas:
       "date title title"
       "time competition watch"
-      "time provider provider";
+      "time . provider";
     column-gap: 10px;
     row-gap: 7px;
     align-items: center;
@@ -709,6 +709,7 @@
   .my-caddy-next-game-provider {
     grid-area: provider;
     min-width: 0;
+    justify-self: end;
     align-self: start;
   }
 
@@ -716,6 +717,7 @@
     grid-area: watch;
     justify-self: end;
     align-self: center;
+    transform: translateY(-3px);
     padding: 0 8px !important;
     font-size: 10px !important;
   }
