@@ -47,6 +47,8 @@ import {
   useAuth,
 } from "@/hooks/useAuth";
 
+import { supabase } from "@/integrations/supabase/client";
+
 import {
   usePostHog,
 } from "@posthog/react";
@@ -101,6 +103,13 @@ function CalendarPage() {
 
   const [googleCalendarConnected, setGoogleCalendarConnected] =
   useState(false);
+
+  const [googleCalendarExcludedFixtureIds, setGoogleCalendarExcludedFixtureIds] =
+    useState<Set<string>>(() => new Set());
+  const [googleCalendarExclusionsLoaded, setGoogleCalendarExclusionsLoaded] =
+    useState(false);
+  const [googleCalendarPreferenceSavingIds, setGoogleCalendarPreferenceSavingIds] =
+    useState<Set<string>>(() => new Set());
 
 const [googleCalendarDisconnecting, setGoogleCalendarDisconnecting] =
   useState(false);
@@ -202,6 +211,45 @@ if (
         true;
     };
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadGoogleCalendarFixtureExclusions() {
+      if (!user?.id) {
+        setGoogleCalendarExcludedFixtureIds(new Set());
+        setGoogleCalendarExclusionsLoaded(true);
+        return;
+      }
+
+      setGoogleCalendarExclusionsLoaded(false);
+
+      const { data, error } = await (supabase as any)
+        .from("user_google_calendar_fixture_exclusions")
+        .select("fixture_id")
+        .eq("user_id", user.id);
+
+      if (cancelled) return;
+
+      if (error) {
+        console.error("Could not load Google Calendar fixture preferences", error);
+        toast.error("Could not load Google Calendar fixture preferences");
+        setGoogleCalendarExclusionsLoaded(false);
+        return;
+      }
+
+      setGoogleCalendarExcludedFixtureIds(
+        new Set((Array.isArray(data) ? data : []).map((row: { fixture_id: string }) => String(row.fixture_id))),
+      );
+      setGoogleCalendarExclusionsLoaded(true);
+    }
+
+    void loadGoogleCalendarFixtureExclusions();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
 
   /* ==================================================== */
   /* KEEP REGION IN SYNC                                  */
@@ -375,6 +423,39 @@ if (
   /* GOOGLE CALENDAR SYNC                                 */
   /* ==================================================== */
 
+async function toggleGoogleCalendarFixture(fixtureId: string) {
+  if (!user?.id || !googleCalendarExclusionsLoaded) return;
+  if (googleCalendarPreferenceSavingIds.has(fixtureId)) return;
+
+  setGoogleCalendarPreferenceSavingIds((current) => new Set(current).add(fixtureId));
+
+  try {
+    const isExcluded = googleCalendarExcludedFixtureIds.has(fixtureId);
+    const query = (supabase as any).from("user_google_calendar_fixture_exclusions");
+    const result = isExcluded
+      ? await query.delete().eq("user_id", user.id).eq("fixture_id", fixtureId)
+      : await query.insert({ user_id: user.id, fixture_id: fixtureId });
+
+    if (result.error) throw result.error;
+
+    setGoogleCalendarExcludedFixtureIds((current) => {
+      const next = new Set(current);
+      if (isExcluded) next.delete(fixtureId);
+      else next.add(fixtureId);
+      return next;
+    });
+  } catch (error) {
+    console.error("Could not save Google Calendar fixture preference", error);
+    toast.error("Could not save this Google Calendar preference");
+  } finally {
+    setGoogleCalendarPreferenceSavingIds((current) => {
+      const next = new Set(current);
+      next.delete(fixtureId);
+      return next;
+    });
+  }
+}
+
 async function disconnectGoogleCalendar() {
   if (
     googleCalendarDisconnecting ||
@@ -441,6 +522,11 @@ async function disconnectGoogleCalendar() {
 }
   
   async function syncWithGoogleCalendar() {
+  if (!googleCalendarExclusionsLoaded) {
+    toast.error("Google Calendar preferences are still loading. Please try again.");
+    return;
+  }
+
   const savedTeamCount = Object.values(savedLeagues).reduce(
     (total, competitionTeams) => total + competitionTeams.length,
     0,
@@ -489,6 +575,7 @@ async function disconnectGoogleCalendar() {
     const syncEvents =
       savedGames
         .filter((game) => {
+          if (googleCalendarExcludedFixtureIds.has(String(game.id))) return false;
           if (!game.kickoff) return false;
 
           const kickoffMs =
@@ -929,6 +1016,11 @@ opacity:
           getProviderIds={
             regionalProviderIds
           }
+          googleCalendarControlsVisible={googleCalendarSyncStatus === "syncing" || googleCalendarSyncStatus === "synced"}
+          googleCalendarExcludedFixtureIds={googleCalendarExcludedFixtureIds}
+          googleCalendarPreferenceSavingIds={googleCalendarPreferenceSavingIds}
+          googleCalendarSyncing={googleCalendarSyncStatus === "syncing"}
+          onToggleGoogleCalendarFixture={toggleGoogleCalendarFixture}
         />
       )}
     </div>
@@ -943,14 +1035,20 @@ function CalendarPanel({
   games,
   region,
   getProviderIds,
+  googleCalendarControlsVisible,
+  googleCalendarExcludedFixtureIds,
+  googleCalendarPreferenceSavingIds,
+  googleCalendarSyncing,
+  onToggleGoogleCalendarFixture,
 }: {
   games: Game[];
-
   region: string;
-
-  getProviderIds: (
-    game: Game,
-  ) => string[];
+  getProviderIds: (game: Game) => string[];
+  googleCalendarControlsVisible: boolean;
+  googleCalendarExcludedFixtureIds: Set<string>;
+  googleCalendarPreferenceSavingIds: Set<string>;
+  googleCalendarSyncing: boolean;
+  onToggleGoogleCalendarFixture: (fixtureId: string) => void;
 }) {
   const today =
     todayForRegion(
@@ -1422,6 +1520,10 @@ function CalendarPanel({
                       getProviderIds={
                         getProviderIds
                       }
+                      showGoogleSyncControl={googleCalendarControlsVisible}
+                      googleSyncIncluded={!googleCalendarExcludedFixtureIds.has(String(game.id))}
+                      googleSyncDisabled={googleCalendarSyncing || googleCalendarPreferenceSavingIds.has(String(game.id))}
+                      onToggleGoogleSync={() => onToggleGoogleCalendarFixture(String(game.id))}
                     />
                   ),
                 )}
@@ -1495,9 +1597,58 @@ function CalendarPanel({
           getProviderIds={
             getProviderIds
           }
+          showGoogleSyncControl={googleCalendarControlsVisible}
+          excludedFixtureIds={googleCalendarExcludedFixtureIds}
+          savingFixtureIds={googleCalendarPreferenceSavingIds}
+          googleCalendarSyncing={googleCalendarSyncing}
+          onToggleGoogleCalendarFixture={onToggleGoogleCalendarFixture}
         />
       )}
     </div>
+  );
+}
+
+/* ====================================================== */
+/* GOOGLE CALENDAR FIXTURE TOGGLE                         */
+/* ====================================================== */
+
+function GoogleCalendarFixtureToggle({
+  included,
+  disabled,
+  onToggle,
+}: {
+  included: boolean;
+  disabled: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={included ? "Exclude fixture from Google Calendar" : "Include fixture in Google Calendar"}
+      aria-pressed={included}
+      title={included ? "Included in Google Calendar" : "Excluded from Google Calendar"}
+      disabled={disabled}
+      onClick={onToggle}
+      style={{
+        width: "22px",
+        height: "22px",
+        flex: "0 0 22px",
+        display: "grid",
+        placeItems: "center",
+        padding: 0,
+        borderRadius: "50%",
+        border: included ? "1px solid var(--brand)" : "1px solid var(--muted-foreground)",
+        background: included ? "var(--brand)" : "transparent",
+        color: included ? "var(--brand-foreground)" : "var(--muted-foreground)",
+        fontSize: "13px",
+        fontWeight: 800,
+        lineHeight: 1,
+        cursor: disabled ? "wait" : "pointer",
+        opacity: disabled ? 0.55 : 1,
+      }}
+    >
+      {included ? "✓" : ""}
+    </button>
   );
 }
 
@@ -1509,14 +1660,18 @@ function CalendarGameChip({
   game,
   region,
   getProviderIds,
+  showGoogleSyncControl,
+  googleSyncIncluded,
+  googleSyncDisabled,
+  onToggleGoogleSync,
 }: {
   game: Game;
-
   region: string;
-
-  getProviderIds: (
-    game: Game,
-  ) => string[];
+  getProviderIds: (game: Game) => string[];
+  showGoogleSyncControl: boolean;
+  googleSyncIncluded: boolean;
+  googleSyncDisabled: boolean;
+  onToggleGoogleSync: () => void;
 }) {
   const providers =
     getProviderIds(
@@ -1568,6 +1723,7 @@ function CalendarGameChip({
         liveEndTime);
 
   return (
+    <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: 0 }}>
     <Link
       to="/game/$gameId"
       params={{
@@ -1578,6 +1734,7 @@ function CalendarGameChip({
         region,
       }}
       title={gameDisplayTitle(game)}
+      style={{ flex: 1, minWidth: 0 }}
       className={[
         "my-calendar-game-chip",
         isFinished
@@ -1616,6 +1773,14 @@ function CalendarGameChip({
           : "Broadcast TBD"}
       </div>
     </Link>
+    {showGoogleSyncControl && (
+      <GoogleCalendarFixtureToggle
+        included={googleSyncIncluded}
+        disabled={googleSyncDisabled}
+        onToggle={onToggleGoogleSync}
+      />
+    )}
+    </div>
   );
 
 }
@@ -1628,14 +1793,20 @@ function CalendarListView({
   games,
   region,
   getProviderIds,
+  showGoogleSyncControl,
+  excludedFixtureIds,
+  savingFixtureIds,
+  googleCalendarSyncing,
+  onToggleGoogleCalendarFixture,
 }: {
   games: Game[];
-
   region: string;
-
-  getProviderIds: (
-    game: Game,
-  ) => string[];
+  getProviderIds: (game: Game) => string[];
+  showGoogleSyncControl: boolean;
+  excludedFixtureIds: Set<string>;
+  savingFixtureIds: Set<string>;
+  googleCalendarSyncing: boolean;
+  onToggleGoogleCalendarFixture: (fixtureId: string) => void;
 }) {
   if (
     games.length ===
@@ -1674,6 +1845,10 @@ function CalendarListView({
             getProviderIds={
               getProviderIds
             }
+            showGoogleSyncControl={showGoogleSyncControl}
+            googleSyncIncluded={!excludedFixtureIds.has(String(game.id))}
+            googleSyncDisabled={googleCalendarSyncing || savingFixtureIds.has(String(game.id))}
+            onToggleGoogleSync={() => onToggleGoogleCalendarFixture(String(game.id))}
             last={
               index ===
               games.length -
@@ -1694,16 +1869,19 @@ function CalendarListRow({
   game,
   region,
   getProviderIds,
+  showGoogleSyncControl,
+  googleSyncIncluded,
+  googleSyncDisabled,
+  onToggleGoogleSync,
   last,
 }: {
   game: Game;
-
   region: string;
-
-  getProviderIds: (
-    game: Game,
-  ) => string[];
-
+  getProviderIds: (game: Game) => string[];
+  showGoogleSyncControl: boolean;
+  googleSyncIncluded: boolean;
+  googleSyncDisabled: boolean;
+  onToggleGoogleSync: () => void;
   last: boolean;
 }) {
   const providers =
@@ -1735,6 +1913,7 @@ function CalendarListRow({
     );
 
   return (
+    <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
     <Link
   to="/game/$gameId"
   params={{
@@ -1746,6 +1925,8 @@ function CalendarListRow({
   }}
   className="my-calendar-list-row"
   style={{
+    flex: 1,
+    minWidth: 0,
     borderBottom:
       last
         ? "none"
@@ -1928,6 +2109,14 @@ function CalendarListRow({
         </span>
       </div>
     </Link>
+    {showGoogleSyncControl && (
+      <GoogleCalendarFixtureToggle
+        included={googleSyncIncluded}
+        disabled={googleSyncDisabled}
+        onToggle={onToggleGoogleSync}
+      />
+    )}
+    </div>
   );
 }
 
