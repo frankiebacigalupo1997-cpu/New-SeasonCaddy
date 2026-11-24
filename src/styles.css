@@ -693,11 +693,45 @@
   margin-top: 18px;
 }
 
-/* Stack the Overview panels when space gets tight */
+.my-caddy-overview-column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Stack the two desktop columns when space gets tight. */
 @media (max-width: 1100px) {
   .my-caddy-overview-grid {
     grid-template-columns:
       minmax(0, 1fr);
+  }
+}
+
+/* Phone: one full-width panel per row in the requested order. */
+@media (max-width: 619px) {
+  .my-caddy-overview-column {
+    display: contents;
+  }
+
+  .my-caddy-overview-grid {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .my-caddy-overview-next-games {
+    order: 1;
+  }
+
+  .my-caddy-overview-teams {
+    order: 2;
+  }
+
+  .my-caddy-overview-streaming {
+    order: 3;
+  }
+
+  .my-caddy-overview-calendar {
+    order: 4;
   }
 }
 
