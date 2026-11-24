@@ -1200,7 +1200,17 @@ async function syncWithGoogleCalendar(
           league: game.league,
           home: game.home,
           away: game.away,
+
+                  eventName:
+                    game.eventName,
+
+                  eventKind:
+                    game.eventKind,
+
+                  summary:
+                    gameDisplayTitle(game),
           eventName: game.eventName,
+          summary: gameDisplayTitle(game),
           eventKind: game.eventKind,
           kickoff: game.kickoff,
           scheduledDate: game.scheduledDate,
