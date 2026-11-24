@@ -1075,6 +1075,17 @@ function CalendarPanel({
     "month" | "list"
   >("month");
 
+  // Choose the initial calendar view after mount so SSR stays consistent.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setView(
+        window.matchMedia("(max-width: 619px)").matches
+          ? "list"
+          : "month",
+      );
+    }
+  }, []);
+
   const [
     expandedDays,
     setExpandedDays,
