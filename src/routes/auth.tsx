@@ -31,6 +31,10 @@ import {
   useAuth,
 } from "@/hooks/useAuth";
 
+import {
+  usePostHog,
+} from "@posthog/react";
+
 const SEASONCADDY_LOGO_URL =
   "https://ekxmoxjvnohdbbrpbqdq.supabase.co/storage/v1/object/public/branding/SeasonCaddy%20Logo%20Blue.png";
 
@@ -76,6 +80,9 @@ type AuthMode =
 function AuthPage() {
   const navigate =
     useNavigate();
+
+  const posthog =
+    usePostHog();
 
   const {
     user,
@@ -239,6 +246,10 @@ function AuthPage() {
           throw error;
         }
 
+        posthog?.capture(
+          "user_signed_in",
+        );
+
         toast.success(
           "Welcome back",
         );
@@ -277,6 +288,10 @@ function AuthPage() {
       if (
         data.session
       ) {
+        posthog?.capture(
+          "account_created",
+        );
+
         toast.success(
           "Your SeasonCaddy account is ready",
         );
@@ -292,6 +307,13 @@ function AuthPage() {
        * This fallback remains in case email
        * confirmation is still enabled in Supabase.
        */
+      posthog?.capture(
+        "account_created",
+        {
+          email_confirmation_required: true,
+        },
+      );
+
       toast.success(
         "Account created. Check your email to finish signing in.",
       );

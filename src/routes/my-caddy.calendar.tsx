@@ -47,6 +47,10 @@ import {
   useAuth,
 } from "@/hooks/useAuth";
 
+import {
+  usePostHog,
+} from "@posthog/react";
+
 function normalizeSavedSports(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return Array.from(new Set(value.filter((sport): sport is string => typeof sport === "string").map((sport) => sport.trim().toLowerCase()).filter(Boolean))).sort();
@@ -66,6 +70,9 @@ export const Route =
 function CalendarPage() {
   const { user } =
     useAuth();
+
+  const posthog =
+    usePostHog();
 
   /* ==================================================== */
   /* SAVED TEAMS                                          */
@@ -401,6 +408,10 @@ async function disconnectGoogleCalendar() {
     setGoogleCalendarConnected(false);
     setGoogleCalendarSyncStatus("idle");
 
+    posthog?.capture(
+      "google_calendar_disconnected",
+    );
+
         toast.success("Google Calendar disconnected");
   } catch (error) {
     toast.error(
@@ -636,6 +647,16 @@ async function disconnectGoogleCalendar() {
     }
 
     setGoogleCalendarSyncStatus("synced");
+
+    posthog?.capture(
+      "google_calendar_sync_completed",
+      {
+        fixture_count: syncEvents.length,
+        created_count: totalCreated,
+        updated_count: totalUpdated,
+        deleted_count: totalDeleted,
+      },
+    );
 
     toast.success(
       `${totalCreated + totalUpdated} fixtures synced to Google Calendar`,

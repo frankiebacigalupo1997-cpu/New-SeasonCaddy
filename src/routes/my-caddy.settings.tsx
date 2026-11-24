@@ -25,6 +25,10 @@ import {
   supabase,
 } from "@/integrations/supabase/client";
 
+import {
+  usePostHog,
+} from "@posthog/react";
+
 export const Route =
   createFileRoute(
     "/my-caddy/settings",
@@ -42,6 +46,9 @@ function SettingsPage() {
 
   const navigate =
     useNavigate();
+
+  const posthog =
+    usePostHog();
 
   /* ==================================================== */
   /* PASSWORD                                             */
@@ -207,6 +214,10 @@ function SettingsPage() {
         "",
       );
 
+      posthog?.capture(
+        "password_updated",
+      );
+
       setMessage({
         type:
           "success",
@@ -368,6 +379,10 @@ function SettingsPage() {
 
       setDeleteOpen(
         false,
+      );
+
+      posthog?.capture(
+        "account_deleted",
       );
 
       navigate({

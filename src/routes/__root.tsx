@@ -26,6 +26,17 @@ import {
   AuthProvider,
 } from "@/hooks/useAuth";
 
+import {
+  PostHogErrorBoundary,
+  PostHogProvider,
+} from "@posthog/react";
+
+const posthogToken =
+  import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN;
+
+const posthogHost =
+  import.meta.env.VITE_PUBLIC_POSTHOG_HOST;
+
 /* ====================================================== */
 /* NOT FOUND                                              */
 /* ====================================================== */
@@ -317,7 +328,21 @@ function RootComponent() {
   } =
     Route.useRouteContext();
 
-  return (
+  if (import.meta.env.DEV && typeof window !== "undefined") {
+    if (!posthogToken) {
+      throw new Error(
+        "VITE_PUBLIC_POSTHOG_PROJECT_TOKEN variable required by PostHog is missing or un-configured, this causes events to be silently missed. This error stops appearing once VITE_PUBLIC_POSTHOG_PROJECT_TOKEN is configured",
+      );
+    }
+
+    if (!posthogHost) {
+      throw new Error(
+        "VITE_PUBLIC_POSTHOG_HOST variable required by PostHog is missing or un-configured, this causes events to be silently missed. This error stops appearing once VITE_PUBLIC_POSTHOG_HOST is configured",
+      );
+    }
+  }
+
+  const app = (
     <QueryClientProvider
       client={
         queryClient
@@ -330,5 +355,26 @@ function RootComponent() {
 
       <Toaster />
     </QueryClientProvider>
+  );
+
+  if (!posthogToken || !posthogHost) {
+    return app;
+  }
+
+  return (
+    <PostHogProvider
+      apiKey={
+        posthogToken
+      }
+      options={{
+        api_host: posthogHost,
+        capture_exceptions: true,
+        debug: import.meta.env.DEV,
+      }}
+    >
+      <PostHogErrorBoundary>
+        {app}
+      </PostHogErrorBoundary>
+    </PostHogProvider>
   );
 }

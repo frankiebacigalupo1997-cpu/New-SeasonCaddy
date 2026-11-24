@@ -47,6 +47,10 @@ import {
   sortCompetitions,
 } from "@/lib/competition-sorting";
 
+import {
+  usePostHog,
+} from "@posthog/react";
+
 const SESSION_REGION_KEY =
   "sportstream-region";
 
@@ -70,6 +74,9 @@ export const Route =
 function TeamsPage() {
   const { user } =
     useAuth();
+
+  const posthog =
+    usePostHog();
 
   /* ==================================================== */
   /* LIVE SPORT / COMPETITION / TEAM CATALOG              */
@@ -563,6 +570,15 @@ function TeamsPage() {
 
       setOriginalSavedLeagues(cloneSavedLeagues(savedLeagues));
       setOriginalSavedSports(normalizeSports(savedSports));
+
+      posthog?.capture(
+        "team_preferences_saved",
+        {
+          team_count: totalSavedTeams,
+          competition_count: followedLeagueCount,
+          sport_count: savedSports.length,
+        },
+      );
 
       toast.success(
         "Your teams have been updated",

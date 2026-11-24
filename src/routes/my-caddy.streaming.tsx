@@ -43,6 +43,10 @@ import {
   useAuth,
 } from "@/hooks/useAuth";
 
+import {
+  usePostHog,
+} from "@posthog/react";
+
 const SESSION_REGION_KEY =
   "sportstream-region";
 
@@ -57,6 +61,9 @@ export const Route =
 function StreamingPage() {
   const { user } =
     useAuth();
+
+  const posthog =
+    usePostHog();
 
   /* ==================================================== */
   /* SAVED TEAMS                                          */
@@ -718,6 +725,13 @@ function StreamingPage() {
               ],
       );
 
+      posthog?.capture(
+        "streaming_subscription_added",
+        {
+          provider_id: providerId,
+        },
+      );
+
       toast.success(
         "Subscription saved",
       );
@@ -754,6 +768,13 @@ function StreamingPage() {
               id !==
               providerId,
           ),
+      );
+
+      posthog?.capture(
+        "streaming_subscription_removed",
+        {
+          provider_id: providerId,
+        },
       );
 
       toast.success(
