@@ -5,12 +5,14 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import type { User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
+import { usePostHog } from "@posthog/react";
 
 type AuthContextValue = {
   user: User | null;
@@ -25,6 +27,8 @@ export function AuthProvider({
 }: {
   children: ReactNode;
 }) {
+  const posthog = usePostHog();
+  const identifiedUserId = useRef<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -70,6 +74,21 @@ export function AuthProvider({
     };
   }, []);
 
+  useEffect(() => {
+    if (!posthog || !user || identifiedUserId.current === user.id) {
+      return;
+    }
+
+    if (identifiedUserId.current) {
+      posthog.reset();
+    }
+
+    posthog.identify(user.id, {
+      email: user.email,
+    });
+    identifiedUserId.current = user.id;
+  }, [posthog, user]);
+
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
 
@@ -77,7 +96,10 @@ export function AuthProvider({
       console.error("Failed to sign out:", error);
       throw error;
     }
-  }, []);
+
+    posthog?.reset();
+    identifiedUserId.current = null;
+  }, [posthog]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

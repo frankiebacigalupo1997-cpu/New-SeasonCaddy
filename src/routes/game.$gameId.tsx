@@ -57,6 +57,10 @@ import {
   useGameTimingBoundary,
 } from "@/components/gamehub/GameTiming";
 
+import {
+  usePostHog,
+} from "@posthog/react";
+
 export const Route =
   createFileRoute(
     "/game/$gameId",
@@ -204,6 +208,9 @@ export const Route =
   });
 
 function GamePage() {
+  const posthog =
+    usePostHog();
+
   const {
     game,
     broadcasts: liveBroadcasts,
@@ -279,6 +286,16 @@ function GamePage() {
         result.error ?? "Could not add game to Google Calendar",
       );
     }
+
+    posthog?.capture(
+      "fixture_added_to_calendar",
+      {
+        sport: game.sport,
+        competition_id: game.competitionId,
+        provider_count: realProviders.length,
+        already_exists: Boolean(result.alreadyExists),
+      },
+    );
 
     toast.success(
       result.alreadyExists

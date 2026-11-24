@@ -77,6 +77,10 @@ import {
   useAuth,
 } from "@/hooks/useAuth";
 
+import {
+  usePostHog,
+} from "@posthog/react";
+
 export const Route =
   createFileRoute("/")({
     validateSearch: (
@@ -487,6 +491,9 @@ function Index() {
     user,
   } =
     useAuth();
+
+  const posthog =
+    usePostHog();
 
   /* ==================================================== */
   /* FOLLOW YOUR TEAMS                                    */
@@ -1413,6 +1420,21 @@ async function syncWithGoogleCalendar(
     );
 
     if (
+      !automatic
+    ) {
+      posthog?.capture(
+        "google_calendar_sync_completed",
+        {
+          fixture_count: syncEvents.length,
+          created_count: totalCreated,
+          updated_count: totalUpdated,
+          deleted_count: totalDeleted,
+          failed_count: totalFailed,
+        },
+      );
+    }
+
+    if (
       automatic
     ) {
       console.log(
@@ -1639,6 +1661,16 @@ async function syncWithGoogleCalendar(
         );
       }
 
+      posthog?.capture(
+        "fixture_added_to_calendar",
+        {
+          sport: game.sport,
+          competition_id: game.competitionId,
+          provider_count: providerNames.length,
+          already_exists: Boolean(result.alreadyExists),
+        },
+      );
+
       toast.success(
         result.alreadyExists
           ? "This game is already in Google Calendar"
@@ -1834,6 +1866,18 @@ async function syncWithGoogleCalendar(
         updatedSavedLeagues,
       );
 
+      posthog?.capture(
+        "team_preferences_saved",
+        {
+          action: "slate_saved",
+          team_count: teams.length,
+          competition_count: Object.values(updatedSavedLeagues).filter(
+            (savedTeams) => savedTeams.length > 0,
+          ).length,
+          sport_count: savedSports.length,
+        },
+      );
+
       toast.success(
         teams.length ===
           0
@@ -1964,6 +2008,18 @@ async function syncWithGoogleCalendar(
         );
       }
 
+      posthog?.capture(
+        "team_preferences_saved",
+        {
+          action: "team_removed",
+          team_count: Object.values(updatedSavedLeagues).flat().length,
+          competition_count: Object.values(updatedSavedLeagues).filter(
+            (savedTeams) => savedTeams.length > 0,
+          ).length,
+          sport_count: savedSports.length,
+        },
+      );
+
       toast.success(
         `${savedItemDisplayName(
           savedLeagueId,
@@ -2072,6 +2128,18 @@ async function syncWithGoogleCalendar(
         );
       }
 
+      posthog?.capture(
+        "team_preferences_saved",
+        {
+          action: "competition_removed",
+          team_count: Object.values(updatedSavedLeagues).flat().length,
+          competition_count: Object.values(updatedSavedLeagues).filter(
+            (savedTeams) => savedTeams.length > 0,
+          ).length,
+          sport_count: savedSports.length,
+        },
+      );
+
       toast.success(
         `${competitionName} removed from your saved teams`,
       );
@@ -2137,6 +2205,13 @@ async function syncWithGoogleCalendar(
               ],
       );
 
+      posthog?.capture(
+        "streaming_subscription_added",
+        {
+          provider_id: providerId,
+        },
+      );
+
       toast.success(
         "Subscription saved",
       );
@@ -2166,6 +2241,13 @@ async function syncWithGoogleCalendar(
               id !==
               providerId,
           ),
+      );
+
+      posthog?.capture(
+        "streaming_subscription_removed",
+        {
+          provider_id: providerId,
+        },
       );
 
       toast.success(
