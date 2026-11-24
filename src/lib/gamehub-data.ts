@@ -872,6 +872,21 @@ export const providers: Provider[] = [
   name: "SEC Network",
   url: "https://www.espn.com/watch/",
 },
+  {
+  id: "nbc-sports-philadelphia",
+  name: "NBC",
+  url: "https://www.nbcsportsphiladelphia.com/stream/",
+},
+{
+  id: "FloCombat",
+  name: "FloCombat",
+  url: "https://www.flocombat.com/signup",
+},
+{
+  id: "blue-jackets-hockey-network",
+  name: "Blue Jackets Hockey Network",
+  url: "https://www.amazon.com/BlueJackets",
+},
 
 
 
