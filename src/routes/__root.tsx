@@ -190,7 +190,7 @@ export const Route =
             "og:image",
 
           content:
-            "https://ekxmoxjvnohdbbrpbqdq.supabase.co/storage/v1/object/public/branding/SeasonCaddy%20Logo%20Blue.png",
+            "https://seasoncaddy.com/seasoncaddy-social-preview.jpg",
         },
 
         {
@@ -206,7 +206,7 @@ export const Route =
             "twitter:image",
 
           content:
-            "https://ekxmoxjvnohdbbrpbqdq.supabase.co/storage/v1/object/public/branding/SeasonCaddy%20Logo%20Blue.png",
+            "https://seasoncaddy.com/seasoncaddy-social-preview.jpg",
         },
 
         {
