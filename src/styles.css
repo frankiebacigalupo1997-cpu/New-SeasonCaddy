@@ -441,16 +441,29 @@
       minmax(0, 1fr);
   }
 
-  .home-coverage-sidebar {
+  /* Mobile order: Fixture Tracker, then Services You'll Need. */
+  .home-fixture-tracker {
     order: 1;
+  }
+
+  .home-coverage-sidebar {
+    order: 2;
     display: grid;
     grid-template-columns:
       minmax(0, 1fr);
     gap: 24px;
   }
 
-  .home-fixture-tracker {
-    order: 2;
+  /* Keep the mobile fixture list concise; desktop remains capped at 100. */
+  .home-fixture-row:nth-child(n + 21) {
+    display: none;
+  }
+}
+
+/* Hide Follow Your Teams only on narrow phone-sized viewports. */
+@media (max-width: 619px) {
+  .home-follow-teams {
+    display: none;
   }
 }
 
