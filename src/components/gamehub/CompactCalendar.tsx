@@ -349,6 +349,35 @@ export function CompactCalendar({
         </div>
       </div>
 
+      {/* NARROW-SCREEN LIST VIEW */}
+
+      <div className="compact-calendar-list">
+        {games
+          .slice()
+          .sort((a, b) => {
+            const aDate = gameDateKeyForRegion(a, region) ?? "";
+            const bDate = gameDateKeyForRegion(b, region) ?? "";
+            return aDate.localeCompare(bDate) ||
+              (a.kickoff ?? "").localeCompare(b.kickoff ?? "");
+          })
+          .map((game) => {
+            const dateKey = gameDateKeyForRegion(game, region);
+            const date = dateKey ? new Date(dateKey + "T12:00:00") : null;
+            return (
+              <Link key={game.id} to="/game/$gameId" params={{ gameId: game.id }} search={{ region }} className="compact-calendar-list-game">
+                <div className="compact-calendar-list-date">
+                  {date ? date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "Date TBD"}
+                </div>
+                <div className="compact-calendar-list-details">
+                  <div className="compact-calendar-list-title">{gameDisplayTitle(game)}</div>
+                  <div className="compact-calendar-list-time">{formatRegionalTime(game.kickoff, region)}</div>
+                </div>
+              </Link>
+            );
+          })}
+        {games.length === 0 && <div className="px-5 py-8 text-center text-sm text-muted-foreground">Save teams and their upcoming fixtures will appear here.</div>}
+      </div>
+
       {/* WEEKDAY HEADERS */}
 
       <div className="compact-calendar-weekdays">
