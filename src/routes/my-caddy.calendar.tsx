@@ -1723,7 +1723,7 @@ function CalendarGameChip({
         liveEndTime);
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: 0 }}>
+    <div style={{ position: "relative", display: "block", width: "100%", minWidth: 0 }}>
     <Link
       to="/game/$gameId"
       params={{
@@ -1734,7 +1734,7 @@ function CalendarGameChip({
         region,
       }}
       title={gameDisplayTitle(game)}
-      style={{ flex: 1, minWidth: 0 }}
+      style={{ display: "block", width: "100%", minWidth: 0, boxSizing: "border-box", paddingRight: showGoogleSyncControl ? "34px" : undefined }}
       className={[
         "my-calendar-game-chip",
         isFinished
@@ -1774,11 +1774,13 @@ function CalendarGameChip({
       </div>
     </Link>
     {showGoogleSyncControl && (
-      <GoogleCalendarFixtureToggle
-        included={googleSyncIncluded}
-        disabled={googleSyncDisabled}
-        onToggle={onToggleGoogleSync}
-      />
+      <div style={{ position: "absolute", right: "6px", top: "50%", transform: "translateY(-50%)", zIndex: 1 }}>
+        <GoogleCalendarFixtureToggle
+          included={googleSyncIncluded}
+          disabled={googleSyncDisabled}
+          onToggle={onToggleGoogleSync}
+        />
+      </div>
     )}
     </div>
   );
