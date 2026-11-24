@@ -646,6 +646,34 @@ async function disconnectGoogleCalendar() {
       }
     }
 
+    // Empty desired sets still require a Worker cleanup pass.
+    if (syncEvents.length === 0) {
+      const cleanupResponse = await googleCalendarApiFetch("/google/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ events: [], region: normalizeRegion(region), desiredEventIds, finalBatch: true }),
+      });
+      const cleanupResult = await cleanupResponse.json();
+      if (!cleanupResponse.ok || !cleanupResult.success) {
+        throw new Error(cleanupResult.error ?? "Could not finish Google Calendar cleanup");
+      }
+      totalDeleted += Number(cleanupResult.deleted ?? 0);
+      let cleanupCursor = cleanupResult.cleanupCursor ?? null;
+      while (cleanupCursor) {
+        const nextResponse = await googleCalendarApiFetch("/google/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ events: [], region: normalizeRegion(region), desiredEventIds, finalBatch: true, cleanupCursor }),
+        });
+        const nextResult = await nextResponse.json();
+        if (!nextResponse.ok || !nextResult.success) {
+          throw new Error(nextResult.error ?? "Could not finish Google Calendar cleanup");
+        }
+        totalDeleted += Number(nextResult.deleted ?? 0);
+        cleanupCursor = nextResult.cleanupCursor ?? null;
+      }
+    }
+
     setGoogleCalendarSyncStatus("synced");
 
     posthog?.capture(
