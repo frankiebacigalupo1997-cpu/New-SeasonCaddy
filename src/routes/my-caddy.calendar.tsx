@@ -1239,6 +1239,21 @@ function CalendarPanel({
           "hidden",
       }}
     >
+      {googleCalendarControlsVisible && (
+        <div
+          style={{
+            padding: "10px 16px",
+            textAlign: "center",
+            fontSize: "12px",
+            lineHeight: 1.45,
+            color: "var(--muted-foreground)",
+            borderBottom: "1px solid var(--border)",
+          }}
+        >
+          If you don't want an event to sync to your calendar, uncheck it
+        </div>
+      )}
+
       {/* CALENDAR HEADER */}
 
       <div className="my-calendar-panel-header">
