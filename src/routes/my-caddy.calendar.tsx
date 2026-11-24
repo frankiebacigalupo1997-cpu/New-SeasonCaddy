@@ -2550,6 +2550,22 @@ function timeZoneForCalendarRegion(
   );
 }
 
+function startOfWeek(
+  date: Date,
+) {
+  const start = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+
+  start.setDate(
+    start.getDate() - start.getDay(),
+  );
+
+  return start;
+}
+
 function formatDateKey(
   date: Date,
 ) {
