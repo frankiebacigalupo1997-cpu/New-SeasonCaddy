@@ -1499,6 +1499,7 @@ function NextGamesPanel({
 }) {
   return (
     <div
+      className="my-caddy-next-games-panel"
       style={{
         borderRadius:
           "12px",
@@ -1719,6 +1720,7 @@ function NextGameRow({
 
   return (
     <div
+      className="my-caddy-next-game-row"
       style={{
         display:
           "grid",
@@ -1741,7 +1743,7 @@ function NextGameRow({
             : "1px solid var(--border)",
       }}
     >
-      <div>
+      <div className="my-caddy-next-game-date-time">
         <div
           style={{
             fontSize:
@@ -1813,13 +1815,13 @@ function NextGameRow({
         </div>
       </div>
 
-      <div
+      <div className="my-caddy-next-game-details"
         style={{
           minWidth:
             0,
         }}
       >
-        <div
+        <div className="my-caddy-next-game-title"
           style={{
             fontSize:
               "14px",
@@ -1857,7 +1859,7 @@ function NextGameRow({
         </div>
 
         <div
-          className="text-muted-foreground"
+          className="my-caddy-next-game-competition text-muted-foreground"
           style={{
             marginTop:
               "4px",
@@ -1866,13 +1868,12 @@ function NextGameRow({
               "11px",
           }}
         >
-          {
-            game.league
-          }
+          {formatSportLabel(game.sport)} - {game.league}
         </div>
       </div>
 
       <div
+        className="my-caddy-next-game-provider"
         style={{
           minWidth:
             0,
@@ -1946,6 +1947,7 @@ function NextGameRow({
       </div>
 
       <Link
+        className="my-caddy-next-game-watch"
         to="/game/$gameId"
         params={{
           gameId:
@@ -2002,6 +2004,12 @@ function NextGameRow({
       </Link>
     </div>
   );
+}
+
+function formatSportLabel(sport: string) {
+  const normalized = sport.trim().replace(/[_-]+/g, " ").replace(/\s+/g, " ");
+  const knownLabels: Record<string, string> = { mma: "MMA", nfl: "NFL", nba: "NBA", nhl: "NHL", wnba: "WNBA", ufc: "UFC" };
+  return normalized.split(" ").map((part) => knownLabels[part.toLowerCase()] ?? (part ? part[0].toUpperCase() + part.slice(1) : part)).join(" ");
 }
 
 function NextGamesMessage({
