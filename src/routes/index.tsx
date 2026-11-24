@@ -1338,14 +1338,28 @@ async function syncWithGoogleCalendar(
         true;
     }
 
+    // Empty desired sets have no final event batch to trigger cleanup.
+    if (syncEvents.length === 0) {
+      const cleanupResponse = await googleCalendarApiFetch("/google/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ events: [], region: normalizeRegion(region), desiredEventIds, finalBatch: true }),
+      });
+      const cleanupResult = await cleanupResponse.json();
+      if (!cleanupResponse.ok || !cleanupResult.success) {
+        throw new Error(cleanupResult.error ?? "Could not finish Google Calendar cleanup");
+      }
+      totalDeleted += Number(cleanupResult.deleted ?? 0);
+      totalFailed += Number(cleanupResult.failed ?? 0);
+      cleanupCursor = cleanupResult.cleanupCursor ?? null;
+      cleanupComplete = cleanupResult.cleanupComplete === true;
+    }
+
     /*
      * Continue cleanup in separate Worker invocations
      * when the final batch returned another cleanup page.
      */
-    while (
-      syncEvents.length > 0 &&
-      !cleanupComplete
-    ) {
+    while (!cleanupComplete) {
       const cleanupResponse =
         await googleCalendarApiFetch(
           "/google/sync",
