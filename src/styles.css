@@ -657,34 +657,32 @@
   padding: 15px 18px;
 }
 
-/* Narrow panels: date/time stay left; fixture details stack on the right. */
+/* Narrow panels: date/time on the left, event details and action on the right. */
 @container (max-width: 600px) {
   .my-caddy-next-game-row {
-    grid-template-columns: 92px minmax(0, 1fr) !important;
+    grid-template-columns: 88px minmax(0, 1fr) auto !important;
     grid-template-areas:
-      "date title"
-      "date competition"
-      "time provider";
-    column-gap: 12px;
-    row-gap: 6px;
+      "date title title"
+      "time competition watch"
+      "time provider provider";
+    column-gap: 10px;
+    row-gap: 7px;
     align-items: center;
   }
 
   .my-caddy-next-game-date-time {
-    grid-area: date;
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-width: 0;
+    display: contents;
   }
 
   .my-caddy-next-game-date-time > div:first-child {
+    grid-area: date;
+    min-width: 0;
     line-height: 1.3;
   }
 
   .my-caddy-next-game-date-time > div:nth-child(2) {
     grid-area: time;
+    align-self: start;
     margin-top: 0 !important;
     white-space: normal !important;
   }
@@ -704,8 +702,8 @@
     grid-area: competition;
     min-width: 0;
     margin-top: 0 !important;
+    padding-right: 0;
     line-height: 1.35;
-    padding-right: 112px;
   }
 
   .my-caddy-next-game-provider {
@@ -715,15 +713,13 @@
   }
 
   .my-caddy-next-game-watch {
-    grid-column: 2;
-    grid-row: 2;
+    grid-area: watch;
     justify-self: end;
     align-self: center;
     padding: 0 8px !important;
     font-size: 10px !important;
   }
 }
-
 .my-caddy-overview-grid {
   display: grid;
   grid-template-columns:
