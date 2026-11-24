@@ -554,33 +554,9 @@ function MyCaddyOverview() {
         />
       </div>
 
-      <div
-        style={{
-          display:
-            "grid",
-
-          gridTemplateColumns:
-            "minmax(0, 1.7fr) minmax(300px, 0.9fr)",
-
-          gap:
-            "18px",
-
-          alignItems:
-            "start",
-        }}
-      >
-        <div
-          style={{
-            display:
-              "flex",
-
-            flexDirection:
-              "column",
-
-            gap:
-              "18px",
-          }}
-        >
+      <div className="my-caddy-overview-grid">
+        <div className="my-caddy-overview-column my-caddy-overview-left">
+          <div className="my-caddy-overview-next-games">
           <NextGamesPanel
             games={
               savedGames
@@ -603,24 +579,17 @@ function MyCaddyOverview() {
               savedTeamCount
             }
           />
-          <CompactCalendar
-  games={savedGames}
-  region={region}
-/>
+          </div>
+          <div className="my-caddy-overview-calendar">
+            <CompactCalendar
+              games={savedGames}
+              region={region}
+            />
+          </div>
         </div>
 
-        <div
-          style={{
-            display:
-              "flex",
-
-            flexDirection:
-              "column",
-
-            gap:
-              "18px",
-          }}
-        >
+        <div className="my-caddy-overview-column my-caddy-overview-right">
+          <div className="my-caddy-overview-streaming">
           <StreamingCoveragePanel
             savedGames={
               savedGames
@@ -650,14 +619,17 @@ function MyCaddyOverview() {
             }
           />
 
-          <MyTeamsPanel
-            savedLeagues={
-              savedLeagues
-            }
-            preferencesLoaded={
-              preferencesLoaded
-            }
-          />
+          </div>
+          <div className="my-caddy-overview-teams">
+            <MyTeamsPanel
+              savedLeagues={
+                savedLeagues
+              }
+              preferencesLoaded={
+                preferencesLoaded
+              }
+            />
+          </div>
         </div>
       </div>
     </>
