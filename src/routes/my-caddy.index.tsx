@@ -1889,6 +1889,7 @@ function NextGameRow({
         }}
       >
         <Tv
+          className="my-caddy-next-game-provider-icon"
           size={
             13
           }
