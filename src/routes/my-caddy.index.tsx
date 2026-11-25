@@ -1780,22 +1780,6 @@ function NextGameRow({
               "nowrap",
           }}
         >
-          <Clock3
-            className="my-caddy-next-game-time-icon"
-            size={
-              11
-            }
-            style={{
-              flexShrink:
-                0,
-
-              color:
-                liveNow
-                  ? "var(--brand)"
-                  : undefined,
-            }}
-          />
-
           <span
             style={{
               color:
