@@ -713,9 +713,9 @@
     align-self: start;
   }
 
-  /* Keep the provider name aligned with the title and competition text. */
-  .my-caddy-next-game-provider > svg {
-    margin-left: -19px;
+  /* Hide the provider icon only in narrow mobile rows. */
+  .my-caddy-next-game-provider-icon {
+    display: none;
   }
 
   .my-caddy-next-game-watch {
