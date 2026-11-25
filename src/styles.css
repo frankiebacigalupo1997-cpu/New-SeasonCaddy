@@ -664,7 +664,7 @@
     grid-template-areas:
       "date title title"
       "time competition watch"
-      "time . provider";
+      "time provider .";
     column-gap: 10px;
     row-gap: 7px;
     align-items: center;
@@ -709,8 +709,13 @@
   .my-caddy-next-game-provider {
     grid-area: provider;
     min-width: 0;
-    justify-self: end;
+    justify-self: start;
     align-self: start;
+  }
+
+  /* Keep the provider name aligned with the title and competition text. */
+  .my-caddy-next-game-provider > svg {
+    margin-left: -19px;
   }
 
   .my-caddy-next-game-watch {
