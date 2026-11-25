@@ -1336,19 +1336,21 @@ function CalendarPanel({
           </button>
         </div>
 
-        <div
-          style={{
-            fontSize:
-              "16px",
+        {view === "month" && (
+          <div
+            style={{
+              fontSize:
+                "16px",
 
-            fontWeight:
-              750,
-          }}
-        >
-          {
-            rangeLabel
-          }
-        </div>
+              fontWeight:
+                750,
+            }}
+          >
+            {
+              rangeLabel
+            }
+          </div>
+        )}
 
         <div
           style={{
