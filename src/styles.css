@@ -685,6 +685,12 @@
     align-self: start;
     margin-top: 0 !important;
     white-space: normal !important;
+    gap: 0 !important;
+  }
+
+  /* Keep the time text aligned with the date's first character on narrow views. */
+  .my-caddy-next-game-time-icon {
+    display: none;
   }
 
   .my-caddy-next-game-details {
