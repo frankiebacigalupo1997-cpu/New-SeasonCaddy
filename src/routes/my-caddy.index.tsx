@@ -1781,6 +1781,7 @@ function NextGameRow({
           }}
         >
           <Clock3
+            className="my-caddy-next-game-time-icon"
             size={
               11
             }
