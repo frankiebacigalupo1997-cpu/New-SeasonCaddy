@@ -1716,7 +1716,7 @@ function NextGameRow({
       : formatRegionalTime(
           game.kickoff,
           region,
-        );
+        ).replace(" / ", " /\n");
 
   return (
     <div
@@ -1807,6 +1807,9 @@ function NextGameRow({
                 liveNow
                   ? 800
                   : undefined,
+
+              whiteSpace:
+                "pre-line",
             }}
           >
             {
